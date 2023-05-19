@@ -1,8 +1,7 @@
 cmake_minimum_required(VERSION 3.24)
-project(SimpleSynth)
-
-#include(ExternalProject)
 include(FetchContent)
+
+project(SimpleSynth VERSION 0.0.1)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -12,6 +11,8 @@ set( GLFW_BUILD_EXAMPLES OFF CACHE BOOL  "GLFW lib only" )
 set( GLFW_BUILD_TESTS OFF CACHE BOOL  "GLFW lib only" )
 set( GLFW_BUILD_DOCS OFF CACHE BOOL  "GLFW lib only" )
 set( GLFW_BUILD_INSTALL OFF CACHE BOOL  "GLFW lib only" )
+
+add_definitions(-D_USE_MATH_DEFINES) # needed for stk on windows
 
 # glad
 FetchContent_Declare(glad
@@ -67,7 +68,14 @@ if (NOT imnodes_POPULATED)
     target_link_libraries(imnodes PUBLIC imgui)
 endif ()
 
-add_executable(SimpleSynth main.cpp)
-target_link_libraries(SimpleSynth glad glfw imgui imnodes stk)
+add_executable(${PROJECT_NAME} main.cpp)
+target_link_libraries(${PROJECT_NAME} glad glfw imgui imnodes stk)
 include_directories(${imnodes_SOURCE_DIR})
 include_directories(${stk_SOURCE_DIR}/include)
+
+# Enable many good warnings
+if (MSVC)
+    target_compile_options(${PROJECT_NAME} PRIVATE /WX /W3)
+else()
+    target_compile_options(${PROJECT_NAME} PRIVATE -Werror -Wall -Wextra -Wpedantic -pedantic-errors)
+endif()
