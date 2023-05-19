@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include "imnodes.h"
 #include "imgui.h"
 
 #include "backends/imgui_impl_glfw.h"
@@ -139,7 +140,7 @@ void shutdown(GLFWwindow* window)
 int main() {
 
     GLFWwindow* const window = create_window(1280, 720, "Simple Synth");
-
+    ImNodes::CreateContext();
     while (!glfwWindowShouldClose(window)) {
         // Poll and handle events (inputs, window resize, etc.)
         // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
@@ -149,6 +150,24 @@ int main() {
 
         begin_frame();
 
+        ImNodes::BeginNodeEditor();
+        ImNodes::BeginNode(1);
+
+        ImNodes::BeginNodeTitleBar();
+        ImGui::TextUnformatted("simple node :)");
+        ImNodes::EndNodeTitleBar();
+
+        ImNodes::BeginInputAttribute(2);
+        ImGui::Text("input");
+        ImNodes::EndInputAttribute();
+
+        ImNodes::BeginOutputAttribute(3);
+        ImGui::Indent(40);
+        ImGui::Text("output");
+        ImNodes::EndOutputAttribute();
+
+        ImNodes::EndNode();
+        ImNodes::EndNodeEditor();
 
         end_frame(window, {0.45f, 0.55f, 0.60f, 1.00f});
     }
