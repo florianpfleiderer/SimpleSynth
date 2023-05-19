@@ -29,15 +29,22 @@ FetchContent_Declare(
         GIT_REPOSITORY https://github.com/ocornut/imgui.git
         GIT_TAG v1.89.3 #v1.89.4 breaks current imnodes version!
 )
+#imnodes
 FetchContent_Declare(
         imnodes
         GIT_REPOSITORY https://github.com/Nelarius/imnodes.git
         GIT_TAG v0.5
 )
-
+#stk
+FetchContent_Declare(
+        stk
+        GIT_REPOSITORY https://github.com/thestk/stk.git
+        GIT_TAG cc2dd22e9752bf5fd94f0799e01d19d5e8399058
+)
 
 FetchContent_MakeAvailable(glad)
 FetchContent_MakeAvailable(glfw)
+FetchContent_MakeAvailable(stk)
 
 FetchContent_GetProperties(imgui)
 if (NOT imgui_POPULATED)
@@ -56,11 +63,11 @@ if (NOT imnodes_POPULATED)
     FetchContent_Populate(imnodes)
     file(GLOB IMNODES_SOURCES ${imnodes_SOURCE_DIR}/*.cpp)
     file(GLOB IMNODES_HEADERS ${imnodes_SOURCE_DIR}/*.h)
-    message("${IMNODES_HEADERS}")
     add_library(imnodes STATIC ${IMNODES_SOURCES} ${IMNODES_HEADERS})
     target_link_libraries(imnodes PUBLIC imgui)
 endif ()
 
 add_executable(SimpleSynth main.cpp)
-target_link_libraries(SimpleSynth glad glfw imgui imnodes)
+target_link_libraries(SimpleSynth glad glfw imgui imnodes stk)
 include_directories(${imnodes_SOURCE_DIR})
+include_directories(${stk_SOURCE_DIR}/include)
