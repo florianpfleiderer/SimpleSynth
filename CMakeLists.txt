@@ -68,7 +68,11 @@ if (NOT imnodes_POPULATED)
     target_link_libraries(imnodes PUBLIC imgui)
 endif ()
 
-add_executable(${PROJECT_NAME} main.cpp)
+add_executable(${PROJECT_NAME}
+        src/main.cpp
+        src/ModuleEditor.cpp
+        include/ModuleEditor.h)
+
 target_link_libraries(${PROJECT_NAME} glad glfw imgui imnodes stk)
 include_directories(${imnodes_SOURCE_DIR})
 include_directories(${stk_SOURCE_DIR}/include)
@@ -78,4 +82,16 @@ if (MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE /WX /W3)
 else()
     target_compile_options(${PROJECT_NAME} PRIVATE -Werror -Wall -Wextra -Wpedantic -pedantic-errors)
+endif()
+
+################## DOCUMENTATION ################
+set(PROJECT_ROOT_NAME ${PROJECT_NAME})
+set(PROJECT_ROOT_VERSION ${PROJECT_VERSION})
+set(PROJECT_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
+set(PROJECT_ROOT_BINARY_DIR ${CMAKE_BINARY_DIR})
+
+option(BUILD_DOCS "Build documentation" ON)
+if(BUILD_DOCS)
+    add_subdirectory(docs)
+    add_dependencies(${PROJECT_NAME} doc_doxygen)
 endif()

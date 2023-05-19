@@ -8,8 +8,8 @@
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 
-#include <SineWave.h>
-#include <RtAudio.h>
+#include "SineWave.h"
+#include "RtAudio.h"
 
 using namespace stk;
 // This tick() function handles sample computation only.  It will be
