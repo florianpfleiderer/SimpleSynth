@@ -5,18 +5,22 @@
 #ifndef SIMPLESYNTH_MODULEEDITOR_H
 #define SIMPLESYNTH_MODULEEDITOR_H
 
+#include "GLFW/glfw3.h"
 
 class ModuleEditor {
-    int attribute;
-
-    ModuleEditor();
-
 public:
-    /**
-     * Constructor
-     * @param attribute
-     */
-    explicit ModuleEditor(int attribute);
+    ModuleEditor();
+    virtual ~ModuleEditor();
+    [[nodiscard]] GLFWwindow* getWindow() const;
+    void show();
+private:
+    GLFWwindow* const window;
+
+    static void glfw_error_callback(int error, const char* description);
+    static GLFWwindow* create_window(int width, int height, const char* title);
+    static void begin_frame();
+    static void end_frame(GLFWwindow* window, ImVec4 background_color);
+    static void shutdown(GLFWwindow* window);
 };
 
 
