@@ -10,7 +10,10 @@
 
 #include "../include/ModuleEditor.h"
 
-ModuleEditor::ModuleEditor() : window(ModuleEditor::create_window(1280, 720, "Simple Synth")) {
+#include "../include/modules/Oscillator.h"
+#include "../include/modules/Output.h"
+
+ModuleEditor::ModuleEditor() : window(ModuleEditor::create_window(1280, 720, "Simple Synth")), _idGenerator() {
     ImNodes::CreateContext();
 }
 
@@ -143,22 +146,45 @@ void ModuleEditor::show() {
     ModuleEditor::begin_frame();
 
     ImNodes::BeginNodeEditor();
-    ImNodes::BeginNode(1);
 
-    ImNodes::BeginNodeTitleBar();
-    ImGui::TextUnformatted("simple node :)");
-    ImNodes::EndNodeTitleBar();
+    const bool open_popup = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
+                            ImNodes::IsEditorHovered() &&
+                            ImGui::IsKeyReleased(ImGuiKey_A);
 
-    ImNodes::BeginInputAttribute(2);
-    ImGui::Text("input");
-    ImNodes::EndInputAttribute();
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8.f, 8.f));
+    if (!ImGui::IsAnyItemHovered() && open_popup)
+    {
+        ImGui::OpenPopup("add node");
+    }
 
-    ImNodes::BeginOutputAttribute(3);
-    ImGui::Indent(40);
-    ImGui::Text("output");
-    ImNodes::EndOutputAttribute();
+    if (ImGui::BeginPopup("add node"))
+    {
+        //const ImVec2 click_pos = ImGui::GetMousePosOnOpeningCurrentPopup();
 
-    ImNodes::EndNode();
+        if (ImGui::MenuItem("output"))
+        {
+            auto module = std::make_shared<Output>();
+            _modules.emplace_back(module);
+        }
+
+        if (ImGui::MenuItem("oscillator"))
+        {
+            auto module = std::make_shared<Oscillator>();
+            _modules.emplace_back(module);
+        }
+
+        ImGui::EndPopup();
+    }
+
+    for (const auto& module : _modules)
+    {
+        module->draw();
+    }
+
+
+    ImGui::PopStyleVar();
+
+
     ImNodes::EndNodeEditor();
 
     ModuleEditor::end_frame(window, {0.45f, 0.55f, 0.60f, 1.00f});
