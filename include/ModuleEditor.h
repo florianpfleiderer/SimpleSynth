@@ -7,14 +7,21 @@
 
 #include "GLFW/glfw3.h"
 
+#include "IdGenerator.h"
+
+#include "modules/Module.h"
+
 class ModuleEditor {
 public:
     ModuleEditor();
     virtual ~ModuleEditor();
     [[nodiscard]] GLFWwindow* getWindow() const;
     void show();
+
 private:
     GLFWwindow* const window;
+    const IdGenerator _idGenerator;
+    std::vector<std::shared_ptr<Module>> _modules;
 
     static void glfw_error_callback(int error, const char* description);
     static GLFWwindow* create_window(int width, int height, const char* title);

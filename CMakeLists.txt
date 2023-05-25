@@ -71,7 +71,11 @@ endif ()
 add_executable(${PROJECT_NAME}
         src/main.cpp
         src/ModuleEditor.cpp
-        include/ModuleEditor.h)
+        include/ModuleEditor.h
+        src/modules/Module.cpp
+        src/modules/Output.cpp
+        src/modules/Oscillator.cpp
+        include/IdGenerator.h)
 
 target_link_libraries(${PROJECT_NAME} glad glfw imgui imnodes stk)
 include_directories(${imnodes_SOURCE_DIR})
