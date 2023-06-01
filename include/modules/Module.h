@@ -19,6 +19,7 @@ class Module;
 
 /**
  * @brief Used to define Module in- and ouptuts
+ * Create input and output definitions here
  */
 struct Connector {
     ConnectorType type;
@@ -41,6 +42,9 @@ struct Connection {
         : module(std::move(module)), conn_id(conn_id), input_id(input_id), output_id(output_id) {}
 };
 
+/**
+ * @brief Module Interface
+ */
 class Module {
 public:
     /**
@@ -82,11 +86,16 @@ public:
     /**
      * @brief Function used for audio processing
      *
+     * * check if all inputs are connected
+     * * call tick functions of connected modules
+     * * do the necessary calculations
+     *
      * @param buffer vector of audio data
      * @param nBufferFrames buffer size
-     * @param output_id output id of the connected module
+     * @param streamTime time in seconds since the audio stream has started
+     * @param output_id output id of the connected module (only used if module has multiple outputs)
      *
-     * @return true if audio was processed correctly
+     * @return true if audio was processed correctly (else false)
      */
     virtual bool tick(stk::StkFloat* buffer, unsigned int nBufferFrames, double streamTime, int output_id) = 0;
 
