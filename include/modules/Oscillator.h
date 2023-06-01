@@ -9,6 +9,8 @@
 class Oscillator : public Module {
     int _id_output;
 public:
+    bool tick(stk::StkFloat *buffer, unsigned int nBufferFrames, double streamTime, int output_id) override;
+
     Oscillator();
     void draw() override;
 };
