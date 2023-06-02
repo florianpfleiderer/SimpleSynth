@@ -10,7 +10,6 @@
 
 Oscillator::Oscillator() : Module("Oscillator"), _id_output(IdGenerator::generateId()) {
     _connectors.emplace_back(ConnectorType::OUTPUT, _id_output);
-    sine.setFrequency(440.0);
 }
 
 void Oscillator::draw()
@@ -22,3 +21,14 @@ void Oscillator::draw()
 
     ImNodes::EndNode();
 }
+<<<<<<< HEAD
+=======
+
+bool Oscillator::tick(stk::StkFloat *buffer, unsigned int nBufferFrames, double streamTime, int output_id) {
+    (void)buffer;
+    (void)nBufferFrames;
+    (void)streamTime;
+    (void)output_id;
+    return false;
+}
+>>>>>>> main
