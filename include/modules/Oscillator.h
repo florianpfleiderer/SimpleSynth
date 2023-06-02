@@ -1,16 +1,15 @@
-//
-// Created by Robert Ristic on 16.05.23.
-//
-
-#ifndef SIMPLESYNTH_OSCILLATOR_H
-#define SIMPLESYNTH_OSCILLATOR_H
+#ifndef OSCILLATOR_H
+#define OSCILLATOR_H
 
 #include "Module.h"
+
 class Oscillator : public Module {
-    int _id_output;
 public:
     Oscillator();
-    void draw() override;
+
+    void draw();
+
+    bool tick(double *buffer, unsigned int nBufferFrames, double streamTime, int output_id);
 };
 
-#endif // SIMPLESYNTH_OSCILLATOR_H
+#endif // OSCILLATOR_H

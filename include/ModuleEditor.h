@@ -10,9 +10,12 @@
 #include "IdGenerator.h"
 
 #include "modules/Module.h"
+#include <memory>
+
 
 class ModuleEditor {
 public:
+
     ModuleEditor();
     virtual ~ModuleEditor();
     [[nodiscard]] GLFWwindow* getWindow() const;
