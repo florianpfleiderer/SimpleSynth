@@ -2,6 +2,7 @@
 // Created by Robert Ristic on 19.05.23.
 //
 #include <iostream>
+#include <algorithm>
 
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
@@ -12,6 +13,7 @@
 
 #include "../include/modules/Oscillator.h"
 #include "../include/modules/Output.h"
+
 
 ModuleEditor::ModuleEditor() : window(ModuleEditor::create_window(1280, 720, "Simple Synth")), _idGenerator() {
     ImNodes::CreateContext();
