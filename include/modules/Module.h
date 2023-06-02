@@ -9,6 +9,7 @@
 #include <utility>
 #include "Stk.h"
 #include "../IdGenerator.h"
+#include <memory>
 
 enum ConnectorType {
     INPUT,
