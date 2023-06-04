@@ -103,13 +103,14 @@ void ModuleEditor::begin_frame()
         ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.f);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 0.f));
 
-        ImGui::Begin("MyMainDockSpace", nullptr, window_flags);
+        ImGui::Begin("Synth", nullptr, window_flags);
         ImGui::PopStyleVar(3);
-        ImGui::End();
     }
 }
 
 void ModuleEditor::end_frame(GLFWwindow *window, ImVec4 background_color) {
+
+    ImGui::End();
     // Rendering
     ImGui::Render();
     int display_w, display_h;
