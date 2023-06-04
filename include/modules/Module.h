@@ -71,6 +71,8 @@ public:
     [[nodiscard]] const std::vector<Connector>& getConnections() const;
     //[[nodiscard]] const Connector& getConnectionById(int id) const;
 
+    [[nodiscard]] const Connector *getConnectorById(int id) const;
+
     /**
      * @brief Add new connection
      * @param conn
