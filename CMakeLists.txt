@@ -22,7 +22,7 @@ FetchContent_Declare(glad
 # glfw
 FetchContent_Declare(glfw
         GIT_REPOSITORY https://github.com/glfw/glfw.git
-        GIT_TAG 3.3.2
+        GIT_TAG 3.3.8
         )
 # imgui
 FetchContent_Declare(
@@ -42,6 +42,14 @@ FetchContent_Declare(
         GIT_REPOSITORY https://github.com/thestk/stk.git
         GIT_TAG cc2dd22e9752bf5fd94f0799e01d19d5e8399058
 )
+
+# only for licence
+FETCHCONTENT_DECLARE(
+        imguitemplate
+        GIT_REPOSITORY https://github.com/JulesFouchy/Simple-ImGui-Setup.git
+        GIT_TAG origin/main
+)
+FetchContent_Populate(imguitemplate)
 
 FetchContent_MakeAvailable(glad)
 FetchContent_MakeAvailable(glfw)

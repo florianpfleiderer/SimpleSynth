@@ -25,3 +25,12 @@ const std::vector<Connector> &Module::getConnections() const {
 void Module::addConnection(Connection &conn) {
     _connections.emplace_back(conn);
 }
+
+const Connector * Module::getConnectorById(int id) const {
+    auto found = std::find_if(_connectors.begin(), _connectors.end(),
+                              [id](const Connector& m) -> bool { return m.id == id; });
+    if (found == _connectors.end()) {
+        return nullptr;
+    }
+    return &(*found);
+}

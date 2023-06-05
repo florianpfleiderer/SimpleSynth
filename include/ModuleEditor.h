@@ -24,6 +24,8 @@ private:
     std::vector<std::shared_ptr<Module>> _modules;
     std::vector<Connection> _connections;
 
+    [[nodiscard]] std::shared_ptr<Module> getModuleByConnectorId(int id) const;
+
     static void glfw_error_callback(int error, const char* description);
     static GLFWwindow* create_window(int width, int height, const char* title);
     static void begin_frame();

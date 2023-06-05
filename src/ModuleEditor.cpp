@@ -23,6 +23,16 @@ void ModuleEditor::glfw_error_callback(int error, const char *description) {
     std::cerr << "[Glfw Error] " << error << ": " << description << "\n";
 }
 
+/**
+ * @brief create window
+ * based on https://github.com/JulesFouchy/Simple-ImGui-Setup
+ * CC0 1.0 Universal
+ *
+ * @param width
+ * @param height
+ * @param title
+ * @return
+ */
 GLFWwindow* ModuleEditor::create_window(int width, int height, const char* title)
 { // Setup window
     glfwSetErrorCallback(glfw_error_callback);
@@ -89,13 +99,24 @@ GLFWwindow* ModuleEditor::create_window(int width, int height, const char* title
     return window;
 }
 
+/**
+ * @brief begin frame
+ * based on https://github.com/JulesFouchy/Simple-ImGui-Setup
+ * CC0 1.0 Universal
+ */
 void ModuleEditor::begin_frame()
 {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
     if (ImGui::GetIO().ConfigFlags) {
-        static constexpr ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+        static constexpr ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoBackground |
+                ImGuiWindowFlags_NoTitleBar |
+                ImGuiWindowFlags_NoCollapse |
+                ImGuiWindowFlags_NoResize |
+                ImGuiWindowFlags_NoMove |
+                ImGuiWindowFlags_NoBringToFrontOnFocus |
+                ImGuiWindowFlags_NoNavFocus;
 
         ImGuiViewport* viewport = ImGui::GetMainViewport();
         ImGui::SetNextWindowPos(viewport->Pos);
@@ -105,13 +126,19 @@ void ModuleEditor::begin_frame()
         ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.f);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 0.f));
 
-        ImGui::Begin("MyMainDockSpace", nullptr, window_flags);
+        ImGui::Begin("Synth", nullptr, window_flags);
         ImGui::PopStyleVar(3);
-        ImGui::End();
     }
 }
 
+/**
+ * @brief end frame
+ * based on https://github.com/JulesFouchy/Simple-ImGui-Setup
+ * CC0 1.0 Universal
+ */
 void ModuleEditor::end_frame(GLFWwindow *window, ImVec4 background_color) {
+
+    ImGui::End();
     // Rendering
     ImGui::Render();
     int display_w, display_h;
@@ -134,6 +161,13 @@ void ModuleEditor::end_frame(GLFWwindow *window, ImVec4 background_color) {
     glfwSwapBuffers(window);
 }
 
+/**
+ * @brief end window
+ * from https://github.com/JulesFouchy/Simple-ImGui-Setup
+ * CC0 1.0 Universal
+ *
+ * @param window
+ */
 void ModuleEditor::shutdown(GLFWwindow* window)
 {
     ImGui_ImplOpenGL3_Shutdown();
@@ -195,83 +229,31 @@ void ModuleEditor::show() {
 
     ImNodes::EndNodeEditor();
 
-    /* TODO CLEANUP -----------------------------------------------------------------------------------*/
-
     /* handle new connections */
-    int start_attr, end_attr;
-    if (ImNodes::IsLinkCreated(&start_attr, &end_attr))
+    int start_id, end_id;
+    if (ImNodes::IsLinkCreated(&start_id, &end_id))
     {
-        Connector start(INPUT, 0), end(INPUT, 0);
-        /* find start */
-        int id = start_attr;
-        std::shared_ptr<Module> start_module;
-        for (auto &m : _modules)
-        {
-            auto connections = m->getConnections();
-            auto found = std::find_if(connections.begin(), connections.end(),
-                                      [id](const Connector& m) -> bool { return m.id == id; });
-            if (found != connections.end())
-            {
-                start = *found;
-                start_module = m;
-            }
-        }
+        auto input_module = getModuleByConnectorId(start_id);
+        auto input_connector = input_module->getConnectorById(start_id);
+        auto output_module = getModuleByConnectorId(end_id);
+        auto output_connector = output_module->getConnectorById(end_id);
+        // TODO check if pointer valid
 
-        /* find end TODO don't duplicate code */
-        id = end_attr;
-        std::shared_ptr<Module> end_module;
-        for (const auto &m : _modules)
-        {
-            auto connections = m->getConnections();
-            auto found = std::find_if(connections.begin(), connections.end(),
-                                      [id](const Connector& m) -> bool { return m.id == id; });
-            if (found != connections.end())
-            {
-                end = *found;
-                end_module = m;
-            }
-        }
-
-        /* swap swap start and end nodes based on connection type */
-        int input_id, output_id;
-        std::shared_ptr<Module> output_ptr, input_ptr;
-        if (start.type == INPUT)
-        {
-            input_id = start_attr;
-            output_id = end_attr;
-            output_ptr = end_module;
-            input_ptr = start_module;
-        } else {
-            input_id = end_attr;
-            output_id = start_attr;
-            output_ptr = start_module;
-            input_ptr = end_module;
+        /* swap if input is not actually the input */
+        if (input_connector->type != INPUT) {
+           std::swap(input_module, output_module);
+           std::swap(input_connector, output_connector);
         }
 
         /* if they're not both inputs or outputs create connection*/
-        if (start.type != end.type)
+        if (input_connector->type != output_connector->type)
         {
             /* add link to list */
-            Connection conn(output_ptr, IdGenerator::generateId(), input_id, output_id);
+            Connection conn(output_module, IdGenerator::generateId(), start_id, end_id);
             _connections.emplace_back(conn);
             /* add link to corresponding module */
-            input_ptr->addConnection(conn);
+            input_module->addConnection(conn);
         }
-#if 0
-        const bool valid_link = start_type != end_type;
-        if (valid_link)
-        {
-            // Ensure the edge is always directed from the value to
-            // whatever produces the value
-            if (start_type != NodeType::value)
-            {
-                std::swap(start_attr, end_attr);
-            }
-            graph_.insert_edge(start_attr, end_attr);
-        }
-#endif
-
-        /* TODO CLEANUP -----------------------------------------------------------------------------------*/
 
         /* TODO delete nodes and connections */
     }
@@ -285,6 +267,16 @@ GLFWwindow *ModuleEditor::getWindow() const {
 
 ModuleEditor::~ModuleEditor() {
     ModuleEditor::shutdown(window);
+}
+
+std::shared_ptr<Module> ModuleEditor::getModuleByConnectorId(int id) const {
+    for (const auto &m : _modules)
+    {
+        if (m->getConnectorById(id) != nullptr) {
+            return m;
+        }
+    }
+    return nullptr;
 }
 
 
