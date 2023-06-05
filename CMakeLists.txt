@@ -80,6 +80,8 @@ add_executable(${PROJECT_NAME}
         src/main.cpp
         src/ModuleEditor.cpp
         include/ModuleEditor.h
+        src/modules/DelayNode.cpp
+        src/modules/EchoNode.cpp
         src/modules/Module.cpp
         src/modules/Output.cpp
         src/modules/Oscillator.cpp

@@ -14,6 +14,8 @@
 #include "../include/modules/Output.h"
 #include "../include/modules/SineOscillator.h"
 #include "../include/modules/RectOscillator.h"
+#include "../include/modules/EchoNode.h"
+#include "../include/modules/DelayNode.h"
 
 
 ModuleEditor::ModuleEditor() : window(ModuleEditor::create_window(1280, 720, "Simple Synth")), _idGenerator() {
@@ -213,6 +215,18 @@ void ModuleEditor::show() {
         if (ImGui::MenuItem("RectOscillator"))
         {
             auto module = std::make_shared<RectOscillator>();
+            _modules.emplace_back(module);
+        }
+
+        if (ImGui::MenuItem("delay"))
+        {
+            auto module = std::make_shared<DelayNode>();
+            _modules.emplace_back(module);
+        }
+
+        if (ImGui::MenuItem("echo"))
+        {
+            auto module = std::make_shared<EchoNode>();
             _modules.emplace_back(module);
         }
 
