@@ -13,6 +13,7 @@
 
 #include "../include/modules/Oscillator.h"
 #include "../include/modules/Output.h"
+#include "../include/modules/EchoNode.h"
 #include "../include/modules/DelayNode.h"
 
 
@@ -179,6 +180,12 @@ void ModuleEditor::show() {
         if (ImGui::MenuItem("delay"))
         {
             auto module = std::make_shared<DelayNode>();
+            _modules.emplace_back(module);
+        }
+
+        if (ImGui::MenuItem("echo"))
+        {
+            auto module = std::make_shared<EchoNode>();
             _modules.emplace_back(module);
         }
 
