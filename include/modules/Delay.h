@@ -13,6 +13,8 @@
 class Delay : public Module {
     const int _id_input;
     const int _id_output;
+    float _delay_time;
+    float _feedback;
     const std::string _name;
 public:
     /**
