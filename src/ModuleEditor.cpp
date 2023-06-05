@@ -13,7 +13,7 @@
 
 #include "../include/modules/Oscillator.h"
 #include "../include/modules/Output.h"
-#include "../include/modules/Delay.h"
+#include "../include/modules/DelayNode.h"
 
 
 ModuleEditor::ModuleEditor() : window(ModuleEditor::create_window(1280, 720, "Simple Synth")), _idGenerator() {
@@ -178,7 +178,7 @@ void ModuleEditor::show() {
 
         if (ImGui::MenuItem("delay"))
         {
-            auto module = std::make_shared<Delay>();
+            auto module = std::make_shared<DelayNode>();
             _modules.emplace_back(module);
         }
 

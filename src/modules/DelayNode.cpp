@@ -5,7 +5,7 @@
 #include <imnodes.h>
 #include "../../include/modules/Delay.h"
 
-Delay::Delay() : Module("Delay"), 
+DelayNode::DelayNode() : Module("Delay"), 
                  _id_input(IdGenerator::generateId()), 
                  _id_output(IdGenerator::generateId()), 
                  _id_delay_time(IdGenerator::generateId()),
@@ -16,7 +16,7 @@ Delay::Delay() : Module("Delay"),
     _connectors.emplace_back(ConnectorType::OUTPUT, _id_output);
 }
 
-void Delay::draw() {
+void DelayNode::draw() {
     // const float node_width = 100.0f;
 
     ImNodes::BeginNode(getId());
@@ -49,7 +49,7 @@ void Delay::draw() {
     ImNodes::EndNode();
 }
 
-bool Delay::tick(stk::StkFloat *buffer, unsigned int nBufferFrames, double streamTime, int output_id) {
+bool DelayNode::tick(stk::StkFloat *buffer, unsigned int nBufferFrames, double streamTime, int output_id) {
     (void)buffer;
     (void)nBufferFrames;
     (void)streamTime;
