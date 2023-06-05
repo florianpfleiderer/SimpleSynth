@@ -21,6 +21,16 @@ void ModuleEditor::glfw_error_callback(int error, const char *description) {
     std::cerr << "[Glfw Error] " << error << ": " << description << "\n";
 }
 
+/**
+ * @brief create window
+ * based on https://github.com/JulesFouchy/Simple-ImGui-Setup
+ * CC0 1.0 Universal
+ *
+ * @param width
+ * @param height
+ * @param title
+ * @return
+ */
 GLFWwindow* ModuleEditor::create_window(int width, int height, const char* title)
 { // Setup window
     glfwSetErrorCallback(glfw_error_callback);
@@ -87,13 +97,24 @@ GLFWwindow* ModuleEditor::create_window(int width, int height, const char* title
     return window;
 }
 
+/**
+ * @brief begin frame
+ * based on https://github.com/JulesFouchy/Simple-ImGui-Setup
+ * CC0 1.0 Universal
+ */
 void ModuleEditor::begin_frame()
 {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
     if (ImGui::GetIO().ConfigFlags) {
-        static constexpr ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+        static constexpr ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoBackground |
+                ImGuiWindowFlags_NoTitleBar |
+                ImGuiWindowFlags_NoCollapse |
+                ImGuiWindowFlags_NoResize |
+                ImGuiWindowFlags_NoMove |
+                ImGuiWindowFlags_NoBringToFrontOnFocus |
+                ImGuiWindowFlags_NoNavFocus;
 
         ImGuiViewport* viewport = ImGui::GetMainViewport();
         ImGui::SetNextWindowPos(viewport->Pos);
@@ -108,6 +129,11 @@ void ModuleEditor::begin_frame()
     }
 }
 
+/**
+ * @brief end frame
+ * based on https://github.com/JulesFouchy/Simple-ImGui-Setup
+ * CC0 1.0 Universal
+ */
 void ModuleEditor::end_frame(GLFWwindow *window, ImVec4 background_color) {
 
     ImGui::End();
@@ -133,6 +159,13 @@ void ModuleEditor::end_frame(GLFWwindow *window, ImVec4 background_color) {
     glfwSwapBuffers(window);
 }
 
+/**
+ * @brief end window
+ * from https://github.com/JulesFouchy/Simple-ImGui-Setup
+ * CC0 1.0 Universal
+ *
+ * @param window
+ */
 void ModuleEditor::shutdown(GLFWwindow* window)
 {
     ImGui_ImplOpenGL3_Shutdown();
@@ -193,8 +226,6 @@ void ModuleEditor::show() {
     ImGui::PopStyleVar();
 
     ImNodes::EndNodeEditor();
-
-    /* TODO CLEANUP -----------------------------------------------------------------------------------*/
 
     /* handle new connections */
     int start_id, end_id;

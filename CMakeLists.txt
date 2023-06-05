@@ -43,6 +43,14 @@ FetchContent_Declare(
         GIT_TAG cc2dd22e9752bf5fd94f0799e01d19d5e8399058
 )
 
+# only for licence
+FETCHCONTENT_DECLARE(
+        imguitemplate
+        GIT_REPOSITORY https://github.com/JulesFouchy/Simple-ImGui-Setup.git
+        GIT_TAG origin/main
+)
+FetchContent_Populate(imguitemplate)
+
 FetchContent_MakeAvailable(glad)
 FetchContent_MakeAvailable(glfw)
 FetchContent_MakeAvailable(stk)
