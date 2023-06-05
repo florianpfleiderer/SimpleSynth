@@ -95,7 +95,7 @@ void ModuleEditor::begin_frame()
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
     if (ImGui::GetIO().ConfigFlags) {
-        static constexpr ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+        static constexpr ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus;
 
         ImGuiViewport* viewport = ImGui::GetMainViewport();
         ImGui::SetNextWindowPos(viewport->Pos);
@@ -106,6 +106,16 @@ void ModuleEditor::begin_frame()
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 0.f));
 
         ImGui::Begin("MyMainDockSpace", nullptr, window_flags);
+        if (ImGui::BeginMainMenuBar())
+        {
+            if (ImGui::BeginMenu("File"))
+            {
+                if (ImGui::MenuItem("Open..", "Ctrl+O")) { /* Do stuff */ }
+                if (ImGui::MenuItem("Save", "Ctrl+S"))   { /* Do stuff */ }
+                ImGui::EndMenu();
+            }
+            ImGui::EndMenuBar();
+        }
         ImGui::PopStyleVar(3);
         ImGui::End();
     }
@@ -177,6 +187,8 @@ void ModuleEditor::show() {
 
         ImGui::EndPopup();
     }
+
+    
 
     /* draw modules */
     for (const auto& module : _modules)
