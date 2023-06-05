@@ -3,7 +3,7 @@
 //
 
 #include <imnodes.h>
-#include "../../include/modules/Delay.h"
+#include "../../include/modules/DelayNode.h"
 
 DelayNode::DelayNode() : Module("Delay"), 
                  _id_input(IdGenerator::generateId()), 
@@ -14,6 +14,9 @@ DelayNode::DelayNode() : Module("Delay"),
                  _feedback(0.f) {
     _connectors.emplace_back(ConnectorType::INPUT, _id_input);
     _connectors.emplace_back(ConnectorType::OUTPUT, _id_output);
+    
+    // set Delay with default values
+    _delay = stk::Delay();
 }
 
 void DelayNode::draw() {
@@ -51,8 +54,10 @@ void DelayNode::draw() {
 
 bool DelayNode::tick(stk::StkFloat *buffer, unsigned int nBufferFrames, double streamTime, int output_id) {
     (void)buffer;
-    (void)nBufferFrames;
     (void)streamTime;
+    for(unsigned int i = 0; i < nBufferFrames; i++) {
+        *buffer++ = _delay.tick(buffer[i]);
+    }
     (void)output_id;
     return false;
 }

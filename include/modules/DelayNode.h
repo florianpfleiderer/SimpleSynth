@@ -29,7 +29,6 @@ public:
 
     void draw() override;
     bool tick(stk::StkFloat *buffer, unsigned int nBufferFrames, double streamTime, int output_id) override;
-
 };
 
 #endif // SIMPLESYNTH_DELAY_H
