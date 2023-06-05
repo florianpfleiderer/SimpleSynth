@@ -5,13 +5,16 @@
 
 class Oscillator : public Module {
 public:
+
+    Oscillator(std::string name);
+
+    void draw() override;
+
+    ~Oscillator() override;
+
     bool tick(stk::StkFloat *buffer, unsigned int nBufferFrames, double streamTime, int output_id) override;
 
-    Oscillator();
-
-    void draw();
-
-    bool tick(double *buffer, unsigned int nBufferFrames, double streamTime, int output_id);
+    int _id_output;
 };
 
 #endif // OSCILLATOR_H

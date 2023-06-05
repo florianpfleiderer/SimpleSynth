@@ -6,12 +6,12 @@
 #include <iostream>
 #include "Stk.h"
 
-RectOscillator::RectOscillator() : Oscillator(), _id_output(IdGenerator::generateId()) {
+RectOscillator::RectOscillator() : Oscillator("RectOscillator"), _id_output(IdGenerator::generateId()) {
     _connectors.emplace_back(ConnectorType::OUTPUT, _id_output);
     rectangle.setFrequency(440.0);
 }
 
-bool RectOscillator::tick(stk::StkFloat *buffer, unsigned int nBufferFrames, double streamTime, int output_id) {
+bool RectOscillator::tick(stk::StkFloat* buffer, unsigned int nBufferFrames, double streamTime, int output_id) {
     (void)output_id;
     (void)streamTime;
 
@@ -27,4 +27,6 @@ void RectOscillator::draw() {
 
     ImGui::Text("out");
     ImNodes::EndOutputAttribute();
+
+    ImNodes::EndNode();
 }

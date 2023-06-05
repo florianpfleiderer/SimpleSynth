@@ -8,7 +8,7 @@
 #include "../../include/modules/SineOscillator.h"
 #include "../../include/IdGenerator.h"
 
-Oscillator::Oscillator() : Module("Oscillator"), _id_output(IdGenerator::generateId()) {
+Oscillator::Oscillator(std::string name) : Module(name), _id_output(IdGenerator::generateId()) {
     _connectors.emplace_back(ConnectorType::OUTPUT, _id_output);
 }
 
@@ -18,17 +18,19 @@ void Oscillator::draw()
     ImNodes::BeginNodeTitleBar();
     ImGui::TextUnformatted(getName().c_str());
     ImNodes::EndNodeTitleBar();
-
-    ImNodes::EndNode();
 }
-<<<<<<< HEAD
-=======
+
+
+
+Oscillator::~Oscillator() {
+
+}
 
 bool Oscillator::tick(stk::StkFloat *buffer, unsigned int nBufferFrames, double streamTime, int output_id) {
-    (void)buffer;
-    (void)nBufferFrames;
-    (void)streamTime;
-    (void)output_id;
+    (void) buffer;
+    (void) nBufferFrames;
+    (void) streamTime;
+    (void) output_id;
     return false;
 }
->>>>>>> main
+

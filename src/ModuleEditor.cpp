@@ -11,8 +11,9 @@
 
 #include "../include/ModuleEditor.h"
 
-#include "../include/modules/Oscillator.h"
 #include "../include/modules/Output.h"
+#include "../include/modules/SineOscillator.h"
+#include "../include/modules/RectOscillator.h"
 
 
 ModuleEditor::ModuleEditor() : window(ModuleEditor::create_window(1280, 720, "Simple Synth")), _idGenerator() {
@@ -169,9 +170,15 @@ void ModuleEditor::show() {
             _modules.emplace_back(module);
         }
 
-        if (ImGui::MenuItem("oscillator"))
+        if (ImGui::MenuItem("SineOscillator"))
         {
-            auto module = std::make_shared<Oscillator>();
+            auto module = std::make_shared<SineOscillator>();
+            _modules.emplace_back(module);
+        }
+
+        if (ImGui::MenuItem("RectOscillator"))
+        {
+            auto module = std::make_shared<RectOscillator>();
             _modules.emplace_back(module);
         }
 

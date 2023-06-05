@@ -12,11 +12,13 @@ class RectOscillator : public Oscillator {
 public:
     RectOscillator();
 
-    bool tick(stk::StkFloat *buffer, unsigned int nBufferFrames, double streamTime, int output_id);
+    bool tick(stk::StkFloat* buffer, unsigned int nBufferFrames, double streamTime, int output_id);
 
 private:
     int _id_output;
     stk::BlitSquare rectangle;
+
+    void draw();
 };
 
 #endif //SIMPLESYNTH_RECTOSCILLATOR_H

@@ -5,7 +5,7 @@
 #include "imnodes.h"
 #include <iostream>
 
-SineOscillator::SineOscillator() : Oscillator(), _id_output(IdGenerator::generateId()) {
+SineOscillator::SineOscillator() : Oscillator("SineOscillator"), _id_output(IdGenerator::generateId()) {
     _connectors.emplace_back(ConnectorType::OUTPUT, _id_output);
     sine.setFrequency(440.0);
 }
@@ -26,4 +26,6 @@ void SineOscillator::draw() {
 
     ImGui::Text("out");
     ImNodes::EndOutputAttribute();
+
+    ImNodes::EndNode();
 }
