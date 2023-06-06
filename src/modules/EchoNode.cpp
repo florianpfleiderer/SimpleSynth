@@ -24,7 +24,9 @@ void EchoNode::draw() {
     ImGui::TextUnformatted(getName().c_str());
     ImNodes::EndNodeTitleBar();
 
-    if (ImGui::Button("Save")){ /* Do stuff */ }
+    if (ImGui::Button("Save")){ 
+        [[ maybe_unused ]] std::string filename = getName() + ".ini";
+    }
 
     ImNodes::BeginStaticAttribute(_id_echo_delay);
     ImGui::PushItemWidth(100.0f);

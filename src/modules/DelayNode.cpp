@@ -18,14 +18,15 @@ DelayNode::DelayNode() : Module("Delay"),
 }
 
 void DelayNode::draw() {
-    // const float node_width = 100.0f;
 
     ImNodes::BeginNode(getId());
     ImNodes::BeginNodeTitleBar();
     ImGui::TextUnformatted(getName().c_str());
     ImNodes::EndNodeTitleBar();
 
-    if (ImGui::Button("Save")) { /* Do stuff */ }
+    if (ImGui::Button("Save")){ 
+        [[ maybe_unused ]] std::string filename = getName() + ".ini";
+    }
 
     ImNodes::BeginStaticAttribute(_id_delay_length);
     ImGui::PushItemWidth(100.0f);
