@@ -45,8 +45,6 @@ foreach(TEST ${TEST_NAMES})
         imnodes
         stk)
 
-      # add to gtest
-      gtest_discover_tests(${TEST})
       # add to ctest
       add_test(NAME ${TEST} COMMAND ${TEST})
 endforeach(TEST ${TEST_NAMES})
