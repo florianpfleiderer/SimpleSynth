@@ -8,10 +8,8 @@
 DelayNode::DelayNode() : Module("Delay"), 
                  _id_input(IdGenerator::generateId()), 
                  _id_output(IdGenerator::generateId()), 
-                 _id_delay_time(IdGenerator::generateId()),
-                 _id_feedback(IdGenerator::generateId()), 
-                 _delay_time(0.f), 
-                 _feedback(0.f) {
+                 _id_delay_length(IdGenerator::generateId()), 
+                 _delay_length(0.0f) {
     _connectors.emplace_back(ConnectorType::INPUT, _id_input);
     _connectors.emplace_back(ConnectorType::OUTPUT, _id_output);
     
@@ -27,16 +25,11 @@ void DelayNode::draw() {
     ImGui::TextUnformatted(getName().c_str());
     ImNodes::EndNodeTitleBar();
 
-    ImNodes::BeginStaticAttribute(_id_delay_time);
+    ImNodes::BeginStaticAttribute(_id_delay_length);
     ImGui::PushItemWidth(100.0f);
-    ImGui::DragFloat("delay_time", &_delay_time, 0.01f);
+    ImGui::DragFloat("delay_length", &_delay_length, 0.01f);
     ImGui::PopItemWidth();
-    ImNodes::EndStaticAttribute();
-
-    ImNodes::BeginStaticAttribute(_id_feedback);
-    ImGui::PushItemWidth(100.0f);
-    ImGui::DragFloat("feedback", &_feedback, 0.01f);
-    ImGui::PopItemWidth();
+    ImGui::Text("delay_length=%03f", _delay_length);
     ImNodes::EndStaticAttribute();
 
     ImNodes::BeginInputAttribute(_id_input);
