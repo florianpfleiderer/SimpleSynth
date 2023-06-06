@@ -25,7 +25,7 @@ public:
     explicit EchoNode();
 
     void draw() override;
-    bool tick(stk::StkFloat *buffer, unsigned int nBufferFrames, double streamTime, int output_id) override;
+    bool tick(stk::StkFrames &frames, double streamTime, int output_id) override;
 };
 
 #endif // SIMPLESYNTH_ECHO_H

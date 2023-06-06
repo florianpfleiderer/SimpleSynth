@@ -52,12 +52,9 @@ void DelayNode::draw() {
     ImNodes::EndNode();
 }
 
-bool DelayNode::tick(stk::StkFloat *buffer, unsigned int nBufferFrames, double streamTime, int output_id) {
-    (void)buffer;
+bool DelayNode::tick(stk::StkFrames &frames, double streamTime, int output_id) {
     (void)streamTime;
-    for(unsigned int i = 0; i < nBufferFrames; i++) {
-        *buffer++ = _delay.tick(buffer[i]);
-    }
+    frames = _delay.tick(frames);
     (void)output_id;
     return false;
 }
