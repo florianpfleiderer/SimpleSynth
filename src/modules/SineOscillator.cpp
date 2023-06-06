@@ -10,12 +10,14 @@ SineOscillator::SineOscillator() : Oscillator("SineOscillator"), _id_output(IdGe
     sine.setFrequency(440.0);
 }
 
-bool SineOscillator::tick(stk::StkFloat *buffer, unsigned int nBufferFrames, double streamTime, int output_id) {
+bool SineOscillator::tick(stk::StkFrames &frames, double streamTime, int output_id) {
     (void)output_id;
     (void)streamTime;
 
-    for (unsigned int i = 0; i < nBufferFrames; i++)
-        *buffer++ = sine.tick();
+    // for (unsigned int i = 0; i < nBufferFrames; i++)
+    //     *buffer++ = sine.tick();
+
+    frames = sine.tick(frames);
     return true;
 }
 

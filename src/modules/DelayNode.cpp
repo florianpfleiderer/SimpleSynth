@@ -50,7 +50,6 @@ void DelayNode::draw() {
 }
 
 bool DelayNode::tick(stk::StkFrames &frames, double streamTime, int output_id) {
-    (void)frames;
     (void)streamTime;
     frames = _delay.tick(frames);
     (void)output_id;

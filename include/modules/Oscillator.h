@@ -12,7 +12,7 @@ public:
 
     ~Oscillator() override;
 
-    bool tick(stk::StkFloat *buffer, unsigned int nBufferFrames, double streamTime, int output_id) override;
+    bool tick(stk::StkFrames &frames, double streamTime, int output_id) override;
 
     int _id_output;
 };

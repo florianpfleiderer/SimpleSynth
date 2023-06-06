@@ -50,7 +50,6 @@ void EchoNode::draw() {
 }
 
 bool EchoNode::tick(stk::StkFrames &frames, double streamTime, int output_id) {
-    (void)frames;
     (void)streamTime;
     frames = _echo.tick(frames);
     (void)output_id;
