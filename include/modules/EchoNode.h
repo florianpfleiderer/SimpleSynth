@@ -15,6 +15,8 @@
 class EchoNode : public Module {
     const int _id_input;
     const int _id_output;
+    const int _id_echo_delay;
+    float _echo_delay;
 
     stk::Echo _Echo;
 

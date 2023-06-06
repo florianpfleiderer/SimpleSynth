@@ -7,7 +7,9 @@
 
 EchoNode::EchoNode() : Module("Echo"), 
                  _id_input(IdGenerator::generateId()), 
-                 _id_output(IdGenerator::generateId()) {
+                 _id_output(IdGenerator::generateId()),
+                 _id_echo_delay(IdGenerator::generateId()),
+                 _echo_delay(0.0f) {
     _connectors.emplace_back(ConnectorType::INPUT, _id_input);
     _connectors.emplace_back(ConnectorType::OUTPUT, _id_output);
     
@@ -16,24 +18,19 @@ EchoNode::EchoNode() : Module("Echo"),
 }
 
 void EchoNode::draw() {
-    // const float node_width = 100.0f;
+    // [[maybe_unused]] const float node_width = 100.0f;
 
     ImNodes::BeginNode(getId());
     ImNodes::BeginNodeTitleBar();
     ImGui::TextUnformatted(getName().c_str());
     ImNodes::EndNodeTitleBar();
 
-    // ImNodes::BeginStaticAttribute(_id_Echo_time);
-    // ImGui::PushItemWidth(100.0f);
-    // ImGui::DragFloat("Echo_time", &_Echo_time, 0.01f);
-    // ImGui::PopItemWidth();
-    // ImNodes::EndStaticAttribute();
-
-    // ImNodes::BeginStaticAttribute(_id_feedback);
-    // ImGui::PushItemWidth(100.0f);
-    // ImGui::DragFloat("feedback", &_feedback, 0.01f);
-    // ImGui::PopItemWidth();
-    // ImNodes::EndStaticAttribute();
+    ImNodes::BeginStaticAttribute(_id_echo_delay);
+    ImGui::PushItemWidth(100.0f);
+    ImGui::DragFloat("echo_delay", &_echo_delay, 0.01f);
+    ImGui::PopItemWidth();
+    ImGui::Text("echo_delay=%03f", _echo_delay);
+    ImNodes::EndStaticAttribute();
 
     ImNodes::BeginInputAttribute(_id_input);
     ImGui::Text("in");
