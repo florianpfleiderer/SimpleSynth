@@ -14,7 +14,7 @@ EchoNode::EchoNode() : Module("Echo"),
     _connectors.emplace_back(ConnectorType::OUTPUT, _id_output);
     
     // set Echo with default values
-    _Echo = stk::Echo();
+    _echo = stk::Echo();
 }
 
 void EchoNode::draw() {
@@ -30,8 +30,9 @@ void EchoNode::draw() {
 
     ImNodes::BeginStaticAttribute(_id_echo_delay);
     ImGui::PushItemWidth(100.0f);
-    ImGui::DragFloat("echo_delay", &_echo_delay, 0.01f);
+    ImGui::SliderFloat("echo_delay", &_echo_delay, 0.0f, 100.0f);
     ImGui::PopItemWidth();
+    setEchoDelay(_echo_delay);
     ImGui::Text("echo_delay=%03f", _echo_delay);
     ImNodes::EndStaticAttribute();
 
@@ -52,8 +53,15 @@ bool EchoNode::tick(stk::StkFloat *buffer, unsigned int nBufferFrames, double st
     (void)buffer;
     (void)streamTime;
     for(unsigned int i = 0; i < nBufferFrames; i++) {
-        *buffer++ = _Echo.tick(buffer[i]);
+        *buffer++ = _echo.tick(buffer[i]);
     }
     (void)output_id;
     return false;
+}
+
+bool EchoNode::setEchoDelay(float echo_delay) {
+    if (echo_delay < 0.0f)
+        return false;
+    _echo.setDelay(_echo_delay);
+    return true;
 }

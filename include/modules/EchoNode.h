@@ -18,7 +18,8 @@ class EchoNode : public Module {
     const int _id_echo_delay;
     float _echo_delay;
 
-    stk::Echo _Echo;
+    stk::Echo _echo;
+    bool setEchoDelay(float echo_delay);
 
 public:
     /**

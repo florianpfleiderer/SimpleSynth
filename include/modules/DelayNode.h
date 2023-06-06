@@ -18,6 +18,7 @@ class DelayNode : public Module {
     const int _id_delay_length;
     float _delay_length;
     stk::Delay _delay;
+    bool setDelayLength(float delay_length);
 
 public:
     /**

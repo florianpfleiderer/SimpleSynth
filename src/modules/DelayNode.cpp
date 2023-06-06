@@ -30,9 +30,10 @@ void DelayNode::draw() {
 
     ImNodes::BeginStaticAttribute(_id_delay_length);
     ImGui::PushItemWidth(100.0f);
-    ImGui::DragFloat("delay_length", &_delay_length, 0.01f);
+    ImGui::DragFloat("delay_length", &_delay_length, 0.0f, _delay.getMaximumDelay());
     ImGui::PopItemWidth();
-    ImGui::Text("delay_length=%03f", _delay_length);
+    setDelayLength(_delay_length);
+    ImGui::Text("delay_length=%03f", static_cast<float>(_delay.getDelay()));
     ImNodes::EndStaticAttribute();
 
     ImNodes::BeginInputAttribute(_id_input);
@@ -56,4 +57,12 @@ bool DelayNode::tick(stk::StkFloat *buffer, unsigned int nBufferFrames, double s
     }
     (void)output_id;
     return false;
+}
+
+bool DelayNode::setDelayLength(float delay_length) {
+    if (delay_length < 0.0f) {
+        return false;
+    }
+    _delay.setDelay(delay_length);
+    return true;
 }
