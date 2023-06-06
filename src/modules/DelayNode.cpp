@@ -30,7 +30,7 @@ void DelayNode::draw() {
 
     ImNodes::BeginStaticAttribute(_id_delay_length);
     ImGui::PushItemWidth(100.0f);
-    ImGui::DragFloat("delay_length", &_delay_length, 0.0f, _delay.getMaximumDelay());
+    ImGui::SliderFloat("delay_length", &_delay_length, 0.0f, _delay.getMaximumDelay());
     ImGui::PopItemWidth();
     setDelayLength(_delay_length);
     ImGui::Text("delay_length=%03f", static_cast<float>(_delay.getDelay()));
