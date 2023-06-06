@@ -48,12 +48,9 @@ void EchoNode::draw() {
     ImNodes::EndNode();
 }
 
-bool EchoNode::tick(stk::StkFloat *buffer, unsigned int nBufferFrames, double streamTime, int output_id) {
-    (void)buffer;
+bool EchoNode::tick(stk::StkFrames &frames, double streamTime, int output_id) {
     (void)streamTime;
-    for(unsigned int i = 0; i < nBufferFrames; i++) {
-        *buffer++ = _Echo.tick(buffer[i]);
-    }
+    frames = _Echo.tick(frames);
     (void)output_id;
     return false;
 }

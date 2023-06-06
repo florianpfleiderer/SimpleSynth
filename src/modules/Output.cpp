@@ -24,9 +24,8 @@ void Output::draw()
     ImNodes::EndNode();
 }
 
-bool Output::tick(stk::StkFloat *buffer, unsigned int nBufferFrames, double streamTime, int output_id) {
-    (void)buffer;
-    (void)nBufferFrames;
+bool Output::tick(stk::StkFrames &frames, double streamTime, int output_id) {
+    (void)frames;
     (void)streamTime;
     (void)output_id;
     return false;

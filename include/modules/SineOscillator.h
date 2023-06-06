@@ -12,7 +12,7 @@ class SineOscillator : public Oscillator {
 public:
     SineOscillator();
 
-    bool tick(stk::StkFloat *buffer, unsigned int nBufferFrames, double streamTime, int output_id) override;
+    bool tick(stk::StkFrames &frames, double streamTime, int output_id) override;
 
     void draw() override;
 
