@@ -100,7 +100,7 @@ public:
      *
      * @return true if audio was processed correctly (else false)
      */
-    virtual bool tick(stk::StkFloat* buffer, unsigned int nBufferFrames, double streamTime, int output_id) = 0;
+    virtual bool tick(stk::StkFrames& frames, double streamTime, int output_id) = 0;
 
     /**
      * @brief Destructor
