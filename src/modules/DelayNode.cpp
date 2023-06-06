@@ -25,6 +25,8 @@ void DelayNode::draw() {
     ImGui::TextUnformatted(getName().c_str());
     ImNodes::EndNodeTitleBar();
 
+    if (ImGui::Button("Save")) { /* Do stuff */ }
+
     ImNodes::BeginStaticAttribute(_id_delay_length);
     ImGui::PushItemWidth(100.0f);
     ImGui::DragFloat("delay_length", &_delay_length, 0.01f);

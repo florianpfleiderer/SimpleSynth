@@ -18,12 +18,13 @@ EchoNode::EchoNode() : Module("Echo"),
 }
 
 void EchoNode::draw() {
-    // [[maybe_unused]] const float node_width = 100.0f;
 
     ImNodes::BeginNode(getId());
     ImNodes::BeginNodeTitleBar();
     ImGui::TextUnformatted(getName().c_str());
     ImNodes::EndNodeTitleBar();
+
+    if (ImGui::Button("Save")){ /* Do stuff */ }
 
     ImNodes::BeginStaticAttribute(_id_echo_delay);
     ImGui::PushItemWidth(100.0f);
