@@ -64,3 +64,7 @@ bool DelayNode::setDelayLength(float delay_length) {
     _delay.setDelay(delay_length);
     return true;
 }
+
+float DelayNode::getDelayLength() const {
+    return _delay_length;
+}

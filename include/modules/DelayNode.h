@@ -18,7 +18,6 @@ class DelayNode : public Module {
     const int _id_delay_length;
     float _delay_length;
     stk::Delay _delay;
-    bool setDelayLength(float delay_length);
 
 public:
     /**
@@ -28,6 +27,8 @@ public:
 
     void draw() override;
     bool tick(stk::StkFrames &frames, double streamTime, int output_id) override;
+    bool setDelayLength(float delay_length);
+    float getDelayLength() const;
 };
 
 #endif // SIMPLESYNTH_DELAY_H
