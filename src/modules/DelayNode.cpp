@@ -50,13 +50,11 @@ void DelayNode::draw() {
 }
 
 bool DelayNode::tick(stk::StkFrames &frames, double streamTime, int output_id) {
-    (void)streamTime;
     frames = _delay.tick(frames);
-    (void)output_id;
-    for(auto &conn: this->getConnections()) {
-        conn
+    for(auto &conn: this->_connections) {
+        conn.module->tick(frames, streamTime, output_id);
     }
-    return false;
+    return true;
 }
 
 bool DelayNode::setDelayLength(float delay_length) {

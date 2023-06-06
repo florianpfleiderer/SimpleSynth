@@ -50,10 +50,11 @@ void EchoNode::draw() {
 }
 
 bool EchoNode::tick(stk::StkFrames &frames, double streamTime, int output_id) {
-    (void)streamTime;
     frames = _echo.tick(frames);
-    (void)output_id;
-    return false;
+    for(auto &conn: this->_connections) {
+        conn.module->tick(frames, streamTime, output_id);
+    }
+    return true;
 }
 
 bool EchoNode::setEchoDelay(float echo_delay) {
