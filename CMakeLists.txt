@@ -111,3 +111,9 @@ if(BUILD_DOCS)
     add_subdirectory(docs)
     add_dependencies(${PROJECT_NAME} doc_doxygen)
 endif()
+
+################## TESTING ################
+option(BUILD_TESTS "Build tests" ON)
+if(BUILD_TESTS)
+    add_subdirectory(tests)
+endif()
