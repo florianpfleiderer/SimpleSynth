@@ -115,5 +115,6 @@ endif()
 ################## TESTING ################
 option(BUILD_TESTS "Build tests" ON)
 if(BUILD_TESTS)
-    add_subdirectory(tests)
+        enable_testing()
+        add_subdirectory(tests)
 endif()
