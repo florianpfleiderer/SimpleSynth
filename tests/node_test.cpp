@@ -18,3 +18,5 @@ TEST_CASE("Set Delay Length", "DelayNode") {
         REQUIRE(delayNode.getDelayLength() == 0.0f);
     }
 }
+
+
