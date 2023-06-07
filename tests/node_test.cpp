@@ -1,15 +1,20 @@
-#include <gtest/gtest.h>
+#include <catch2/catch_test_macros.hpp>
 #include "Stk.h"
 #include "../include/modules/EchoNode.h"
 #include "../include/modules/DelayNode.h"
 
 // test member function of delay node
-TEST(DelayNodeTest, DelayNodeFunctions) {
+TEST_CASE("Set Delay Length", "DelayNode") {
     DelayNode delayNode = DelayNode();
-    // set length
-    ASSERT_EQ(delayNode.setDelayLength(237.0f), true);
-    ASSERT_EQ(delayNode.getDelayLength(), 237.0f);
+    REQUIRE(delayNode.getDelayLength() == 0.0f);
 
-    ASSERT_EQ(delayNode.setDelayLength(-1.0f), true);
-    ASSERT_EQ(delayNode.getDelayLength(), 0.0f);
+    SECTION("change delay length") {
+        delayNode.setDelayLength(100.0f);
+        REQUIRE(delayNode.getDelayLength() == 100.0f);
+    }
+
+    SECTION("change delay length to negative value") {
+        delayNode.setDelayLength(-1.0f);
+        REQUIRE(delayNode.getDelayLength() == 0.0f);
+    }
 }

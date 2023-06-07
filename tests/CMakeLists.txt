@@ -1,50 +1,49 @@
 cmake_minimum_required(VERSION 3.24)
-include(FetchContent)
 
 project(SimpleSynthTests VERSION 0.0.1)
 
 set(CMAKE_CXX_STANDARD 17)
 
-#gtest
-FetchContent_Declare(
-        googletest
-        GIT_REPOSITORY https://github.com/google/googletest
-        GIT_TAG 001f281926c74a819e9266bb4ec525515ff39418
-)
-# For Windows: Prevent overriding the parent project's compiler/linker settings
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(googletest)
+# catch2 testing framework
+Include(FetchContent)
 
-include(GoogleTest)
+FetchContent_Declare(
+  Catch2
+  GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+  GIT_TAG        v3.3.2
+)
+
+FetchContent_MakeAvailable(Catch2)
+
+include(CTest)
+include(Catch)
+
+file(GLOB CPP_FILES "../src/modules/*.cpp")
 
 set(TEST_NAMES "")
-# list(APPEND TEST_NAMES "hello_test")
 list(APPEND TEST_NAMES "node_test")
 list(APPEND TEST_NAMES "oscillator_test")
 
-# Make an executable from every test
-foreach(TEST ${TEST_NAMES})
-      add_executable(${TEST} 
-        ${TEST}.cpp
-        ../src/ModuleEditor.cpp
-        ../include/ModuleEditor.h
-        ../src/modules/DelayNode.cpp
-        ../src/modules/EchoNode.cpp
-        ../src/modules/Module.cpp
-        ../src/modules/Output.cpp
-        ../src/modules/Oscillator.cpp
-        ../include/IdGenerator.h
-        ../src/modules/RectOscillator.cpp
-        ../src/modules/SineOscillator.cpp)
-      target_include_directories(${TEST} PRIVATE ../include/modules)
-      target_link_libraries(${TEST} 
-        GTest::gtest_main
-        glad
-        glfw
-        imgui
-        imnodes
-        stk)
+foreach(TEST_NAME ${TEST_NAMES})
+        add_executable(${TEST_NAME}
+                ${CPP_FILES}
+                ${TEST_NAME}.cpp
+        )
 
-      # add to ctest
-      add_test(NAME ${TEST} COMMAND ${TEST})
-endforeach(TEST ${TEST_NAMES})
+        target_link_libraries(${TEST_NAME}
+                PRIVATE
+                Catch2::Catch2WithMain
+                glad
+                glfw
+                imgui
+                imnodes
+                stk
+        )
+
+        include_directories(${imnodes_SOURCE_DIR})
+        include_directories(${stk_SOURCE_DIR}/include)
+
+        catch_discover_tests(${TEST_NAME})
+endforeach(TEST_NAME ${TEST_NAMES})
+
+list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
