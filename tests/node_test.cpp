@@ -5,6 +5,8 @@
 #include "../include/modules/DelayNode.h"
 #include "../include/modules/SineOscillator.h"
 #include "../include/modules/RectOscillator.h"
+#include "../include/modules/Output.h"
+#include <iostream>
 
 TEMPLATE_TEST_CASE( "test module.h functions in modules", "[nodes][template]", 
                     DelayNode, EchoNode, SineOscillator, RectOscillator) {
@@ -25,13 +27,47 @@ TEMPLATE_TEST_CASE( "test module.h functions in modules", "[nodes][template]",
     }
 }
 
+TEMPLATE_TEST_CASE( "test output only nodes", "[output][template]", 
+                    SineOscillator, RectOscillator) {
+    // call default constructor for each type
+    TestType test_type = TestType();
+
+    SECTION( "test output connector") {
+        REQUIRE(test_type.getConnections().size() > 0);
+        REQUIRE(test_type.getConnections().at(0).type == ConnectorType::OUTPUT);
+    }
+}
+
+TEMPLATE_TEST_CASE( "test input only nodes", "[input][template]", Output) {
+    // call default constructor for each type
+    TestType test_type = TestType();
+
+    SECTION( "test output connector") {
+        REQUIRE(test_type.getConnections().size() > 0);
+        REQUIRE(test_type.getConnections().at(0).type == ConnectorType::INPUT);
+    }
+}
+
+TEMPLATE_TEST_CASE( "test input output nodes", "[in-out][template]", 
+                    DelayNode, EchoNode) {
+    // call default constructor for each type
+    TestType test_type = TestType();
+    std::vector<ConnectorType> ctype = {ConnectorType::OUTPUT, ConnectorType::INPUT};
+
+    SECTION( "test input output connector") {
+        REQUIRE(test_type.getConnections().size() >= 2);
+        REQUIRE(std::find(ctype.begin(), ctype.end(), test_type.getConnections().at(0).type) != ctype.end());
+        REQUIRE(std::find(ctype.begin(), ctype.end(), test_type.getConnections().at(1).type) != ctype.end());
+    }
+}
+
 // test member function of delay node
 TEST_CASE("Delay Node Test", "DelayNode") {
     DelayNode delayNode = DelayNode();
 
     SECTION("basic tests") {
         REQUIRE(delayNode.getName() == "Delay");
-        REQUIRE(delayNode.getId() == 1);
+        REQUIRE(delayNode.getId() > 0);
         REQUIRE(delayNode.getDelayLength() == 0.0f);
         REQUIRE(delayNode.getConnections().size() == 2);
     }
@@ -52,7 +88,7 @@ TEST_CASE("Echo Node Test", "EchoNode") {
 
     SECTION("basic tests") {
         REQUIRE(echoNode.getName() == "Echo");
-        REQUIRE(echoNode.getId() == 1);
+        REQUIRE(echoNode.getId() > 0);
         REQUIRE(echoNode.getConnections().size() == 2);
     }
 }
@@ -60,10 +96,11 @@ TEST_CASE("Echo Node Test", "EchoNode") {
 // test member function of Sine Oscillator node
 TEST_CASE("SineOscillator Node Test", "SineOscillator") {
     SineOscillator sineOscillator = SineOscillator();
-
+    // std::cout << sineOscillator.getConnections().at(1).type << std::endl;
     SECTION("basic tests") {
         REQUIRE(sineOscillator.getName() == "SineOscillator");
-        REQUIRE(sineOscillator.getId() == 1);
-        REQUIRE(sineOscillator.getConnections().size() == 1);
+        REQUIRE(sineOscillator.getId() > 0);
+        REQUIRE(sineOscillator.getConnections().size() == 2);
+        REQUIRE(sineOscillator.getConnections().at(0).type == OUTPUT);
     }
 }

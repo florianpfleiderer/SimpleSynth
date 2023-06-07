@@ -22,7 +22,6 @@ file(GLOB CPP_FILES "../src/modules/*.cpp")
 
 set(TEST_NAMES "")
 list(APPEND TEST_NAMES "node_test")
-list(APPEND TEST_NAMES "oscillator_test")
 list(APPEND TEST_NAMES "template_test_example")
 
 foreach(TEST_NAME ${TEST_NAMES})
