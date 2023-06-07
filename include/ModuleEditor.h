@@ -11,6 +11,9 @@
 
 #include "modules/Module.h"
 
+#include <memory>
+
+
 class ModuleEditor {
 public:
     ModuleEditor();
