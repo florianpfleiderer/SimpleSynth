@@ -16,6 +16,7 @@
 #include "../include/modules/RectOscillator.h"
 #include "../include/modules/EchoNode.h"
 #include "../include/modules/DelayNode.h"
+#include "../include/modules/Sequencer.h"
 
 
 ModuleEditor::ModuleEditor() : window(ModuleEditor::create_window(1280, 720, "Simple Synth")), _idGenerator() {
@@ -227,6 +228,12 @@ void ModuleEditor::show() {
         if (ImGui::MenuItem("echo"))
         {
             auto module = std::make_shared<EchoNode>();
+            _modules.emplace_back(module);
+        }
+
+        if (ImGui::MenuItem("sequencer"))
+        {
+            auto module = std::make_shared<Sequencer>();
             _modules.emplace_back(module);
         }
 
