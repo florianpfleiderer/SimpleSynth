@@ -174,7 +174,15 @@ void ModuleEditor::show() {
             _modules.emplace_back(module);
         }
 
+        // Create amplifier node
         if (ImGui::MenuItem("ampflifier"))
+        {
+            auto module = std::make_shared<Amplifier>();
+            _modules.emplace_back(module);
+        }
+
+        // Create mixer node
+        if (ImGui::MenuItem("mixer"))
         {
             auto module = std::make_shared<Amplifier>();
             _modules.emplace_back(module);
