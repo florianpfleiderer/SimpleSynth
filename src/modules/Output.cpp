@@ -24,10 +24,21 @@ void Output::draw()
     ImNodes::EndNode();
 }
 
-bool Output::tick(stk::StkFloat *buffer, unsigned int nBufferFrames, double streamTime, int output_id) {
+bool Output::tick(stk::StkFloat *buffer, unsigned int nBufferFrames, double streamTime, int output_id)
+{
     (void)buffer;
     (void)nBufferFrames;
     (void)streamTime;
     (void)output_id;
     return false;
+}
+
+void Output::serialize_settings(std::ostream &ostream)
+{  
+    ostream << "[module_settings]" << std::endl;
+    ostream << "Output was here!" << std::endl;
+}
+
+std::shared_ptr<Module> Output::unserialize(std::stringstream &module_str){
+    return std::shared_ptr<Module>();
 }

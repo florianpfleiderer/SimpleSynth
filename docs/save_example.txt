@@ -1,0 +1,22 @@
+[module_name]
+Output
+[module_id]
+1
+[module_connectors]
+id=2 type=0
+[module_connections]
+con_id=5 out_id=4 in_id=2
+[module_settings]
+Output was here!
+
+[module_name]
+Oscillator
+[module_id]
+3
+[module_connectors]
+id=4 type=1
+[module_connections]
+null
+[module_settings]
+Oscillator was here!
+

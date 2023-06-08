@@ -17,12 +17,15 @@ public:
     virtual ~ModuleEditor();
     [[nodiscard]] GLFWwindow* getWindow() const;
     void show();
+    void save();
+    void load();
 
 private:
     GLFWwindow* const window;
     const IdGenerator _idGenerator;
     std::vector<std::shared_ptr<Module>> _modules;
     std::vector<Connection> _connections;
+
 
     static void glfw_error_callback(int error, const char* description);
     static GLFWwindow* create_window(int width, int height, const char* title);

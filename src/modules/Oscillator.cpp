@@ -23,10 +23,21 @@ void Oscillator::draw()
     ImNodes::EndNode();
 }
 
-bool Oscillator::tick(stk::StkFloat *buffer, unsigned int nBufferFrames, double streamTime, int output_id) {
+bool Oscillator::tick(stk::StkFloat *buffer, unsigned int nBufferFrames, double streamTime, int output_id)
+{
     (void)buffer;
     (void)nBufferFrames;
     (void)streamTime;
     (void)output_id;
     return false;
+}
+
+void Oscillator::serialize_settings(std::ostream &ostream)
+{   
+    ostream << "[module_settings]" << std::endl;
+    ostream << "Oscillator was here!" << std::endl;
+}
+
+std::shared_ptr<Module> Oscillator::unserialize(std::stringstream &module_str) {
+    return std::shared_ptr<Module>();
 }

@@ -3,6 +3,11 @@
 //
 #include <iostream>
 #include <algorithm>
+#include <fstream>
+#include <vector>
+#include <memory>
+#include <map>
+
 
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
@@ -95,7 +100,7 @@ void ModuleEditor::begin_frame()
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
     if (ImGui::GetIO().ConfigFlags) {
-        static constexpr ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus;
+        static constexpr ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus;
 
         ImGuiViewport* viewport = ImGui::GetMainViewport();
         ImGui::SetNextWindowPos(viewport->Pos);
@@ -106,16 +111,6 @@ void ModuleEditor::begin_frame()
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 0.f));
 
         ImGui::Begin("MyMainDockSpace", nullptr, window_flags);
-        if (ImGui::BeginMainMenuBar())
-        {
-            if (ImGui::BeginMenu("File"))
-            {
-                if (ImGui::MenuItem("Open..", "Ctrl+O")) { /* Do stuff */ }
-                if (ImGui::MenuItem("Save", "Ctrl+S"))   { /* Do stuff */ }
-                ImGui::EndMenu();
-            }
-            ImGui::EndMenuBar();
-        }
         ImGui::PopStyleVar(3);
         ImGui::End();
     }
@@ -157,6 +152,20 @@ void ModuleEditor::shutdown(GLFWwindow* window)
 void ModuleEditor::show() {
     ModuleEditor::begin_frame();
 
+    //draw Menue
+    static constexpr ImGuiWindowFlags menue_bar_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoBackground;
+    ImGui::Begin("MyMainDockSpace", nullptr, menue_bar_flags);
+    if (ImGui::BeginMainMenuBar())
+        {
+            if (ImGui::BeginMenu("File"))
+            {
+                if (ImGui::MenuItem("Open..", "")) { this->load(); }
+                if (ImGui::MenuItem("Save", ""))   { this->save(); }
+                ImGui::EndMenu();
+            }
+            ImGui::EndMenuBar();
+        }
+    ImGui::End();
     ImNodes::BeginNodeEditor();
 
     const bool open_popup = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
@@ -299,4 +308,58 @@ ModuleEditor::~ModuleEditor() {
     ModuleEditor::shutdown(window);
 }
 
+void ModuleEditor::save() {
+    // Save the internal imnodes state
+    ImNodes::SaveCurrentEditorStateToIniFile("save_load.ini");
 
+    // Save all modules with their settings
+    std::ofstream ostream("save_test.txt");
+    for(auto& module_ptr : _modules) {
+        module_ptr->serialize(ostream); 
+    }
+}
+
+void ModuleEditor::load() {
+    /*  TODO for new modules
+    *   1. include new_module.h in this file
+    *   2. implement unserialize function in new_module.h and new_module.cpp
+    *   3. add unserialize function to unserializer_map in this file
+    *   
+    */
+    // Load the internal imnodes state
+    ImNodes::LoadCurrentEditorStateFromIniFile("save_load.ini");
+
+    // MODULE_CREATORS MAP
+    std::map<std::string, std::shared_ptr<Module>(*)(std::stringstream&)> unserializer_map;
+    unserializer_map["Oscillator"] = &Oscillator::unserialize;
+    unserializer_map["Output"] = &Output::unserialize;
+
+    // Load all modules with their settings
+    std::stringstream buffer;
+    std::string line;
+    std::string module_name("");
+
+    std::ifstream ifstream("save_test.txt");
+    while(std::getline(ifstream, line)){
+        //save all lines to buffer until empty line
+        //check if buffer is not empty else eof
+        if (line.empty() && !buffer.str().empty()) {  
+            //get and check module_name
+            std::getline(buffer, line);
+            if (line != "[module_name]") {
+                throw std::invalid_argument("File invalid! Current buffer does not contain \"[module_name]\" \n\n" + buffer.str());
+            }
+            std::getline(buffer, module_name);
+            auto it = unserializer_map.find(module_name);
+            if (it == unserializer_map.end()) {
+                throw std::invalid_argument("Module \"" + module_name + "\" not found in module_creators");
+            }
+            //create module
+            _modules.push_back(unserializer_map[module_name](buffer));
+            module_name = "";
+            buffer.str("");
+        } else {
+            buffer << line << std::endl;
+        }
+    }
+}
