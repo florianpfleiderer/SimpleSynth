@@ -14,7 +14,10 @@ mkdir build
 cd build
 cmake ..
 ```
-
+### windows
+Import in VS or VSCode with CMake Tools and C/C++ Plugin.
+### linux
+TODO Test
 ## Test
 for this project, the catch2 test framework is used.
 link to docs: https://github.com/catchorg/Catch2/blob/devel/docs/tutorial.md
@@ -32,7 +35,10 @@ make
 ctest
 ```
 ### windows
-Import in VS or VSCode with CMake Tools and C/C++ Plugin.
-
+TODO
 ### linux
-TODO Test
+TODO
+
+## general information
+Link for an extended stk tutorial:
+https://ccrma.stanford.edu/software/stk/

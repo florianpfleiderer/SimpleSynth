@@ -50,10 +50,12 @@ void EchoNode::draw() {
 }
 
 bool EchoNode::tick(stk::StkFrames &frames, double streamTime, int output_id) {
-    frames = _echo.tick(frames);
     for(auto &conn: this->_connections) {
         conn.module->tick(frames, streamTime, output_id);
     }
+    frames = _echo.tick(frames);
+    if(frames.empty())
+        return false;
     return true;
 }
 
