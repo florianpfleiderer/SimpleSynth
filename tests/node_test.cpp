@@ -108,3 +108,27 @@ TEST_CASE("SineOscillator Node Test", "SineOscillator") {
         REQUIRE(sineOscillator.getConnections().at(0).type == OUTPUT);
     }
 }
+
+// test member function of Rect Oscillator node
+TEST_CASE("RectOscillator Node Test", "RectOscillator") {
+    RectOscillator rectOscillator = RectOscillator();
+
+    SECTION("basic tests") {
+        REQUIRE(rectOscillator.getName() == "RectOscillator");
+        REQUIRE(rectOscillator.getId() > 0);
+        REQUIRE(rectOscillator.getConnections().size() == 1);
+        REQUIRE(rectOscillator.getConnections().at(0).type == OUTPUT);
+    }
+}
+
+// test member function of Output node
+TEST_CASE("Output Node Test", "Output") {
+    Output output = Output();
+
+    SECTION("basic tests") {
+        REQUIRE(output.getName() == "Output");
+        REQUIRE(output.getId() > 0);
+        REQUIRE(output.getConnections().size() == 1);
+        REQUIRE(output.getConnections().at(0).type == INPUT);
+    }
+}
