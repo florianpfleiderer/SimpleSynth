@@ -12,7 +12,7 @@
 
 class Sequencer : public Module {
     const int _id_output;
-    std::vector<int> _ids_input;
+    std::vector<unsigned int> _ids_input;
     int bpm;
 
 public:
