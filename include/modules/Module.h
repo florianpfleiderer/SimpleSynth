@@ -51,9 +51,16 @@ struct Connection {
 class Module {
 public:
     /**
-     * @brief Constructor
+     * @brief default constructor
      */
     explicit Module(std::string name);
+
+    /**
+     * @brief constructor used for loading modules from save-file
+     * 
+     */
+    explicit Module(std::string name, int id, std::vector<Connector> connectors);
+
 
     /**
      * @brief Returns the id of the module

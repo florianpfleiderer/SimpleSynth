@@ -21,6 +21,14 @@ public:
     static int generateId() {
         return ++_id;
     }
+    
+    static void loadId(int id) {
+        _id = id;
+    }
+
+    static int saveId() {
+        return _id;
+    }
 
     /**
      * Delete copy constructor
