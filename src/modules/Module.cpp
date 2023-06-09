@@ -3,6 +3,7 @@
 //
 
 #include <utility>
+#include <algorithm>
 
 #include "../../include/modules/Module.h"
 

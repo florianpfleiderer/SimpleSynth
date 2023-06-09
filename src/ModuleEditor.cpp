@@ -14,8 +14,10 @@
 #include "../include/modules/Output.h"
 #include "../include/modules/SineOscillator.h"
 #include "../include/modules/RectOscillator.h"
+#include "../include/modules/SawOscillator.h"
 #include "../include/modules/EchoNode.h"
 #include "../include/modules/DelayNode.h"
+#include "../include/modules/NoiseGenerator.h"
 
 
 ModuleEditor::ModuleEditor() : window(ModuleEditor::create_window(1280, 720, "Simple Synth")), _idGenerator() {
@@ -215,6 +217,18 @@ void ModuleEditor::show() {
         if (ImGui::MenuItem("RectOscillator"))
         {
             auto module = std::make_shared<RectOscillator>();
+            _modules.emplace_back(module);
+        }
+
+        if (ImGui::MenuItem("NoiseGenerator"))
+        {
+            auto module = std::make_shared<NoiseGenerator>();
+            _modules.emplace_back(module);
+        }
+
+        if (ImGui::MenuItem("SawOscillator"))
+        {
+            auto module = std::make_shared<SawOscillator>();
             _modules.emplace_back(module);
         }
 
