@@ -27,6 +27,7 @@ private:
     std::vector<Connection> _connections;
     std::shared_ptr<Module> unserialize_modules(std::stringstream &module_str);
     void unserialize_connections(std::istream &istream);
+    void create_connection(int start_attr, int end_attr, int conn_id);
 
     static void glfw_error_callback(int error, const char* description);
     static GLFWwindow* create_window(int width, int height, const char* title);

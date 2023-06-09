@@ -477,12 +477,72 @@ void ModuleEditor::unserialize_connections(std::istream &istream) {
                     conn_id = std::stoi(matches[1].str());
                     input_id = std::stoi(matches[2].str());
                     output_id = std::stoi(matches[3].str());
-                    ImNodes::Link(conn_id, output_id, input_id); // does not work!
+                    create_connection(output_id, input_id, conn_id);
+                    // does not work!
                     //TODO create link from this data
                 } else {
                     throw std::invalid_argument("Following line does not follow the pattern \"con_id=(\\d+) out_id=(\\d+) in_id=(\\d+)\":\n" + line );
                 }
             }
         }
+    }
+}
+
+void ModuleEditor::create_connection(int start_attr, int end_attr,  int conn_id){
+    Connector start(INPUT, 0), end(INPUT, 0);
+    /* find start */
+    int id = start_attr;
+    std::shared_ptr<Module> start_module;
+    for (auto &m : _modules)
+    {
+        auto connections = m->getConnections();
+        auto found = std::find_if(connections.begin(), connections.end(),
+                                  [id](const Connector& m) -> bool { return m.id == id; });
+        if (found != connections.end())
+        {
+            start = *found;
+            start_module = m;
+        }
+    }
+
+    /* find end TODO don't duplicate code */
+    id = end_attr;
+    std::shared_ptr<Module> end_module;
+    for (const auto &m : _modules)
+    {
+        auto connections = m->getConnections();
+        auto found = std::find_if(connections.begin(), connections.end(),
+                                  [id](const Connector& m) -> bool { return m.id == id; });
+        if (found != connections.end())
+        {
+            end = *found;
+            end_module = m;
+        }
+    }
+
+    /* swap swap start and end nodes based on connection type */
+    int input_id, output_id;
+    std::shared_ptr<Module> output_ptr, input_ptr;
+    if (start.type == INPUT)
+    {
+        input_id = start_attr;
+        output_id = end_attr;
+        output_ptr = end_module;
+        input_ptr = start_module;
+    } else {
+        input_id = end_attr;
+        output_id = start_attr;
+        output_ptr = start_module;
+        input_ptr = end_module;
+    }
+
+    /* if they're not both inputs or outputs create connection*/
+    if (start.type != end.type)
+    {
+        /* add link to list */
+        Connection conn(output_ptr, conn_id, input_id, output_id);
+        _connections.emplace_back(conn);
+        /* add link to corresponding module */
+        input_ptr->addConnection(conn);
     }
 }
