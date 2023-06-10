@@ -8,10 +8,9 @@
 #include "Module.h"
 #include "Stk.h"
 
-//! Amplifier class
-/*!
-  TO DO: Amplifier class description
-*/
+/**
+ * @brief Amplifier class
+ */
 class Amplifier : public Module {
     //! Input pin variable
     int _id_output;
@@ -24,10 +23,7 @@ public:
      */
     Amplifier();
 
-    /**
-     * @brief Draw the module
-     * This function is called every frame to draw the module ui.
-     */
+    //! This function is called every frame to draw the module ui.
     void draw() override;
 
     /**
@@ -45,6 +41,7 @@ public:
      * @return true if audio was processed correctly (else false)
      */
     bool tick(stk::StkFrames& frames, double streamTime, int output_id) override;
+
     //! Amplify a pending signal
     void amplify(stk::StkFrames& frames);
 

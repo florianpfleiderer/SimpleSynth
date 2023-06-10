@@ -6,6 +6,7 @@
 
 #include "../../include/modules/Amplifier.h"
 
+#define AMPL_VAL 10
 
 Amplifier::Amplifier() : Module("Amplifier"), _id_output(IdGenerator::generateId()),
                            _id_input(IdGenerator::generateId())  {}
@@ -13,23 +14,22 @@ Amplifier::Amplifier() : Module("Amplifier"), _id_output(IdGenerator::generateId
 
 void Amplifier::amplify(stk::StkFrames& frames) {
     //...
-
+    frames
 
 }
 
-bool tick(stk::StkFrames& frames, double streamTime, int output_id) {
-    /*
-     WIE VERSTÄRKT WIRD
-     buffer_oscilattor.copy(buffer)
-     pairs(0)->osc->tick(buffer_osc, nBufferFrames, output_id)
+bool Amplifier::tick(stk::StkFrames& frames, double streamTime, int output_id) {
 
-     WAS VERSTÄRKT WIRD
-     buffer_ton
-     pairs(1)->osc->tick(buffer_ton, nBufferFrames, output_id)
+    // Fill frames with audio data and amplify it
+    for(auto & conn : _connections){
+        // Annahme: Jedes Module befüllt frames mit Werten
+        conn.module->tick(frames, streamTime, output_id);
 
-     amplify(buffer_oscillator, buffer_ton)
-    */
-    return 0;
+        //Amplify
+        amplify(frames);
+    }
+
+    return 1;
 }
 
 
