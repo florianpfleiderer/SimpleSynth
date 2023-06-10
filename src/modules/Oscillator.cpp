@@ -8,9 +8,7 @@
 #include "../../include/modules/SineOscillator.h"
 #include "../../include/IdGenerator.h"
 
-Oscillator::Oscillator(std::string name) : Module(name), _id_output(IdGenerator::generateId()) {
-    _connectors.emplace_back(ConnectorType::OUTPUT, _id_output);
-}
+Oscillator::Oscillator(std::string name) : Module(name) {}
 
 void Oscillator::draw()
 {
