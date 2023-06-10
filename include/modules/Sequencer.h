@@ -7,24 +7,26 @@
 
 #include "Module.h"
 #include <algorithm>
+#include "Stk.h"
 
 #define INPUT_SIZE 4
 
 class Sequencer : public Module {
+private:
+    const int _id_bpm;
     const int _id_output;
     std::vector<unsigned int> _ids_input;
-    int bpm;
+    int _bpm = 60;
+    int _selected_bpm = 1;
 
 public:
-    Sequencer(int input_size=4, int beats_per_minute=60);
+    Sequencer(unsigned int input_size = 4);
 
     ~Sequencer() override;
 
     bool tick(stk::StkFrames &frames, double streamTime, int output_id) override;
 
     void draw() override;
-
-
 
 };
 
