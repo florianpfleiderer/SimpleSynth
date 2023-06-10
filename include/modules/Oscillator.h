@@ -1,16 +1,20 @@
-//
-// Created by Robert Ristic on 16.05.23.
-//
-
-#ifndef SIMPLESYNTH_OSCILLATOR_H
-#define SIMPLESYNTH_OSCILLATOR_H
+#ifndef OSCILLATOR_H
+#define OSCILLATOR_H
 
 #include "Module.h"
+
 class Oscillator : public Module {
-    int _id_output;
 public:
-    Oscillator();
+
+    Oscillator(std::string name);
+
     void draw() override;
+
+    ~Oscillator() override;
+
+    bool tick(stk::StkFrames &frames, double streamTime, int output_id) override;
+
+    int _id_output;
 };
 
-#endif // SIMPLESYNTH_OSCILLATOR_H
+#endif // OSCILLATOR_H

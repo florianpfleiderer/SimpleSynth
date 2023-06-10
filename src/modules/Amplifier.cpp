@@ -11,13 +11,13 @@ Amplifier::Amplifier() : Module("Amplifier"), _id_output(IdGenerator::generateId
                            _id_input(IdGenerator::generateId())  {}
 
 
-void Amplifier::amplify(stk::StkFloat signal , double amp_val) {
+void Amplifier::amplify(stk::StkFrames& frames) {
     //...
 
 
 }
 
-virtual void tick(stk::StkFloat* buffer, unsigned int nBufferFrames, int output_id) {
+bool tick(stk::StkFrames& frames, double streamTime, int output_id) {
     /*
      WIE VERSTÄRKT WIRD
      buffer_oscilattor.copy(buffer)
@@ -29,6 +29,7 @@ virtual void tick(stk::StkFloat* buffer, unsigned int nBufferFrames, int output_
 
      amplify(buffer_oscillator, buffer_ton)
     */
+    return 0;
 }
 
 

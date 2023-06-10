@@ -2,6 +2,7 @@
 // Created by Robert Ristic on 19.05.23.
 //
 #include <iostream>
+#include <algorithm>
 
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
@@ -10,8 +11,11 @@
 
 #include "../include/ModuleEditor.h"
 
-#include "../include/modules/Oscillator.h"
 #include "../include/modules/Output.h"
+#include "../include/modules/SineOscillator.h"
+#include "../include/modules/RectOscillator.h"
+#include "../include/modules/EchoNode.h"
+#include "../include/modules/DelayNode.h"
 #include "../include/modules/Amplifier.h"
 
 ModuleEditor::ModuleEditor() : window(ModuleEditor::create_window(1280, 720, "Simple Synth")), _idGenerator() {
@@ -22,6 +26,16 @@ void ModuleEditor::glfw_error_callback(int error, const char *description) {
     std::cerr << "[Glfw Error] " << error << ": " << description << "\n";
 }
 
+/**
+ * @brief create window
+ * based on https://github.com/JulesFouchy/Simple-ImGui-Setup
+ * CC0 1.0 Universal
+ *
+ * @param width
+ * @param height
+ * @param title
+ * @return
+ */
 GLFWwindow* ModuleEditor::create_window(int width, int height, const char* title)
 { // Setup window
     glfwSetErrorCallback(glfw_error_callback);
@@ -88,13 +102,24 @@ GLFWwindow* ModuleEditor::create_window(int width, int height, const char* title
     return window;
 }
 
+/**
+ * @brief begin frame
+ * based on https://github.com/JulesFouchy/Simple-ImGui-Setup
+ * CC0 1.0 Universal
+ */
 void ModuleEditor::begin_frame()
 {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
     if (ImGui::GetIO().ConfigFlags) {
-        static constexpr ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+        static constexpr ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoBackground |
+                ImGuiWindowFlags_NoTitleBar |
+                ImGuiWindowFlags_NoCollapse |
+                ImGuiWindowFlags_NoResize |
+                ImGuiWindowFlags_NoMove |
+                ImGuiWindowFlags_NoBringToFrontOnFocus |
+                ImGuiWindowFlags_NoNavFocus;
 
         ImGuiViewport* viewport = ImGui::GetMainViewport();
         ImGui::SetNextWindowPos(viewport->Pos);
@@ -104,13 +129,19 @@ void ModuleEditor::begin_frame()
         ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.f);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 0.f));
 
-        ImGui::Begin("MyMainDockSpace", nullptr, window_flags);
+        ImGui::Begin("Synth", nullptr, window_flags);
         ImGui::PopStyleVar(3);
-        ImGui::End();
     }
 }
 
+/**
+ * @brief end frame
+ * based on https://github.com/JulesFouchy/Simple-ImGui-Setup
+ * CC0 1.0 Universal
+ */
 void ModuleEditor::end_frame(GLFWwindow *window, ImVec4 background_color) {
+
+    ImGui::End();
     // Rendering
     ImGui::Render();
     int display_w, display_h;
@@ -133,6 +164,13 @@ void ModuleEditor::end_frame(GLFWwindow *window, ImVec4 background_color) {
     glfwSwapBuffers(window);
 }
 
+/**
+ * @brief end window
+ * from https://github.com/JulesFouchy/Simple-ImGui-Setup
+ * CC0 1.0 Universal
+ *
+ * @param window
+ */
 void ModuleEditor::shutdown(GLFWwindow* window)
 {
     ImGui_ImplOpenGL3_Shutdown();
@@ -168,9 +206,27 @@ void ModuleEditor::show() {
             _modules.emplace_back(module);
         }
 
-        if (ImGui::MenuItem("oscillator"))
+        if (ImGui::MenuItem("SineOscillator"))
         {
-            auto module = std::make_shared<Oscillator>();
+            auto module = std::make_shared<SineOscillator>();
+            _modules.emplace_back(module);
+        }
+
+        if (ImGui::MenuItem("RectOscillator"))
+        {
+            auto module = std::make_shared<RectOscillator>();
+            _modules.emplace_back(module);
+        }
+
+        if (ImGui::MenuItem("delay"))
+        {
+            auto module = std::make_shared<DelayNode>();
+            _modules.emplace_back(module);
+        }
+
+        if (ImGui::MenuItem("echo"))
+        {
+            auto module = std::make_shared<EchoNode>();
             _modules.emplace_back(module);
         }
 
@@ -191,16 +247,51 @@ void ModuleEditor::show() {
         ImGui::EndPopup();
     }
 
+    /* draw modules */
     for (const auto& module : _modules)
     {
         module->draw();
     }
 
+    /* draw connections */
+    for (const auto& conn : _connections)
+    {
+        ImNodes::Link(conn.conn_id, conn.input_id, conn.output_id);
+    }
+
 
     ImGui::PopStyleVar();
 
-
     ImNodes::EndNodeEditor();
+
+    /* handle new connections */
+    int start_id, end_id;
+    if (ImNodes::IsLinkCreated(&start_id, &end_id))
+    {
+        auto input_module = getModuleByConnectorId(start_id);
+        auto input_connector = input_module->getConnectorById(start_id);
+        auto output_module = getModuleByConnectorId(end_id);
+        auto output_connector = output_module->getConnectorById(end_id);
+        // TODO check if pointer valid
+
+        /* swap if input is not actually the input */
+        if (input_connector->type != INPUT) {
+           std::swap(input_module, output_module);
+           std::swap(input_connector, output_connector);
+        }
+
+        /* if they're not both inputs or outputs create connection*/
+        if (input_connector->type != output_connector->type)
+        {
+            /* add link to list */
+            Connection conn(output_module, IdGenerator::generateId(), start_id, end_id);
+            _connections.emplace_back(conn);
+            /* add link to corresponding module */
+            input_module->addConnection(conn);
+        }
+
+        /* TODO delete nodes and connections */
+    }
 
     ModuleEditor::end_frame(window, {0.45f, 0.55f, 0.60f, 1.00f});
 }
@@ -211,6 +302,16 @@ GLFWwindow *ModuleEditor::getWindow() const {
 
 ModuleEditor::~ModuleEditor() {
     ModuleEditor::shutdown(window);
+}
+
+std::shared_ptr<Module> ModuleEditor::getModuleByConnectorId(int id) const {
+    for (const auto &m : _modules)
+    {
+        if (m->getConnectorById(id) != nullptr) {
+            return m;
+        }
+    }
+    return nullptr;
 }
 
 

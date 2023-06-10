@@ -23,7 +23,7 @@ FetchContent_Declare(glad
 # glfw
 FetchContent_Declare(glfw
         GIT_REPOSITORY https://github.com/glfw/glfw.git
-        GIT_TAG 3.3.2
+        GIT_TAG 3.3.8
         )
 # imgui
 FetchContent_Declare(
@@ -43,6 +43,14 @@ FetchContent_Declare(
         GIT_REPOSITORY https://github.com/thestk/stk.git
         GIT_TAG cc2dd22e9752bf5fd94f0799e01d19d5e8399058
 )
+
+# only for licence
+FETCHCONTENT_DECLARE(
+        imguitemplate
+        GIT_REPOSITORY https://github.com/JulesFouchy/Simple-ImGui-Setup.git
+        GIT_TAG origin/main
+)
+FetchContent_Populate(imguitemplate)
 
 FetchContent_MakeAvailable(glad)
 FetchContent_MakeAvailable(glfw)
@@ -73,10 +81,19 @@ add_executable(${PROJECT_NAME}
         src/main.cpp
         src/ModuleEditor.cpp
         include/ModuleEditor.h
+        src/modules/DelayNode.cpp
+        src/modules/EchoNode.cpp
         src/modules/Module.cpp
         src/modules/Output.cpp
         src/modules/Oscillator.cpp
-        include/IdGenerator.h src/modules/Amplifier.cpp include/modules/Amplifier.h include/modules/Mixer.h src/modules/Mixer.cpp)
+        include/IdGenerator.h
+        src/modules/RectOscillator.cpp
+        src/modules/SineOscillator.cpp
+        include/IdGenerator.h
+        include/modules/Amplifier.h
+        src/modules/Amplifier.cpp
+        include/modules/Mixer.h
+        src/modules/Mixer.cpp)
 
 target_link_libraries(${PROJECT_NAME} glad glfw imgui imnodes stk)
 include_directories(${imnodes_SOURCE_DIR})
@@ -99,4 +116,11 @@ option(BUILD_DOCS "Build documentation" ON)
 if(BUILD_DOCS)
     add_subdirectory(docs)
     add_dependencies(${PROJECT_NAME} doc_doxygen)
+endif()
+
+################## TESTING ################
+option(BUILD_TESTS "Build tests" ON)
+if(BUILD_TESTS)
+        enable_testing()
+        add_subdirectory(tests)
 endif()

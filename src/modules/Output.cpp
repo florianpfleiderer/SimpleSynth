@@ -6,7 +6,9 @@
 
 #include "../../include/modules/Output.h"
 
-Output::Output() : Module("Output"), _id_input(IdGenerator::generateId()) {}
+Output::Output() : Module("Output"), _id_input(IdGenerator::generateId()) {
+    _connectors.emplace_back(ConnectorType::INPUT, _id_input);
+}
 
 void Output::draw()
 {
@@ -20,4 +22,11 @@ void Output::draw()
     ImNodes::EndInputAttribute();
 
     ImNodes::EndNode();
+}
+
+bool Output::tick(stk::StkFrames &frames, double streamTime, int output_id) {
+    (void)frames;
+    (void)streamTime;
+    (void)output_id;
+    return false;
 }
