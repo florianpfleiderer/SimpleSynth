@@ -28,5 +28,5 @@ bool Output::tick(stk::StkFrames &frames, double streamTime, int output_id) {
     (void)frames;
     (void)streamTime;
     (void)output_id;
-    return false;
+    return true;
 }
