@@ -37,7 +37,7 @@ TEST_CASE("Echo Node Test", "EchoNode") {
 
     SECTION("basic tests") {
         REQUIRE(echoNode.getName() == "Echo");
-        REQUIRE(echoNode.getId() == 2);
+        REQUIRE(echoNode.getId() == 13);
         REQUIRE(echoNode.getConnections().size() == 2);
     }
 }
@@ -48,7 +48,7 @@ TEST_CASE("SineOscillator Node Test", "SineOscillator") {
     // std::cout << sineOscillator.getConnections().at(1).type << std::endl;
     SECTION("basic tests") {
         REQUIRE(sineOscillator.getName() == "SineOscillator");
-        REQUIRE(sineOscillator.getId() == 3);
+        REQUIRE(sineOscillator.getId() == 17);
         REQUIRE(sineOscillator.getConnections().size() == 1);
         REQUIRE(sineOscillator.getConnections().at(0).type == OUTPUT);
     }
@@ -60,7 +60,7 @@ TEST_CASE("RectOscillator Node Test", "RectOscillator") {
 
     SECTION("basic tests") {
         REQUIRE(rectOscillator.getName() == "RectOscillator");
-        REQUIRE(rectOscillator.getId() == 4);
+        REQUIRE(rectOscillator.getId() == 19);
         REQUIRE(rectOscillator.getConnections().size() == 1);
         REQUIRE(rectOscillator.getConnections().at(0).type == OUTPUT);
     }
@@ -72,7 +72,7 @@ TEST_CASE("NoiseGenerator Node Test", "NoiseGenerator") {
 
     SECTION("basic tests") {
         REQUIRE(noiseGenerator.getName() == "Noise");
-        REQUIRE(noiseGenerator.getId() == 5);
+        REQUIRE(noiseGenerator.getId() == 21);
         REQUIRE(noiseGenerator.getConnections().size() == 1);
         REQUIRE(noiseGenerator.getConnections().at(0).type == OUTPUT);
     }
