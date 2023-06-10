@@ -87,7 +87,11 @@ add_executable(${PROJECT_NAME}
         src/modules/Oscillator.cpp
         include/IdGenerator.h
         src/modules/RectOscillator.cpp
-        src/modules/SineOscillator.cpp)
+        src/modules/SineOscillator.cpp
+        include/modules/SawOscillator.h
+        src/modules/SawOscillator.cpp
+        include/modules/NoiseGenerator.h
+        src/modules/NoiseGenerator.cpp)
 
 target_link_libraries(${PROJECT_NAME} glad glfw imgui imnodes stk)
 include_directories(${imnodes_SOURCE_DIR})
