@@ -152,21 +152,7 @@ void ModuleEditor::shutdown(GLFWwindow* window)
 
 void ModuleEditor::show() {
     ModuleEditor::begin_frame();
-
-    //draw Menue
-    static constexpr ImGuiWindowFlags menue_bar_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoBackground;
-    ImGui::Begin("MyMainDockSpace", nullptr, menue_bar_flags);
-    if (ImGui::BeginMainMenuBar())
-        {
-            if (ImGui::BeginMenu("File"))
-            {
-                if (ImGui::MenuItem("Open..", "")) { this->load(); }
-                if (ImGui::MenuItem("Save", ""))   { this->save(); }
-                ImGui::EndMenu();
-            }
-            ImGui::EndMenuBar();
-        }
-    ImGui::End();
+    ModuleEditor::draw_menu();
     ImNodes::BeginNodeEditor();
 
     const bool open_popup = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
@@ -244,6 +230,20 @@ void ModuleEditor::show() {
     }
 
     ModuleEditor::end_frame(window, {0.45f, 0.55f, 0.60f, 1.00f});
+}
+
+void ModuleEditor::draw_menu() {
+    static constexpr ImGuiWindowFlags menue_bar_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoBackground;
+    ImGui::Begin("MyMainDockSpace", nullptr, menue_bar_flags);
+    if (ImGui::BeginMainMenuBar()) {
+        if (ImGui::BeginMenu("File")) {
+            if (ImGui::MenuItem("Open..", "")) { this->load(); }
+            if (ImGui::MenuItem("Save", ""))   { this->save(); }
+            ImGui::EndMenu();
+        }
+        ImGui::EndMenuBar();
+    }
+    ImGui::End();
 }
 
 GLFWwindow *ModuleEditor::getWindow() const {

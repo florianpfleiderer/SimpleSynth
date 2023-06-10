@@ -17,6 +17,7 @@ public:
     virtual ~ModuleEditor();
     [[nodiscard]] GLFWwindow* getWindow() const;
     void show();
+    void draw_menu();
     void save();
     void load();
 
