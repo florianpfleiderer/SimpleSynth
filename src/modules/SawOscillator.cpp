@@ -6,7 +6,8 @@
 #include <iostream>
 #include "Stk.h"
 
-SawOscillator::SawOscillator() : Oscillator("SawOscillator") {
+SawOscillator::SawOscillator() : Oscillator("SawOscillator"), _id_output(IdGenerator::generateId()) {
+    _connectors.emplace_back(ConnectorType::OUTPUT, _id_output);
     saw.setFrequency(440.0);
 }
 

@@ -6,7 +6,8 @@
 #include <iostream>
 #include "Stk.h"
 
-RectOscillator::RectOscillator() : Oscillator("RectOscillator") {
+RectOscillator::RectOscillator() : Oscillator("RectOscillator"), _id_output(IdGenerator::generateId()) {
+    _connectors.emplace_back(ConnectorType::OUTPUT, _id_output);
     rectangle.setFrequency(440.0);
 }
 
