@@ -101,7 +101,7 @@ void ModuleEditor::begin_frame()
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
     if (ImGui::GetIO().ConfigFlags) {
-        static constexpr ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus;
+        static constexpr ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus;
 
         ImGuiViewport* viewport = ImGui::GetMainViewport();
         ImGui::SetNextWindowPos(viewport->Pos);
@@ -113,7 +113,6 @@ void ModuleEditor::begin_frame()
 
         ImGui::Begin("MyMainDockSpace", nullptr, window_flags);
         ImGui::PopStyleVar(3);
-        ImGui::End();
     }
 }
 
@@ -152,12 +151,38 @@ void ModuleEditor::shutdown(GLFWwindow* window)
 
 void ModuleEditor::show() {
     ModuleEditor::begin_frame();
-    ModuleEditor::draw_menu();
+    bool open_clicked(false);
+    bool save_clicked(false);
+    if (ImGui::BeginMainMenuBar()) {
+        if (ImGui::BeginMenu("File")) {
+            if (ImGui::MenuItem("Open..", "Strg+O")) { open_clicked = true; }
+            
+            if (ImGui::MenuItem("Save..", "Strg+S"))   { save_clicked = true; }
+            ImGui::EndMenu();
+        }
+        ImGui::EndMenuBar();
+    }
+    ImGui::End();
     ImNodes::BeginNodeEditor();
-
     const bool open_popup = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
                             ImNodes::IsEditorHovered() &&
                             ImGui::IsKeyReleased(ImGuiKey_A);
+
+    const bool KEY_STRG_S = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
+                            ImNodes::IsEditorHovered() &&
+                            (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl)) &&
+                            ImGui::IsKeyReleased(ImGuiKey_S);
+    
+    const bool KEY_STRG_O = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
+                            ImNodes::IsEditorHovered() &&
+                            (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl)) &&
+                            ImGui::IsKeyReleased(ImGuiKey_O);
+    
+    const bool KEY_ENTER =  ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
+                            ImGui::IsKeyDown(ImGuiKey_Enter);
+    
+    const bool KEY_ESCAPE = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
+                            ImGui::IsKeyDown(ImGuiKey_Escape);
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8.f, 8.f));
     if (!ImGui::IsAnyItemHovered() && open_popup)
@@ -183,8 +208,6 @@ void ModuleEditor::show() {
 
         ImGui::EndPopup();
     }
-
-    
 
     /* draw modules */
     for (const auto& module : _modules)
@@ -229,21 +252,51 @@ void ModuleEditor::show() {
         /* TODO delete nodes and connections */
     }
 
-    ModuleEditor::end_frame(window, {0.45f, 0.55f, 0.60f, 1.00f});
-}
-
-void ModuleEditor::draw_menu() {
-    static constexpr ImGuiWindowFlags menue_bar_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoBackground;
-    ImGui::Begin("MyMainDockSpace", nullptr, menue_bar_flags);
-    if (ImGui::BeginMainMenuBar()) {
-        if (ImGui::BeginMenu("File")) {
-            if (ImGui::MenuItem("Open..", "")) { this->load(); }
-            if (ImGui::MenuItem("Save", ""))   { this->save(); }
-            ImGui::EndMenu();
-        }
-        ImGui::EndMenuBar();
+    // menu bar -> save
+    if (save_clicked || KEY_STRG_S){
+        ImGui::OpenPopup("save");
     }
-    ImGui::End();
+    if (ImGui::BeginPopup("save")) {
+        static char textBuffer[256] = "";
+        size_t bufferSize = sizeof(textBuffer) - 1;
+        
+        ImGui::Text("Save:");
+        ImGui::InputText("##Eingabe", textBuffer, bufferSize);
+        if (ImGui::Button("Ok") || KEY_ENTER) {  
+            this->save(textBuffer); 
+            save_clicked = false;
+            ImGui::CloseCurrentPopup();
+        }
+        if (ImGui::Button("Cancel") || KEY_ESCAPE) {   
+            save_clicked = false;
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::EndPopup();
+    }
+    
+    //menu bar -> open
+    if (open_clicked || KEY_STRG_O){
+        ImGui::OpenPopup("open");
+    }
+    if (ImGui::BeginPopup("open")) {
+        static char textBuffer[256] = "";
+        size_t bufferSize = sizeof(textBuffer) - 1;
+        
+        ImGui::Text("Open:");
+        ImGui::InputText("##Eingabe", textBuffer, bufferSize);
+        if (ImGui::Button("Ok") || KEY_ENTER) {  
+            this->load(textBuffer); 
+            open_clicked = false;
+            ImGui::CloseCurrentPopup();
+        }
+        if (ImGui::Button("Cancel") || KEY_ESCAPE) {   
+            open_clicked = false;
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::EndPopup();
+    }
+
+    ModuleEditor::end_frame(window, {0.45f, 0.55f, 0.60f, 1.00f});
 }
 
 GLFWwindow *ModuleEditor::getWindow() const {
@@ -305,12 +358,12 @@ std::shared_ptr<Module> ModuleEditor::find_module_by_id(int id, Connector &conn)
     throw std::invalid_argument("No module with id=" + std::to_string(id) + " in _modules.");
 }
 
-void ModuleEditor::save() {
+void ModuleEditor::save(std::string filename) {
     // save the internal imnodes state
-    ImNodes::SaveCurrentEditorStateToIniFile("save_load.ini");
+    ImNodes::SaveCurrentEditorStateToIniFile((filename + ".ini").c_str());
 
     // save all modules
-    std::ofstream ostream("save_test.txt");
+    std::ofstream ostream(filename + ".txt");
     for(auto &module_ptr : _modules) {
         module_ptr->serialize(ostream); 
     }
@@ -328,7 +381,7 @@ void ModuleEditor::save() {
     }
 }
 
-void ModuleEditor::load() {
+void ModuleEditor::load(std::string filename) {
     /*  TODO for new modules
     *   1. include new_module.h in this file
     *   2. implement new constructor so every variable can be set manualy from unserialize function
@@ -341,12 +394,12 @@ void ModuleEditor::load() {
     _connections.clear();
     
     // Load the internal imnodes state
-    ImNodes::LoadCurrentEditorStateFromIniFile("save_load.ini");
+    ImNodes::LoadCurrentEditorStateFromIniFile((filename + ".ini").c_str());
     
     // Load all modules with their settings
     std::stringstream buffer;
     std::string line;
-    std::ifstream ifstream("save_test.txt");
+    std::ifstream ifstream(filename + ".txt");
     while(std::getline(ifstream, line)){
         //save all lines to buffer until empty line
         //then unserialize this buffer and go on with next line
