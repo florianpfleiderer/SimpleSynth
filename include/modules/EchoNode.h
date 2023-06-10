@@ -25,14 +25,14 @@ class EchoNode : public Module {
     const int _id_echo_delay;
     float _echo_delay;
 
-    /*
+    /**
     * @brief Echo object from stk library
     * @see https://ccrma.stanford.edu/software/stk/classstk_1_1Echo.html
     * 
     */
     stk::Echo _echo;
 
-    /*
+    /**
     * @brief Sets the echo delay
     * @param echo_delay
     * @return true if successful

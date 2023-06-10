@@ -19,7 +19,7 @@ enum ConnectorType {
 class Module;
 
 /**
- * @brief Used to define Module in- and ouptuts
+ * @brief Used to define Module in- and outputs
  * Create input and output definitions here
  */
 struct Connector {
@@ -93,8 +93,7 @@ public:
      * * call tick functions of connected modules
      * * do the necessary calculations
      *
-     * @param buffer vector of audio data
-     * @param nBufferFrames buffer size
+     * @param frames stkFrames file of audio data
      * @param streamTime time in seconds since the audio stream has started
      * @param output_id output id of the connected module (only used if module has multiple outputs)
      *
