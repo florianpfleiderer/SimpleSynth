@@ -157,7 +157,7 @@ void ModuleEditor::draw_menu() {
             if (ImGui::MenuItem("Open..", "Strg+O")) { openOpenPopup = true; }
             ImGui::EndMenu();
         }
-        ImGui::EndMenuBar();
+        ImGui::EndMainMenuBar();
     }
 }
 
