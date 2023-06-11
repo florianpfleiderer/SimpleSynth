@@ -245,7 +245,7 @@ void ModuleEditor::show() {
             auto module = std::make_shared<Output>();
             _modules.emplace_back(module);
         }
-
+/*
         if (ImGui::MenuItem("SineOscillator"))
         {
             auto module = std::make_shared<SineOscillator>();
@@ -281,7 +281,7 @@ void ModuleEditor::show() {
             auto module = std::make_shared<EchoNode>();
             _modules.emplace_back(module);
         }
-
+*/
         ImGui::EndPopup();
     }
 
