@@ -5,12 +5,16 @@
 #include "imnodes.h"
 #include <iostream>
 
-SineOscillator::SineOscillator() : Oscillator("SineOscillator"), _id_output(IdGenerator::generateId()) {
-    _connectors.emplace_back(ConnectorType::OUTPUT, _id_output);
-    sine.setFrequency(440.0);
+SineOscillator::SineOscillator() : Oscillator("SineOscillator") {
+    updateFrequency(440.0);
 }
 
-bool SineOscillator::tick(stk::StkFrames &frames, double streamTime, int output_id) {
+SineOscillator::SineOscillator(int module_id, int id_output, float frequency)
+                                : Oscillator("SineOscillator", module_id, id_output, frequency) {}
+
+
+bool SineOscillator::tick(stk::StkFrames &frames, double streamTime, int output_id)
+{
     (void)output_id;
     (void)streamTime;
 
@@ -30,4 +34,17 @@ void SineOscillator::draw() {
     ImNodes::EndOutputAttribute();
 
     ImNodes::EndNode();
+}
+
+void SineOscillator::updateFrequency(float frequency) {
+    sine.setFrequency(frequency);
+    _frequency = frequency;
+}
+
+std::shared_ptr<Module> SineOscillator::unserialize(std::stringstream &module_str, int module_id) {
+    int id_output;
+    float frequency;
+    Oscillator::getSettingsFromText(module_str, id_output, frequency);
+    // create module with read data
+    return std::make_shared<SineOscillator>(SineOscillator(module_id, id_output, frequency));
 }

@@ -11,11 +11,13 @@ class Output : public Module {
     int _id_input;
 public:
     Output();
-    Output(int id, std::vector<Connector> connectors, int id_in);
+    Output(int id, int id_input);
+
+    static std::shared_ptr<Module> unserialize(std::stringstream& module_str, int module_id);
+    
     void draw() override;
     void serialize_settings(std::ostream &ostream) override;
-    static std::shared_ptr<Module> unserialize(std::stringstream& module_str, int module_id, std::vector<Connector> module_connectors);
-
+    
     bool tick(stk::StkFrames &frames, double streamTime, int output_id) override;
 };
 

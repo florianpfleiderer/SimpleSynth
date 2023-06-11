@@ -207,7 +207,8 @@ void ModuleEditor::show() {
     ModuleEditor::begin_frame();
     ImNodes::BeginNodeEditor();
 
-    const bool open_popup = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
+    // Key definitions
+    const bool KEY_A = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
                             ImNodes::IsEditorHovered() &&
                             ImGui::IsKeyReleased(ImGuiKey_A);
 
@@ -231,7 +232,7 @@ void ModuleEditor::show() {
     if (KEY_STRG_O) { openOpenPopup = true; }
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8.f, 8.f));
-    if (!ImGui::IsAnyItemHovered() && open_popup)
+    if (!ImGui::IsAnyItemHovered() && KEY_A)
     {
         ImGui::OpenPopup("add node");
     }
@@ -419,6 +420,10 @@ std::shared_ptr<Module> ModuleEditor::find_module_by_id(int id, Connector &conn)
 }
 
 void ModuleEditor::save(std::string filename) {
+    /* TODO for new modules:
+    *  implement NewModule::serialize_settings
+    */
+
     // save the internal imnodes state
     ImNodes::SaveCurrentEditorStateToIniFile((filename + ".ini").c_str());
 
@@ -442,7 +447,7 @@ void ModuleEditor::save(std::string filename) {
 }
 
 void ModuleEditor::load(std::string filename) {
-    /*  TODO for new modules
+    /*  TODO for new modules:
     *   1. include new_module.h in this file
     *   2. implement new constructor so every variable can be set manualy from unserialize function
     *   3. implement unserialize function in new_module.h and new_module.cpp
@@ -475,39 +480,41 @@ void ModuleEditor::load(std::string filename) {
         if (line.empty()) {
             //create module
             if (buffer.str().empty()) {
-                throw std::invalid_argument("Can not unserialize empty buffer.");
+                throw std::invalid_argument("ModuleEditor::load -> Can not unserialize empty buffer.");
             }
             _modules.push_back(unserialize_module(buffer));
             buffer.str("");
+            buffer.clear();
         } else {
             buffer << line << std::endl;
         }
     }
-    ifstream.seekg(0);
     unserialize_connections(ifstream);
 }
 
-std::shared_ptr<Module> ModuleEditor::unserialize_module(std::stringstream &module_str)
-{
+std::shared_ptr<Module> ModuleEditor::unserialize_module(std::stringstream &module_str) {
     // MODULE_CREATORS MAP
-    std::map<std::string, std::shared_ptr<Module>(*)(std::stringstream&, int, std::vector<Connector>)> unserializer_map;
-    unserializer_map["Oscillator"] = &Oscillator::unserialize;
+    std::map<std::string, std::shared_ptr<Module>(*)(std::stringstream&, int)> unserializer_map;
+    unserializer_map["Delay"] = &DelayNode::unserialize;
+    unserializer_map["Echo"] = &EchoNode::unserialize;
+    unserializer_map["Noise"] = &NoiseGenerator::unserialize;
     unserializer_map["Output"] = &Output::unserialize;
+    unserializer_map["RectOscillator"] = &RectOscillator::unserialize;
+    unserializer_map["SawOscillator"] = &SawOscillator::unserialize;
+    unserializer_map["SineOscillator"] = &SineOscillator::unserialize;
+    
 
     // unserialize general module data
-    // Flags
-    bool module_connectors_f(false);
-
     // variable buffers
     std::string module_name("");
     int module_id(-1);
-    std::vector<Connector> module_connectors;
 
     // Read stringstream
     std::string line;
     std::regex pattern;
     std::smatch matches;
     while(std::getline(module_str, line)) {
+        
         // search for keywords
         if (line == "[module_name]") {          //get module_name
             std::getline(module_str, line);
@@ -523,42 +530,12 @@ std::shared_ptr<Module> ModuleEditor::unserialize_module(std::stringstream &modu
             module_id = std::stoi(line);
             continue;
         }
-        if (line == "[module_connectors]") {    //set module_connectors flag
-            module_connectors_f = true;
-            continue;
-        }
         if (line == "[module_settings]"){       // go into specific module after all basic data was collected
-            if (module_str.str().empty() || module_id == -1 || module_connectors.size() == 0) {
+            if (module_str.str().empty() || module_id == -1) {
                 throw std::invalid_argument("Can not create a module with following arguments:\nmodule_str= "+ module_str.str()
-                                            + "\nmodule_id= " + std::to_string(module_id)
-                                            + "\nmodule_connectors.size()= " + std::to_string(module_connectors.size()));
+                                            + "\nmodule_id= " + std::to_string(module_id));
             }
-            module_str.seekg(0);
-            return unserializer_map[module_name](module_str, module_id, module_connectors);
-        }
-
-        // process flags
-        if (module_connectors_f) {              //get all module_connectors
-            pattern = "id=(\\d+) type=(\\d+)";
-            if (std::regex_search(line, matches, pattern)) {
-                if (matches.size() == 3) {
-                    ConnectorType type;
-                    int id = std::stoi(matches[1].str());
-                    int type_int = std::stoi(matches[2].str());
-                    switch (type_int) {
-                    case 0: type = INPUT;
-                            break;
-                    case 1: type = OUTPUT;
-                            break;
-                    default:
-                        throw std::invalid_argument(std::to_string(type_int) + " is not a valid ConnectorType ENUM");
-                    }
-                    module_connectors.emplace_back(Connector(type, id));
-                    continue;
-                } else {
-                    throw std::invalid_argument("Following line does not follow the pattern \"id=(\\d+) type=(\\d+)\":\n" + line );
-                }
-            }
+            return unserializer_map[module_name](module_str, module_id);
         }
     }
     throw std::invalid_argument("Could not unserialize following module_str:\n" + module_str.str());
@@ -576,7 +553,6 @@ std::shared_ptr<Module> ModuleEditor::getModuleByConnectorId(int id) const {
 
 void ModuleEditor::unserialize_connections(std::istream &istream) {
     std::string line;
-    bool connections_f(false);
     std::regex pattern("conn_id=(\\d+) input_id=(\\d+) output_id=(\\d+)");
     std::smatch matches;
 
@@ -584,22 +560,15 @@ void ModuleEditor::unserialize_connections(std::istream &istream) {
     int input_id;
     int output_id;
     while (std::getline(istream, line)) {
-        // search istream until connections
-        if(line == "[connections]") {
-            connections_f = true;
-            continue;
-        }
         //create all connections
-        if (connections_f && !line.empty()) {
-            if (std::regex_search(line, matches, pattern)) {
-                if (matches.size() == 4) {
-                    conn_id = std::stoi(matches[1].str());
-                    input_id = std::stoi(matches[2].str());
-                    output_id = std::stoi(matches[3].str());
-                    create_connection(output_id, input_id, conn_id);
-                } else {
-                    throw std::invalid_argument("Following line does not follow the pattern \"con_id=(\\d+) out_id=(\\d+) in_id=(\\d+)\":\n" + line );
-                }
+        if (std::regex_search(line, matches, pattern)) {
+            if (matches.size() == 4) {
+                conn_id = std::stoi(matches[1].str());
+                input_id = std::stoi(matches[2].str());
+                output_id = std::stoi(matches[3].str());
+                create_connection(output_id, input_id, conn_id);
+            } else {
+                throw std::invalid_argument("Following line does not follow the pattern \"con_id=(\\d+) out_id=(\\d+) in_id=(\\d+)\":\n" + line );
             }
         }
     }

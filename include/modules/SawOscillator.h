@@ -12,15 +12,17 @@
 class SawOscillator : public Oscillator {
 public:
     SawOscillator();
+    SawOscillator(int id, int id_output, float frequency);
+
+    static std::shared_ptr<Module> unserialize(std::stringstream& module_str, int module_id);
 
     bool tick(stk::StkFrames &frames, double streamTime, int output_id) override;
-
     void draw() override;
 
 private:
-    int _id_output;
     stk::BlitSaw saw;
 
+    void updateFrequency(float frequency) override;
 };
 
 #endif //SIMPLESYNTH_SAWOSCILLATOR_H

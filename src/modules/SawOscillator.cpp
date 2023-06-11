@@ -6,10 +6,13 @@
 #include <iostream>
 #include "Stk.h"
 
-SawOscillator::SawOscillator() : Oscillator("SawOscillator"), _id_output(IdGenerator::generateId()) {
-    _connectors.emplace_back(ConnectorType::OUTPUT, _id_output);
-    saw.setFrequency(440.0);
+SawOscillator::SawOscillator() : Oscillator("SawOscillator") {
+    updateFrequency(440.0);
 }
+
+SawOscillator::SawOscillator(int id, int id_output, float frequency)
+                                : Oscillator("SawOscillator", id, id_output, frequency) {}
+
 
 bool SawOscillator::tick(stk::StkFrames &frames, double streamTime, int output_id) {
     (void)output_id;
@@ -28,4 +31,17 @@ void SawOscillator::draw() {
     ImNodes::EndOutputAttribute();
 
     ImNodes::EndNode();
+}
+
+void SawOscillator::updateFrequency(float frequency) {
+    saw.setFrequency(frequency);
+    _frequency = frequency;
+}
+
+std::shared_ptr<Module> SawOscillator::unserialize(std::stringstream &module_str, int module_id) {
+    int id_output;
+    float frequency;
+    Oscillator::getSettingsFromText(module_str, id_output, frequency);
+    // create module with read data
+    return std::make_shared<SawOscillator>(SawOscillator(module_id, id_output, frequency));
 }

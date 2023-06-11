@@ -37,6 +37,17 @@ public:
      */
     explicit DelayNode();
 
+    /**
+     * @brief Construct a new Delay Node object with full controll
+     * 
+     * @param module_id
+     * @param id_input 
+     * @param id_output 
+     * @param _id_delay_length 
+     * @param _delay_length 
+     */
+    explicit DelayNode(int module_id, int id_input, int id_output, int _id_delay_length, float _delay_length);
+
     void draw() override;
     bool tick(stk::StkFrames &frames, double streamTime, int output_id) override;
 
@@ -52,6 +63,9 @@ public:
      * @return delay_length
      */
     [[nodiscard]] float getDelayLength() const;
+
+    void serialize_settings(std::ostream &ostream) override;
+    static std::shared_ptr<Module> unserialize(std::stringstream& module_str, int module_id);
 };
 
 #endif // SIMPLESYNTH_DELAY_H
