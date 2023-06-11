@@ -2,21 +2,40 @@
 Output
 [module_id]
 1
-[module_connectors]
-id=2 type=0
 [module_settings]
 _id_input=2
 
 [module_name]
-Oscillator
+Echo
 [module_id]
 3
-[module_connectors]
-id=4 type=1
 [module_settings]
-_id_output=4
+_id_input=4
+_id_output=5
+_id_echo_delay=6
+_echo_delay=0
+
+[module_name]
+Delay
+[module_id]
+7
+[module_settings]
+_id_input=8
+_id_output=9
+_id_delay_length=10
+_delay_length=0
+
+[module_name]
+SineOscillator
+[module_id]
+11
+[module_settings]
+_id_output=12
+_frequency=440
 
 [IdGenerator_state]
-5
+18
 [connections]
-conn_id=5 input_id=2 output_id=4
+conn_id=14 input_id=12 output_id=8
+conn_id=16 input_id=9 output_id=4
+conn_id=18 input_id=5 output_id=2

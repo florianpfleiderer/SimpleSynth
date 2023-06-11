@@ -56,10 +56,10 @@ public:
     explicit Module(std::string name);
 
     /**
-     * @brief constructor used for loading modules from save-file
+     * @brief Construct a new Module object with full controll
      * 
      */
-    explicit Module(std::string name, int id, std::vector<Connector> connectors);
+    explicit Module(std::string name, int id);
 
 
     /**
