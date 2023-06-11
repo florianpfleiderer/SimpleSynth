@@ -6,30 +6,30 @@
 
 #include "../../include/modules/Amplifier.h"
 
-#define AMPL_VAL 10
 
-Amplifier::Amplifier() : Module("Amplifier"), _id_output(IdGenerator::generateId()),
-                           _id_input(IdGenerator::generateId())  {}
+Amplifier::Amplifier(unsigned int gain) : Module("Amplifier"), _id_output(IdGenerator::generateId()),
+                           _id_input(IdGenerator::generateId()), _gain(gain)  {}
+
+void Amplifier::setGain(unsigned int g) {
+    _gain  = g;
+}
 
 
 void Amplifier::amplify(stk::StkFrames& frames) {
-    //...
-    frames
-
+    frames.operator*(_gain);
 }
 
 bool Amplifier::tick(stk::StkFrames& frames, double streamTime, int output_id) {
 
-    // Fill frames with audio data and amplify it
+    // Fill frames with audio data and amplify the data
     for(auto & conn : _connections){
         // Annahme: Jedes Module befüllt frames mit Werten
         conn.module->tick(frames, streamTime, output_id);
 
-        //Amplify
         amplify(frames);
     }
 
-    return 1;
+    return true;
 }
 
 
