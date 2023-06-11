@@ -21,7 +21,7 @@
 #include "../include/modules/Output.h"
 
 
-ModuleEditor::ModuleEditor() : window(ModuleEditor::create_window(1280, 720, "Simple Synth")), _idGenerator() {
+ModuleEditor::ModuleEditor() : window(ModuleEditor::create_window(1280, 720, "Simple Synth")), _idGenerator() , openSavePopup(false), openOpenPopup(false){
     ImNodes::CreateContext();
 }
 
@@ -110,9 +110,10 @@ void ModuleEditor::begin_frame()
         ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.f);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.f);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 0.f));
-
         ImGui::Begin("MyMainDockSpace", nullptr, window_flags);
+        ModuleEditor::draw_menu();
         ImGui::PopStyleVar(3);
+        ImGui::End();
     }
 }
 
@@ -149,24 +150,29 @@ void ModuleEditor::shutdown(GLFWwindow* window)
     glfwTerminate();
 }
 
-void ModuleEditor::show() {
-    ModuleEditor::begin_frame();
-    bool open_clicked(false);
-    bool save_clicked(false);
+void ModuleEditor::draw_menu() {
     if (ImGui::BeginMainMenuBar()) {
         if (ImGui::BeginMenu("File")) {
-            if (ImGui::MenuItem("Open..", "Strg+O")) { open_clicked = true; }
-            
-            if (ImGui::MenuItem("Save..", "Strg+S"))   { save_clicked = true; }
+            if (ImGui::MenuItem("Save..", "Strg+S")) { openSavePopup = true; }
+            if (ImGui::MenuItem("Open..", "Strg+O")) { openOpenPopup = true; }
             ImGui::EndMenu();
         }
         ImGui::EndMenuBar();
     }
-    ImGui::End();
+}
+
+void ModuleEditor::show() {
+    ModuleEditor::begin_frame();
     ImNodes::BeginNodeEditor();
     const bool open_popup = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
                             ImNodes::IsEditorHovered() &&
                             ImGui::IsKeyReleased(ImGuiKey_A);
+    
+    const bool KEY_ENTER =  ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
+                            ImGui::IsKeyDown(ImGuiKey_Enter);
+    
+    const bool KEY_ESCAPE = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
+                            ImGui::IsKeyDown(ImGuiKey_Escape);
 
     const bool KEY_STRG_S = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
                             ImNodes::IsEditorHovered() &&
@@ -177,12 +183,9 @@ void ModuleEditor::show() {
                             ImNodes::IsEditorHovered() &&
                             (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl)) &&
                             ImGui::IsKeyReleased(ImGuiKey_O);
-    
-    const bool KEY_ENTER =  ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
-                            ImGui::IsKeyDown(ImGuiKey_Enter);
-    
-    const bool KEY_ESCAPE = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
-                            ImGui::IsKeyDown(ImGuiKey_Escape);
+
+    if (KEY_STRG_S) { openSavePopup = true; }
+    if (KEY_STRG_O) { openOpenPopup = true; }
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8.f, 8.f));
     if (!ImGui::IsAnyItemHovered() && open_popup)
@@ -252,8 +255,9 @@ void ModuleEditor::show() {
         /* TODO delete nodes and connections */
     }
 
+    
     // menu bar -> save
-    if (save_clicked || KEY_STRG_S){
+    if (openSavePopup) {
         ImGui::OpenPopup("save");
     }
     if (ImGui::BeginPopup("save")) {
@@ -263,19 +267,19 @@ void ModuleEditor::show() {
         ImGui::Text("Save:");
         ImGui::InputText("##Eingabe", textBuffer, bufferSize);
         if (ImGui::Button("Ok") || KEY_ENTER) {  
-            this->save(textBuffer); 
-            save_clicked = false;
+            this->save(textBuffer);
+            openSavePopup = false;
             ImGui::CloseCurrentPopup();
         }
-        if (ImGui::Button("Cancel") || KEY_ESCAPE) {   
-            save_clicked = false;
+        if (ImGui::Button("Cancel") || KEY_ESCAPE) {
+            openSavePopup = false;
             ImGui::CloseCurrentPopup();
         }
         ImGui::EndPopup();
     }
     
     //menu bar -> open
-    if (open_clicked || KEY_STRG_O){
+    if (openOpenPopup) {
         ImGui::OpenPopup("open");
     }
     if (ImGui::BeginPopup("open")) {
@@ -286,11 +290,11 @@ void ModuleEditor::show() {
         ImGui::InputText("##Eingabe", textBuffer, bufferSize);
         if (ImGui::Button("Ok") || KEY_ENTER) {  
             this->load(textBuffer); 
-            open_clicked = false;
+            openOpenPopup = false;
             ImGui::CloseCurrentPopup();
         }
-        if (ImGui::Button("Cancel") || KEY_ESCAPE) {   
-            open_clicked = false;
+        if (ImGui::Button("Cancel") || KEY_ESCAPE) {
+            openOpenPopup = false;
             ImGui::CloseCurrentPopup();
         }
         ImGui::EndPopup();
