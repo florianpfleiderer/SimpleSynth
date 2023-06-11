@@ -6,21 +6,43 @@
 #include "imnodes.h"
 
 Sequencer::Sequencer(unsigned int input_size) : Module("Sequencer"), _id_bpm(IdGenerator::generateId()), _id_output(IdGenerator::generateId()){
-    _ids_input = std::vector<unsigned int>(input_size);
+    _ids_input = std::vector<int>(input_size);
     std::generate(_ids_input.begin(), _ids_input.end(), IdGenerator::generateId);
-
-    for(auto i: _ids_input){
-        std::cout << i << ", ";
     }
-}
 
 Sequencer::~Sequencer(){
 }
 
 bool Sequencer::tick(stk::StkFrames &frames, double streamTime, int output_id){
 
-    // unsigned long step_duration = 1 / (_bpm/60); // step duration is one divided by beats per second
-    // int step_index = (int)( ( (long)(streamTime / step_duration) ) % _ids_input.size() );
+    unsigned long step_duration = 1 / (_bpm/60); // step duration is one divided by beats per second
+    int step_index = (int)( ( (long)(streamTime / step_duration) ) % _ids_input.size() );
+    int frame_start_ind = (int)(streamTime / (1 / frames.dataRate())); // position in frame via index according to streamTime and dataRate
+    int frame_len = (int)(step_duration / (1 / frames.dataRate()));
+
+    stk::StkFrames input_frame = stk::StkFrames(frame_len, 1);
+
+    std::shared_ptr<Module> module = nullptr;
+    int module_output = -1;
+    for(auto c : _connections){
+        if(_ids_input[step_index] == c.input_id){
+            module = c.module;
+            module_output = c.output_id;
+            break;
+        }
+    }
+
+    module->tick(input_frame, streamTime, module_output);
+
+    for(int index = 0; index < frame_len; index++){
+        frames[frame_start_ind + index] = input_frame[index];
+    }
+
+    // 1. create empty frame
+    // 1.1 find correcet input module
+    // 2. get date from appropiate input
+    // 3. select data range
+    // 4. iterate and copy data accordingly
 
 
 
@@ -34,8 +56,6 @@ bool Sequencer::tick(stk::StkFrames &frames, double streamTime, int output_id){
     //
     // TODO do I need to set sample rate?
     // stk::StkFrames
-
-
 
 }
 

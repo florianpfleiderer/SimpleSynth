@@ -15,7 +15,7 @@ class Sequencer : public Module {
 private:
     const int _id_bpm;
     const int _id_output;
-    std::vector<unsigned int> _ids_input;
+    std::vector<int> _ids_input;
     int _bpm = 60;
     int _selected_bpm = 1;
 
