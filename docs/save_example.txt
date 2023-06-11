@@ -1,0 +1,22 @@
+[module_name]
+Output
+[module_id]
+1
+[module_connectors]
+id=2 type=0
+[module_settings]
+_id_input=2
+
+[module_name]
+Oscillator
+[module_id]
+3
+[module_connectors]
+id=4 type=1
+[module_settings]
+_id_output=4
+
+[IdGenerator_state]
+5
+[connections]
+conn_id=5 input_id=2 output_id=4

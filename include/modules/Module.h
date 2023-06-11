@@ -41,6 +41,8 @@ struct Connection {
     // TODO shared pointer initialization makes sense?
     Connection(std::shared_ptr<Module> module, int conn_id, int input_id, int output_id)
         : module(std::move(module)), conn_id(conn_id), input_id(input_id), output_id(output_id) {}
+
+    
 };
 
 /**
@@ -49,9 +51,16 @@ struct Connection {
 class Module {
 public:
     /**
-     * @brief Constructor
+     * @brief default constructor
      */
     explicit Module(std::string name);
+
+    /**
+     * @brief constructor used for loading modules from save-file
+     * 
+     */
+    explicit Module(std::string name, int id, std::vector<Connector> connectors);
+
 
     /**
      * @brief Returns the id of the module
@@ -73,6 +82,12 @@ public:
     //[[nodiscard]] const Connector& getConnectionById(int id) const;
 
     [[nodiscard]] const Connector *getConnectorById(int id) const;
+
+    /**
+     * @brief Returns the settings of the module
+     * @return List of 
+     */
+    //[[nodiscard]] 
 
     /**
      * @brief Add new connection
@@ -101,6 +116,15 @@ public:
      */
     virtual bool tick(stk::StkFrames& frames, double streamTime, int output_id) = 0;
 
+
+    /**
+     * @brief writes the data of the module to a given outputstream
+     * (structure example "/docs/save_example.txt")
+     * 
+     * @param ostream outputstream to write the serialized data to
+     */
+    void serialize(std::ostream &ostream);
+
     /**
      * @brief Destructor
      */
@@ -128,6 +152,14 @@ private:
      * @brief module name
      */
     const std::string _name;
+
+    /**
+     * @brief writes the settings of the specific module to the given outputsream 
+     * (structure example from [module_settings] to empty line"/docs/save_example.txt")
+     * 
+     * @param ostream outputstream to write the serialized data to
+     */
+    virtual void serialize_settings(std::ostream &ostream) = 0;
 };
 
 

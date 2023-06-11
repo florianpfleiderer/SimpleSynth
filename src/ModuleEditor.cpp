@@ -3,6 +3,12 @@
 //
 #include <iostream>
 #include <algorithm>
+#include <fstream>
+#include <vector>
+#include <memory>
+#include <map>
+#include <regex>
+
 
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
@@ -20,7 +26,7 @@
 #include "../include/modules/NoiseGenerator.h"
 
 
-ModuleEditor::ModuleEditor() : window(ModuleEditor::create_window(1280, 720, "Simple Synth")), _idGenerator() {
+ModuleEditor::ModuleEditor() : window(ModuleEditor::create_window(1280, 720, "Simple Synth")), _idGenerator() , openSavePopup(false), openOpenPopup(false){
     ImNodes::CreateContext();
 }
 
@@ -115,7 +121,9 @@ void ModuleEditor::begin_frame()
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
     if (ImGui::GetIO().ConfigFlags) {
-        static constexpr ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoBackground |
+        static constexpr ImGuiWindowFlags window_flags =
+                ImGuiWindowFlags_MenuBar |
+                ImGuiWindowFlags_NoBackground |
                 ImGuiWindowFlags_NoTitleBar |
                 ImGuiWindowFlags_NoCollapse |
                 ImGuiWindowFlags_NoResize |
@@ -132,6 +140,7 @@ void ModuleEditor::begin_frame()
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 0.f));
 
         ImGui::Begin("Synth", nullptr, window_flags);
+        ModuleEditor::draw_menu();
         ImGui::PopStyleVar(3);
     }
 }
@@ -183,14 +192,43 @@ void ModuleEditor::shutdown(GLFWwindow* window)
     glfwTerminate();
 }
 
+void ModuleEditor::draw_menu() {
+    if (ImGui::BeginMainMenuBar()) {
+        if (ImGui::BeginMenu("File")) {
+            if (ImGui::MenuItem("Save..", "Strg+S")) { openSavePopup = true; }
+            if (ImGui::MenuItem("Open..", "Strg+O")) { openOpenPopup = true; }
+            ImGui::EndMenu();
+        }
+        ImGui::EndMainMenuBar();
+    }
+}
+
 void ModuleEditor::show() {
     ModuleEditor::begin_frame();
-
     ImNodes::BeginNodeEditor();
 
     const bool open_popup = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
                             ImNodes::IsEditorHovered() &&
                             ImGui::IsKeyReleased(ImGuiKey_A);
+
+    const bool KEY_ENTER =  ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
+                            ImGui::IsKeyDown(ImGuiKey_Enter);
+
+    const bool KEY_ESCAPE = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
+                            ImGui::IsKeyDown(ImGuiKey_Escape);
+
+    const bool KEY_STRG_S = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
+                            ImNodes::IsEditorHovered() &&
+                            (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl)) &&
+                            ImGui::IsKeyReleased(ImGuiKey_S);
+
+    const bool KEY_STRG_O = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
+                            ImNodes::IsEditorHovered() &&
+                            (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl)) &&
+                            ImGui::IsKeyReleased(ImGuiKey_O);
+
+    if (KEY_STRG_S) { openSavePopup = true; }
+    if (KEY_STRG_O) { openOpenPopup = true; }
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8.f, 8.f));
     if (!ImGui::IsAnyItemHovered() && open_popup)
@@ -268,29 +306,52 @@ void ModuleEditor::show() {
     int start_id, end_id;
     if (ImNodes::IsLinkCreated(&start_id, &end_id))
     {
-        auto input_module = getModuleByConnectorId(start_id);
-        auto input_connector = input_module->getConnectorById(start_id);
-        auto output_module = getModuleByConnectorId(end_id);
-        auto output_connector = output_module->getConnectorById(end_id);
-        // TODO check if pointer valid
+        create_connection(start_id, end_id, IdGenerator::generateId());
+    }
 
-        /* swap if input is not actually the input */
-        if (input_connector->type != INPUT) {
-           std::swap(input_module, output_module);
-           std::swap(input_connector, output_connector);
+
+    // menu bar -> save
+    if (openSavePopup) {
+        ImGui::OpenPopup("save");
+    }
+    if (ImGui::BeginPopup("save")) {
+        static char textBuffer[256] = "";
+        size_t bufferSize = sizeof(textBuffer) - 1;
+
+        ImGui::Text("Save:");
+        ImGui::InputText("##Eingabe", textBuffer, bufferSize);
+        if (ImGui::Button("Ok") || KEY_ENTER) {
+            this->save(textBuffer);
+            openSavePopup = false;
+            ImGui::CloseCurrentPopup();
         }
-
-        /* if they're not both inputs or outputs create connection*/
-        if (input_connector->type != output_connector->type)
-        {
-            /* add link to list */
-            Connection conn(output_module, IdGenerator::generateId(), start_id, end_id);
-            _connections.emplace_back(conn);
-            /* add link to corresponding module */
-            input_module->addConnection(conn);
+        if (ImGui::Button("Cancel") || KEY_ESCAPE) {
+            openSavePopup = false;
+            ImGui::CloseCurrentPopup();
         }
+        ImGui::EndPopup();
+    }
 
-        /* TODO delete nodes and connections */
+    //menu bar -> open
+    if (openOpenPopup) {
+        ImGui::OpenPopup("open");
+    }
+    if (ImGui::BeginPopup("open")) {
+        static char textBuffer[256] = "";
+        size_t bufferSize = sizeof(textBuffer) - 1;
+
+        ImGui::Text("Open:");
+        ImGui::InputText("##Eingabe", textBuffer, bufferSize);
+        if (ImGui::Button("Ok") || KEY_ENTER) {
+            this->load(textBuffer);
+            openOpenPopup = false;
+            ImGui::CloseCurrentPopup();
+        }
+        if (ImGui::Button("Cancel") || KEY_ESCAPE) {
+            openOpenPopup = false;
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::EndPopup();
     }
 
     ModuleEditor::end_frame(window, {0.45f, 0.55f, 0.60f, 1.00f});
@@ -304,6 +365,205 @@ ModuleEditor::~ModuleEditor() {
     ModuleEditor::shutdown(window);
 }
 
+void ModuleEditor::create_connection(int start_id, int end_id,  int conn_id){
+    Connector start(INPUT, 0), end(INPUT, 0);
+    std::shared_ptr<Module> start_module, end_module;
+
+    auto input_module = getModuleByConnectorId(start_id);
+    auto input_connector = input_module->getConnectorById(start_id);
+    auto output_module = getModuleByConnectorId(end_id);
+    auto output_connector = output_module->getConnectorById(end_id);
+    // TODO check if pointer valid
+
+    /* swap if input is not actually the input */
+    if (input_connector->type != INPUT) {
+       std::swap(input_module, output_module);
+       std::swap(input_connector, output_connector);
+    }
+
+    /* if they're not both inputs or outputs create connection*/
+    if (start.type != end.type)
+    {
+        /* add link to list */
+        Connection conn(output_module, conn_id, start_id, end_id);
+        _connections.emplace_back(conn);
+        /* add link to corresponding module */
+        input_module->addConnection(conn);
+    }
+
+    /* if they're not both inputs or outputs create connection*/
+    if (input_connector->type != output_connector->type)
+    {
+        /* add link to list */
+        Connection conn(output_module, IdGenerator::generateId(), start_id, end_id);
+        _connections.emplace_back(conn);
+        /* add link to corresponding module */
+        input_module->addConnection(conn);
+    }
+}
+
+std::shared_ptr<Module> ModuleEditor::find_module_by_id(int id, Connector &conn){
+    std::shared_ptr<Module> module;
+    for (const auto &m : _modules)
+    {
+        auto connections = m->getConnections();
+        auto found = std::find_if(connections.begin(), connections.end(),
+                                  [id](const Connector& m) -> bool { return m.id == id; });
+        if (found != connections.end())
+        {
+            conn = *found;
+            return m;
+        }
+    }
+    throw std::invalid_argument("No module with id=" + std::to_string(id) + " in _modules.");
+}
+
+void ModuleEditor::save(std::string filename) {
+    // save the internal imnodes state
+    ImNodes::SaveCurrentEditorStateToIniFile((filename + ".ini").c_str());
+
+    // save all modules
+    std::ofstream ostream(filename + ".txt");
+    for(auto &module_ptr : _modules) {
+        module_ptr->serialize(ostream);
+    }
+
+    // save IdGenerator state
+    ostream << "[IdGenerator_state]" << std::endl
+            << IdGenerator::saveId() << std::endl;
+    // save all connections
+    ostream << "[connections]" << std::endl;
+    for(auto &connection : _connections) {
+        ostream << "conn_id=" << connection.conn_id
+                << " input_id=" << connection.input_id
+                << " output_id=" << connection.output_id
+                << std::endl;
+    }
+}
+
+void ModuleEditor::load(std::string filename) {
+    /*  TODO for new modules
+    *   1. include new_module.h in this file
+    *   2. implement new constructor so every variable can be set manualy from unserialize function
+    *   3. implement unserialize function in new_module.h and new_module.cpp
+    *   4. add unserialize function to unserializer_map in ModuleEditor::unserialize
+    */
+
+    // delete all modules and connections from current memory
+    _modules.clear();
+    _connections.clear();
+
+    // Load the internal imnodes state
+    ImNodes::LoadCurrentEditorStateFromIniFile((filename + ".ini").c_str());
+
+    // Load all modules with their settings
+    std::stringstream buffer;
+    std::string line;
+    std::ifstream ifstream(filename + ".txt");
+    while(std::getline(ifstream, line)){
+        //save all lines to buffer until empty line
+        //then unserialize this buffer and go on with next line
+        //stop when reaching connections
+        if (line == "[IdGenerator_state]") {          //set IdGenerator state
+            std::getline(ifstream, line);
+            IdGenerator::loadId(std::stoi(line));
+            continue;
+        }
+        if(line == "[connections]") {
+            break;
+        }
+        if (line.empty()) {
+            //create module
+            if (buffer.str().empty()) {
+                throw std::invalid_argument("Can not unserialize empty buffer.");
+            }
+            _modules.push_back(unserialize_module(buffer));
+            buffer.str("");
+        } else {
+            buffer << line << std::endl;
+        }
+    }
+    ifstream.seekg(0);
+    unserialize_connections(ifstream);
+}
+
+std::shared_ptr<Module> ModuleEditor::unserialize_module(std::stringstream &module_str)
+{
+    // MODULE_CREATORS MAP
+    std::map<std::string, std::shared_ptr<Module>(*)(std::stringstream&, int, std::vector<Connector>)> unserializer_map;
+    unserializer_map["Oscillator"] = &Oscillator::unserialize;
+    unserializer_map["Output"] = &Output::unserialize;
+
+    // unserialize general module data
+    // Flags
+    bool module_connectors_f(false);
+
+    // variable buffers
+    std::string module_name("");
+    int module_id(-1);
+    std::vector<Connector> module_connectors;
+
+    // Read stringstream
+    std::string line;
+    std::regex pattern;
+    std::smatch matches;
+    while(std::getline(module_str, line)) {
+        // search for keywords
+        if (line == "[module_name]") {          //get module_name
+            std::getline(module_str, line);
+            module_name = line;
+            auto it = unserializer_map.find(module_name);
+            if (it == unserializer_map.end()) {
+                throw std::invalid_argument("Module \"" + module_name + "\" not found in unserializer_map");
+            }
+            continue;
+        }
+        if (line == "[module_id]") {            //get module_id
+            std::getline(module_str, line);
+            module_id = std::stoi(line);
+            continue;
+        }
+        if (line == "[module_connectors]") {    //set module_connectors flag
+            module_connectors_f = true;
+            continue;
+        }
+        if (line == "[module_settings]"){       // go into specific module after all basic data was collected
+            if (module_str.str().empty() || module_id == -1 || module_connectors.size() == 0) {
+                throw std::invalid_argument("Can not create a module with following arguments:\nmodule_str= "+ module_str.str()
+                                            + "\nmodule_id= " + std::to_string(module_id)
+                                            + "\nmodule_connectors.size()= " + std::to_string(module_connectors.size()));
+            }
+            module_str.seekg(0);
+            return unserializer_map[module_name](module_str, module_id, module_connectors);
+        }
+
+        // process flags
+        if (module_connectors_f) {              //get all module_connectors
+            pattern = "id=(\\d+) type=(\\d+)";
+            if (std::regex_search(line, matches, pattern)) {
+                if (matches.size() == 3) {
+                    ConnectorType type;
+                    int id = std::stoi(matches[1].str());
+                    int type_int = std::stoi(matches[2].str());
+                    switch (type_int) {
+                    case 0: type = INPUT;
+                            break;
+                    case 1: type = OUTPUT;
+                            break;
+                    default:
+                        throw std::invalid_argument(std::to_string(type_int) + " is not a valid ConnectorType ENUM");
+                    }
+                    module_connectors.emplace_back(Connector(type, id));
+                    continue;
+                } else {
+                    throw std::invalid_argument("Following line does not follow the pattern \"id=(\\d+) type=(\\d+)\":\n" + line );
+                }
+            }
+        }
+    }
+    throw std::invalid_argument("Could not unserialize following module_str:\n" + module_str.str());
+}
+
 std::shared_ptr<Module> ModuleEditor::getModuleByConnectorId(int id) const {
     for (const auto &m : _modules)
     {
@@ -314,4 +574,33 @@ std::shared_ptr<Module> ModuleEditor::getModuleByConnectorId(int id) const {
     return nullptr;
 }
 
+void ModuleEditor::unserialize_connections(std::istream &istream) {
+    std::string line;
+    bool connections_f(false);
+    std::regex pattern("conn_id=(\\d+) input_id=(\\d+) output_id=(\\d+)");
+    std::smatch matches;
 
+    int conn_id;
+    int input_id;
+    int output_id;
+    while (std::getline(istream, line)) {
+        // search istream until connections
+        if(line == "[connections]") {
+            connections_f = true;
+            continue;
+        }
+        //create all connections
+        if (connections_f && !line.empty()) {
+            if (std::regex_search(line, matches, pattern)) {
+                if (matches.size() == 4) {
+                    conn_id = std::stoi(matches[1].str());
+                    input_id = std::stoi(matches[2].str());
+                    output_id = std::stoi(matches[3].str());
+                    create_connection(output_id, input_id, conn_id);
+                } else {
+                    throw std::invalid_argument("Following line does not follow the pattern \"con_id=(\\d+) out_id=(\\d+) in_id=(\\d+)\":\n" + line );
+                }
+            }
+        }
+    }
+}
