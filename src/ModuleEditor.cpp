@@ -24,6 +24,7 @@
 #include "../include/modules/EchoNode.h"
 #include "../include/modules/DelayNode.h"
 #include "../include/modules/NoiseGenerator.h"
+#include "modules/Sweep.h"
 
 
 ModuleEditor::ModuleEditor() : window(ModuleEditor::create_window(1280, 720, "Simple Synth")), _idGenerator() , openSavePopup(false), openOpenPopup(false){
@@ -268,6 +269,12 @@ void ModuleEditor::show() {
         if (ImGui::MenuItem("SawOscillator"))
         {
             auto module = std::make_shared<SawOscillator>();
+            _modules.emplace_back(module);
+        }
+
+        if (ImGui::MenuItem("Sweep"))
+        {
+            auto module = std::make_shared<Sweep>();
             _modules.emplace_back(module);
         }
 
