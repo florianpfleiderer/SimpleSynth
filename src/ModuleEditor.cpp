@@ -24,7 +24,7 @@
 #include "../include/modules/EchoNode.h"
 #include "../include/modules/DelayNode.h"
 #include "../include/modules/NoiseGenerator.h"
-
+#include "../include/modules/Sweep.h"
 
 ModuleEditor::ModuleEditor() : window(ModuleEditor::create_window(1280, 720, "Simple Synth")), _idGenerator() , openSavePopup(false), openOpenPopup(false){
     ImNodes::CreateContext();
@@ -271,6 +271,12 @@ void ModuleEditor::show() {
             _modules.emplace_back(module);
         }
 
+        if (ImGui::MenuItem("Sweep"))
+        {
+            auto module = std::make_shared<Sweep>();
+            _modules.emplace_back(module);
+        }
+
         if (ImGui::MenuItem("delay"))
         {
             auto module = std::make_shared<DelayNode>();
@@ -502,6 +508,7 @@ std::shared_ptr<Module> ModuleEditor::unserialize_module(std::stringstream &modu
     unserializer_map["RectOscillator"] = &RectOscillator::unserialize;
     unserializer_map["SawOscillator"] = &SawOscillator::unserialize;
     unserializer_map["SineOscillator"] = &SineOscillator::unserialize;
+    unserializer_map["Sweep"] = &Sweep::unserialize;
     
 
     // unserialize general module data
