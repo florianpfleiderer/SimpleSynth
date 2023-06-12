@@ -21,6 +21,7 @@ public:
     ~Oscillator() override;
 protected:
     int _id_output;
+    int _id_frequency;
     float _frequency;
 };
 

@@ -9,8 +9,9 @@
 #include "../../include/modules/SineOscillator.h"
 #include "../../include/IdGenerator.h"
 
-Oscillator::Oscillator(std::string name) : Module(name), _id_output(IdGenerator::generateId()) {
+Oscillator::Oscillator(std::string name) : Module(name), _id_output(IdGenerator::generateId()), _id_frequency(IdGenerator::generateId()) {
     _connectors.emplace_back(ConnectorType::OUTPUT, _id_output);
+    _frequency = 500;
 }
 
 Oscillator::Oscillator(std::string name, int id, int id_output, float frequency)
@@ -24,6 +25,12 @@ void Oscillator::draw()
     ImNodes::BeginNodeTitleBar();
     ImGui::TextUnformatted(getName().c_str());
     ImNodes::EndNodeTitleBar();
+
+    ImNodes::BeginStaticAttribute(_id_frequency);
+    ImGui::PushItemWidth(150.0f);
+    ImGui::SliderFloat("Frequency", &_frequency, 0.1f, 16000.0f);
+    ImGui::PopItemWidth();
+    ImNodes::EndStaticAttribute();
 }
 
 Oscillator::~Oscillator() {

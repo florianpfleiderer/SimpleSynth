@@ -15,9 +15,6 @@ RectOscillator::RectOscillator(int module_id, int id_output, float frequency)
 bool RectOscillator::tick(stk::StkFrames &frames, double streamTime, int output_id) {
     (void)output_id;
     (void)streamTime;
-
-    // for (unsigned int i = 0; i < nBufferFrames; i++)
-    //     *buffer++ = rectangle.tick();
     
     frames = rectangle.tick(frames);
     return true;

@@ -16,9 +16,6 @@ NoiseGenerator::NoiseGenerator(int id, int id_output, float frequency)
 bool NoiseGenerator::tick(stk::StkFrames &frames, double streamTime, int output_id) {
     (void)output_id;
     (void)streamTime;
-
-    // for (unsigned int i = 0; i < nBufferFrames; i++)
-    //     *buffer++ = rectangle.tick();
     
     frames = noise.tick(frames);
     return true;
