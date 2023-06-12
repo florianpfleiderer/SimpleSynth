@@ -65,6 +65,14 @@ public:
     [[nodiscard]] float getDelayLength() const;
 
     void serialize_settings(std::ostream &ostream) override;
+
+    /**
+     * @brief creates a DelayNode object from the given module string of the save-file
+     * 
+     * @param module_str DelayNode module string from the save-file
+     * @param module_id id of the DelayNode object
+     * @return std::shared_ptr<Module> to unserialized DelayNode object
+     */
     static std::shared_ptr<Module> unserialize(std::stringstream& module_str, int module_id);
 };
 
