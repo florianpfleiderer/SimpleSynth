@@ -5,6 +5,7 @@
 #include "imnodes.h"
 
 #include "../../include/modules/Amplifier.h"
+#include "Stk.h"
 
 
 Amplifier::Amplifier(unsigned int gain) : Module("Amplifier"), _id_output(IdGenerator::generateId()),
@@ -16,21 +17,28 @@ void Amplifier::setGain(unsigned int g) {
 }
 
 //! Amplify the StkFloat values (audio data) contained in frame
-void Amplifier::amplify(stk::StkFrames& frames) {
-    frames.operator*(_gain);
+void Amplifier::amplify(stk::StkFrames& frames, unsigned int g) {
+    // Amplify
+    stk::StkFrames frames_amplified = frames * g;
+
+    //Deep copy the amplified data to the original frames object
+    //Fehlermöglichkeit, evtl. geht Information zu bufferSize_, dataRate_ etc. verloren
+    frames = frames_amplified;
 }
 
 bool Amplifier::tick(stk::StkFrames& frames, double streamTime, int output_id) {
 
     // Fill frames with audio data and amplify the data
-    for(auto & conn : _connections){
+    for(auto & conn : this->_connections){
         // Annahme: Jedes Module befüllt frames mit Werten
         conn.module->tick(frames, streamTime, output_id);
-
-        //Hier müssten die frames des aufgerufenen moduls übergeben werden. Diese
-        //sind aber in module nicht angelegt
-        amplify(frames);
     }
+
+    if(frames.empty())
+        return false;
+
+    // Amplify the audio signal stored in frames
+    amplify(frames, _gain);
 
     return true;
 }

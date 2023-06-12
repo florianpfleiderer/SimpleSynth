@@ -51,7 +51,7 @@ public:
      *
      * @param frames vector of audio data
      */
-    void amplify(stk::StkFrames& frames);
+    void amplify(stk::StkFrames& frames, unsigned int g);
 
     //! Set requested value for gain
     /*!

@@ -7,7 +7,7 @@
 #include "../../include/modules/Mixer.h"
 
 Mixer::Mixer() : Module("Mixer"), _id_output(IdGenerator::generateId()),
-                         _id_input(IdGenerator::generateId())  {}
+                         _id_input_1(IdGenerator::generateId()), _id_input_2(IdGenerator::generateId())   {}
 
 void Mixer::draw()
 {
@@ -18,9 +18,14 @@ void Mixer::draw()
     ImGui::TextUnformatted(getName().c_str());
     ImNodes::EndNodeTitleBar();
 
-    // Input pin
-    ImNodes::BeginInputAttribute(_id_input);
-    ImGui::Text("in");
+    // Input pin 1
+    ImNodes::BeginInputAttribute(_id_input_1);
+    ImGui::Text("in_1");
+    ImNodes::EndInputAttribute();
+
+    // Input pin 2
+    ImNodes::BeginInputAttribute(_id_input_2);
+    ImGui::Text("in_2");
     ImNodes::EndInputAttribute();
 
     // Output pin
