@@ -24,7 +24,12 @@ int Module::getId() const
 
 Module::~Module() = default;
 
-const std::vector<Connector> &Module::getConnections() const
+const std::vector<Connection> &Module::getConnections() const
+{
+    return _connections;
+}
+
+const std::vector<Connector> & Module::getConnectors() const
 {
     return _connectors;
 }
@@ -49,4 +54,9 @@ void Module::serialize(std::ostream &ostream) {
             << _id << std::endl;
     this->serialize_settings(ostream);
     ostream << std::endl;
+}
+
+void Module::removeConnection(int id) {
+    _connections.erase(std::remove_if(_connections.begin(), _connections.end(),
+                                      [id](const auto c){ return c.conn_id == id || c.input_id == id || c.output_id == id; }), _connections.end());
 }

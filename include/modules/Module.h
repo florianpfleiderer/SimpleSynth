@@ -78,10 +78,17 @@ public:
      * @brief Returns all connections
      * @return reference to the connection list
      */
-    [[nodiscard]] const std::vector<Connector>& getConnections() const;
-    //[[nodiscard]] const Connector& getConnectionById(int id) const;
+    [[nodiscard]] const std::vector<Connection> & getConnections() const;
+
+    /**
+     * @brief Returns all connectors
+     * @return reference to the connection list
+     */
+    [[nodiscard]] const std::vector<Connector> & getConnectors() const;
 
     [[nodiscard]] const Connector *getConnectorById(int id) const;
+
+    void removeConnection(int id);
 
     /**
      * @brief Returns the settings of the module
