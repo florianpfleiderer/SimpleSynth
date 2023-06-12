@@ -22,7 +22,7 @@ public:
 private:
     stk::Noise noise;
 
-    void updateFrequency(float freqency) override;
+    void updateFrequency(float frequency) override;
 };
 
 #endif //SIMPLESYNTH_NOISEGENERATOR_H

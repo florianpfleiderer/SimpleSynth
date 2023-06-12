@@ -24,7 +24,7 @@
 #include "../include/modules/EchoNode.h"
 #include "../include/modules/DelayNode.h"
 #include "../include/modules/NoiseGenerator.h"
-#include "modules/Sweep.h"
+#include "../include/modules/Sweep.h"
 
 
 ModuleEditor::ModuleEditor() : window(ModuleEditor::create_window(1280, 720, "Simple Synth")), _idGenerator() , openSavePopup(false), openOpenPopup(false){

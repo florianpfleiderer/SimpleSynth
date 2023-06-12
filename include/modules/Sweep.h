@@ -5,7 +5,7 @@
 #ifndef SIMPLESYNTH_SWEEP_H
 #define SIMPLESYNTH_SWEEP_H
 
-#include "../../include/modules/Oscillator.h"
+#include "Oscillator.h"
 #include "Stk.h"
 #include "imnodes.h"
 #include "SineWave.h"
@@ -18,6 +18,7 @@ private:
     double sweepDuration;
     double startTime;
     bool isSweeping;
+    void updateFrequency(float frequency) override;
 
 public:
     Sweep(double startFreq = 500, double endFreq = 10000, double duration = 10);

@@ -2,7 +2,7 @@
 // Created by Cheetah on 09.06.2023.
 //
 
-#include "Sweep.h"
+#include "../../include/modules/Sweep.h"
 #include "imnodes.h"
 #include "Stk.h"
 #include <chrono>
@@ -65,3 +65,6 @@ bool Sweep::tick(stk::StkFrames &frames, double streamTime, int output_id)
     return true;
 }
 
+void Sweep::updateFrequency(float frequency) {
+    std::cout<<frequency;
+}

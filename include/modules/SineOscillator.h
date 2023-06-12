@@ -21,7 +21,7 @@ public:
 private:
     stk::SineWave sine;
 
-    void updateFrequency(float freqency) override;
+    void updateFrequency(float frequency) override;
 };
 
 #endif // SINE_OSCILLATOR_H
