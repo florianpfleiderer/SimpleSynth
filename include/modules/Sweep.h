@@ -19,8 +19,8 @@ public:
 
     void startSweep();
     void stopSweep();
-    void draw();
-    bool tick(stk::StkFrames &frames, double streamTime, int output_id);
+    void draw() override;
+    bool tick(stk::StkFrames &frames, double streamTime, int output_id) override;
     void serialize_settings(std::ostream &ostream) override;
     static std::shared_ptr<Module> unserialize(std::stringstream& module_str, int module_id);
 
