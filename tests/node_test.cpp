@@ -11,7 +11,9 @@
 #include "../include/modules/RectOscillator.h"
 #include "../include/modules/SawOscillator.h"
 #include "../include/modules/NoiseGenerator.h"
+#include "../include/modules/Sweep.h"
 #include "../include/modules/Output.h"
+#include "../include/IdGenerator.h"
 #include <iostream>
 
 // test member function of delay node
@@ -46,17 +48,21 @@ TEST_CASE("Echo Node Test", "EchoNode") {
     }
 }
 
+IdGenerator::resetId();
+
 // test member function of Sine Oscillator node
 TEST_CASE("SineOscillator Node Test", "SineOscillator") {
     SineOscillator sineOscillator = SineOscillator();
     // std::cout << sineOscillator.getConnections().at(1).type << std::endl;
     SECTION("basic tests") {
         REQUIRE(sineOscillator.getName() == "SineOscillator");
-        REQUIRE(sineOscillator.getId() == 17);
+        REQUIRE(sineOscillator.getId() == 1);
         REQUIRE(sineOscillator.getConnections().size() == 1);
         REQUIRE(sineOscillator.getConnections().at(0).type == OUTPUT);
     }
 }
+
+IdGenerator::resetId();
 
 // test member function of Rect Oscillator node
 TEST_CASE("RectOscillator Node Test", "RectOscillator") {
@@ -64,11 +70,27 @@ TEST_CASE("RectOscillator Node Test", "RectOscillator") {
 
     SECTION("basic tests") {
         REQUIRE(rectOscillator.getName() == "RectOscillator");
-        REQUIRE(rectOscillator.getId() == 19);
+        REQUIRE(rectOscillator.getId() == 1);
         REQUIRE(rectOscillator.getConnections().size() == 1);
         REQUIRE(rectOscillator.getConnections().at(0).type == OUTPUT);
     }
 }
+
+IdGenerator::resetId();
+
+// test member function of Sweep node
+TEST_CASE("Sweep Node Test", "Sweep") {
+    Sweep sweep = Sweep();
+
+    SECTION("basic tests") {
+        REQUIRE(sweep.getName() == "Sweep");
+        REQUIRE(sweep.getId() == 1);
+        REQUIRE(sweep.getConnections().size() == 1);
+        REQUIRE(sweep.getConnections().at(0).type == OUTPUT);
+    }
+}
+
+IdGenerator::resetId();
 
 // test member function of Noise Generator node
 TEST_CASE("NoiseGenerator Node Test", "NoiseGenerator") {
@@ -76,11 +98,13 @@ TEST_CASE("NoiseGenerator Node Test", "NoiseGenerator") {
 
     SECTION("basic tests") {
         REQUIRE(noiseGenerator.getName() == "Noise");
-        REQUIRE(noiseGenerator.getId() == 21);
+        REQUIRE(noiseGenerator.getId() == 1);
         REQUIRE(noiseGenerator.getConnections().size() == 1);
         REQUIRE(noiseGenerator.getConnections().at(0).type == OUTPUT);
     }
 }
+
+IdGenerator::resetId();
 
 // test member function of Output node
 TEST_CASE("Output Node Test", "Output") {
@@ -88,7 +112,7 @@ TEST_CASE("Output Node Test", "Output") {
 
     SECTION("basic tests") {
         REQUIRE(output.getName() == "Output");
-        REQUIRE(output.getId() > 0);
+        REQUIRE(output.getId() == 1);
         REQUIRE(output.getConnections().size() == 1);
         REQUIRE(output.getConnections().at(0).type == INPUT);
     }
