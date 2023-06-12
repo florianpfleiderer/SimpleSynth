@@ -13,7 +13,6 @@
 #include "../include/modules/NoiseGenerator.h"
 #include "../include/modules/Sweep.h"
 #include "../include/modules/Output.h"
-#include "../include/IdGenerator.h"
 #include <iostream>
 
 // test member function of delay node
@@ -120,7 +119,7 @@ TEST_CASE("Output Node Test", "Output") {
 
 
 TEMPLATE_TEST_CASE( "test module.h functions in modules", "[nodes][template]", 
-                    DelayNode, EchoNode, SineOscillator, RectOscillator, SawOscillator, NoiseGenerator, Output) {
+                    DelayNode, EchoNode, SineOscillator, RectOscillator, SawOscillator, Sweep, NoiseGenerator, Output) {
     // call default constructor for each type
     TestType test_type = TestType();
 
@@ -139,7 +138,7 @@ TEMPLATE_TEST_CASE( "test module.h functions in modules", "[nodes][template]",
 }
 
 TEMPLATE_TEST_CASE( "test output only nodes", "[output][template]", 
-                    SineOscillator, RectOscillator, SawOscillator, NoiseGenerator) {
+                    SineOscillator, RectOscillator, SawOscillator, Sweep, NoiseGenerator) {
     // call default constructor for each type
     TestType test_type = TestType();
 
