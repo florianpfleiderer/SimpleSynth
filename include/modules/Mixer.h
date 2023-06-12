@@ -9,18 +9,22 @@
 
 //! Mixer class
 /*!
-  TO DO: Mixer class description
-*/
+ * This class overlays the received audio signals from different modules. This happens by
+ * superimposing the audio data. The audio data is represented by values of type StkFloat.
+ * These values are added together to create the mixed audio signal.
+ */
 class Mixer : public Module {
-    //! Input pin variable
-    int _id_output;
     //! Output pin variable
-    int _id_input;
+    int _id_output;
+    //! Input pin variables
+    int _id_input_1;
+    int _id_input_2;
+
 public:
     //! Mixer constructor.
     /*!
-      TO DO
-    */
+     *
+     */
     Mixer();
 
     //! A member function for creating the node GUI

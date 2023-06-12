@@ -15,9 +15,9 @@
  *  constant .
  */
 class Amplifier : public Module {
-    //! Input pin variable
-    int _id_output;
     //! Output pin variable
+    int _id_output;
+    //! Input pin variable
     int _id_input;
     //! gain factor
     unsigned int _gain;
@@ -27,7 +27,7 @@ public:
      *
      * @param gain value for amplifying the audio signal
      */
-    Amplifier(unsigned int gain = 10);
+    explicit Amplifier(unsigned int gain = 10);
 
     //! This function is called every frame to draw the module ui.
     void draw() override;

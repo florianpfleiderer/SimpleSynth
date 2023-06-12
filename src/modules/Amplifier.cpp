@@ -10,11 +10,12 @@
 Amplifier::Amplifier(unsigned int gain) : Module("Amplifier"), _id_output(IdGenerator::generateId()),
                            _id_input(IdGenerator::generateId()), _gain(gain)  {}
 
+//! Set the gain factor
 void Amplifier::setGain(unsigned int g) {
     _gain  = g;
 }
 
-
+//! Amplify the StkFloat values (audio data) contained in frame
 void Amplifier::amplify(stk::StkFrames& frames) {
     frames.operator*(_gain);
 }
@@ -26,13 +27,15 @@ bool Amplifier::tick(stk::StkFrames& frames, double streamTime, int output_id) {
         // Annahme: Jedes Module befüllt frames mit Werten
         conn.module->tick(frames, streamTime, output_id);
 
+        //Hier müssten die frames des aufgerufenen moduls übergeben werden. Diese
+        //sind aber in module nicht angelegt
         amplify(frames);
     }
 
     return true;
 }
 
-
+//! Create the GUI (node) for the amplifier class
 void Amplifier::draw()
 {
     // Create empty node
