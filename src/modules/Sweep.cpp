@@ -1,16 +1,21 @@
 //
 // Created by Cheetah on 09.06.2023.
 //
-
+#include <iostream>
 #include "../../include/modules/Sweep.h"
 #include "imnodes.h"
 #include "Stk.h"
 #include <chrono>
 
-Sweep::Sweep(double startFreq, double endFreq, double duration)
-        : Oscillator("Sweep"), sweepStartFrequency(startFreq), sweepEndFrequency(endFreq),
+Sweep::Sweep(std::string name, double startFreq, double endFreq, float duration)
+        : Module(name), sweepStartFrequency(startFreq), sweepEndFrequency(endFreq),
           sweepDuration(duration), startTime(0.0), isSweeping(false)
 {
+    _id_output = IdGenerator::generateId();
+    _id_start_frequency = IdGenerator::generateId();
+    _id_end_frequency = IdGenerator::generateId();
+    _id_duration = IdGenerator::generateId();
+    _connectors.emplace_back(ConnectorType::OUTPUT, _id_output);
 }
 
 void Sweep::startSweep()
@@ -26,14 +31,42 @@ void Sweep::stopSweep()
 
 void Sweep::draw()
 {
-    Oscillator::draw();
+    ImNodes::BeginNode(getId());
+    ImNodes::BeginNodeTitleBar();
+    ImGui::TextUnformatted(getName().c_str());
+    ImNodes::EndNodeTitleBar();
+
+    ImNodes::BeginStaticAttribute(_id_start_frequency);
+    ImGui::PushItemWidth(150.0f);
+    ImGui::SliderFloat("Start Frequency", &sweepStartFrequency, 0, 16000.0);
+    ImGui::PopItemWidth();
+    ImNodes::EndStaticAttribute();
+
+    ImNodes::BeginStaticAttribute(_id_end_frequency);
+    ImGui::PushItemWidth(150.0f);
+    ImGui::SliderFloat("End Frequency", &sweepEndFrequency, sweepStartFrequency, 16000);
+    ImGui::PopItemWidth();
+    ImNodes::EndStaticAttribute();
+
+    ImNodes::BeginStaticAttribute(_id_duration);
+    ImGui::PushItemWidth(150.0f);
+    ImGui::SliderFloat("Duration", &sweepDuration, 0.0f, 20.0);
+    ImGui::PopItemWidth();
+    ImNodes::EndStaticAttribute();
 
     ImNodes::BeginOutputAttribute(_id_output);
-
     ImGui::Text("out");
     ImNodes::EndOutputAttribute();
 
     ImNodes::EndNode();
+}
+
+void Sweep::serialize_settings(std::ostream &ostream) {
+    ostream << "[module_settings]" << std::endl
+            << "_id_output=" << _id_output << std::endl
+            << "_start_frequency=" << sweepStartFrequency << std::endl
+            << "_end_frequency=" << sweepEndFrequency << std::endl
+            << "_duration=" << sweepDuration << std::endl;
 }
 
 bool Sweep::tick(stk::StkFrames &frames, double streamTime, int output_id)
