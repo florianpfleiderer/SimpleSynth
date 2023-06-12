@@ -4,6 +4,7 @@ build/
 
 # vs code
 .vscode/
+.DS_Store
 
 # imgui
 *.ini
