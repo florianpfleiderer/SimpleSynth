@@ -23,7 +23,7 @@ file(GLOB CPP_FILES "../src/modules/*.cpp")
 set(TEST_NAMES "")
 list(APPEND TEST_NAMES "id_generator_test")
 list(APPEND TEST_NAMES "node_test")
-list(APPEND TEST_NAMES "template_test_example")
+# list(APPEND TEST_NAMES "template_test_example")
 list(APPEND TEST_NAMES "save_load_test")
 
 foreach(TEST_NAME ${TEST_NAMES})
