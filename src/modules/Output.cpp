@@ -25,35 +25,55 @@ void Output::draw()
     ImGui::Text("out");
     ImNodes::EndInputAttribute();
 
+    // Button to trigger action
+    if (ImGui::Button("Play"))
+    {
+        PLAY = true;
+    }
+
     ImNodes::EndNode();
 }
+    
 
 bool Output::tick(stk::StkFrames &frames, double streamTime, int output_id) {
+
+    if(frames.empty())
+        return false;
+
+    //set StreamParameters;
     parameters.deviceId = dac.getDefaultOutputDevice();
     parameters.nChannels = frames.channels();
+    //set dataPointer to first sample of frames
+    void *dataPointer = &frames[0];
     
-    for (unsigned int i = 0; i < frames.frames(); i++) {
-        stk::StkFloat* frame = &frames[i];
-        
-        try {
-            dac.openStream(&parameters, NULL, format, (unsigned int)stk::Stk::sampleRate(), &bufferFrames, &tick_output, (void*)frame);
-        }
-        catch (RtAudioError &error) {
-            error.printMessage();
-            goto cleanup;
-        }
-        
-        try {
-            dac.startStream();
-        }
-        catch (RtAudioError &error) {
-            error.printMessage();
-            goto cleanup;
-        }
+    // open Stream
+    try {
+        dac.openStream(&parameters, NULL, format, (unsigned int)stk::Stk::sampleRate(), &bufferFrames, &tick_output, (void *)dataPointer );
+    }
+    catch (RtAudioError &error) {
+        error.printMessage();
+        goto cleanup;
+    }
+
+    //go thru all connections and tick them
+    for(auto &conn: this->_connections) {
+        streamTime = dac.getStreamTime();
+        conn.module->tick(frames, streamTime, output_id);
     }
     
-    (void)streamTime;
+    
+    //start Stream
+    try {
+        dac.startStream();
+    }
+    catch (RtAudioError &error) {
+        error.printMessage();
+        goto cleanup;
+    }
+
+    //wait for keypress
     (void)output_id;
+    dac.closeStream();
     return true;
 
 cleanup:
@@ -68,12 +88,13 @@ int tick_output( void *outputBuffer, void *inputBuffer, unsigned int nBufferFram
         stk::StkFloat *samples = (stk::StkFloat *) outputBuffer;
         stk::StkFloat *frame = (stk::StkFloat *) dataPointer;
         for ( unsigned int i=0; i<nBufferFrames; i++ ) {
-            *samples++ = *frame;
+            *samples++ = *frame++;
         }
         (void)inputBuffer; // We're not using inputBuffer here, but it's required by the RtAudio API.
         (void)streamTime;  // We're not using streamTime here, but it's required by the RtAudio API.
-        (void)status;      // We're not using status here, but it's required by the RtAudio API.
-        
+        //print status message
+        if ( status ) std::cout << "Stream underflow detected!" << std::endl;
+
 
         return 0;
 }
