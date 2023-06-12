@@ -48,7 +48,7 @@ TEST_CASE("Echo Node Test", "EchoNode") {
     }
 }
 
-IdGenerator::resetId();
+void IdGenerator::resetId();
 
 // test member function of Sine Oscillator node
 TEST_CASE("SineOscillator Node Test", "SineOscillator") {
@@ -62,7 +62,7 @@ TEST_CASE("SineOscillator Node Test", "SineOscillator") {
     }
 }
 
-IdGenerator::resetId();
+void IdGenerator::resetId();
 
 // test member function of Rect Oscillator node
 TEST_CASE("RectOscillator Node Test", "RectOscillator") {
@@ -76,7 +76,7 @@ TEST_CASE("RectOscillator Node Test", "RectOscillator") {
     }
 }
 
-IdGenerator::resetId();
+void IdGenerator::resetId();
 
 // test member function of Sweep node
 TEST_CASE("Sweep Node Test", "Sweep") {
@@ -90,7 +90,7 @@ TEST_CASE("Sweep Node Test", "Sweep") {
     }
 }
 
-IdGenerator::resetId();
+void IdGenerator::resetId();
 
 // test member function of Noise Generator node
 TEST_CASE("NoiseGenerator Node Test", "NoiseGenerator") {
@@ -104,7 +104,7 @@ TEST_CASE("NoiseGenerator Node Test", "NoiseGenerator") {
     }
 }
 
-IdGenerator::resetId();
+void IdGenerator::resetId();
 
 // test member function of Output node
 TEST_CASE("Output Node Test", "Output") {
