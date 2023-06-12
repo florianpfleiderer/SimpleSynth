@@ -4,6 +4,7 @@
 
 #include <imnodes.h>
 #include "../../include/modules/EchoNode.h"
+#include <regex>
 
 EchoNode::EchoNode() : Module("Echo"), 
                  _id_input(IdGenerator::generateId()), 
@@ -17,16 +18,27 @@ EchoNode::EchoNode() : Module("Echo"),
     _echo = stk::Echo();
 }
 
+EchoNode::EchoNode(int module_id, int id_input, int id_output, int id_echo_delay, float echo_delay)
+                 : Module("Echo", module_id), 
+                 _id_input(id_input), 
+                 _id_output(id_output),
+                 _id_echo_delay(id_echo_delay),
+                 _echo_delay(echo_delay) {
+    _connectors.emplace_back(ConnectorType::INPUT, _id_input);
+    _connectors.emplace_back(ConnectorType::OUTPUT, _id_output);
+    
+    // set Echo with default values
+    _echo = stk::Echo();
+}
+
+
+
 void EchoNode::draw() {
 
     ImNodes::BeginNode(getId());
     ImNodes::BeginNodeTitleBar();
     ImGui::TextUnformatted(getName().c_str());
     ImNodes::EndNodeTitleBar();
-
-    if (ImGui::Button("Save")){ 
-        [[ maybe_unused ]] std::string filename = getName() + ".ini";
-    }
 
     ImNodes::BeginStaticAttribute(_id_echo_delay);
     ImGui::PushItemWidth(100.0f);
@@ -64,4 +76,81 @@ bool EchoNode::setEchoDelay(float echo_delay) {
         return false;
     _echo.setDelay(_echo_delay);
     return true;
+}
+
+void EchoNode::serialize_settings(std::ostream &ostream)
+{   //int module_id, std::vector<Connector> connectors, 
+    //int id_input, int id_output, int id_echo_delay, float echo_delay)
+    ostream << "[module_settings]" << std::endl
+            << "_id_input=" << _id_input << std::endl
+            << "_id_output=" << _id_output << std::endl
+            << "_id_echo_delay=" << _id_echo_delay << std::endl
+            << "_echo_delay=" << _echo_delay << std::endl;
+}
+
+std::shared_ptr<Module> EchoNode::unserialize(std::stringstream& module_str, int module_id) {
+    // variables
+    int id_input(-1);
+    int id_output(-1);
+    int id_echo_delay(-1);
+    float echo_delay(-1);
+
+    // read stringstream
+    std::string line;
+    std::regex pattern;
+    std::smatch matches;
+    while(std::getline(module_str, line)) {
+        pattern = "_id_input=(\\d+)";
+        if (std::regex_search(line, matches, pattern)) {
+            if (matches.size() == 2) {
+                id_input = std::stoi(matches[1].str());
+                continue;;
+            } else {
+                throw std::invalid_argument("Following line does not follow the pattern \"_id_input=(\\d+)\":\n" + line );
+            }
+        }
+        pattern = "_id_output=(\\d+)";
+        if (std::regex_search(line, matches, pattern)) {
+            if (matches.size() == 2) {
+                id_output = std::stoi(matches[1].str());
+                continue;
+            } else {
+                throw std::invalid_argument("Following line does not follow the pattern \"_id_output=(\\d+)\":\n" + line );
+            }
+        }
+        pattern = "_id_echo_delay=(\\d+)";
+        if (std::regex_search(line, matches, pattern)) {
+            if (matches.size() == 2) {
+                id_echo_delay = std::stoi(matches[1].str());
+                continue;
+            } else {
+                throw std::invalid_argument("Following line does not follow the pattern \"_id_echo_delay=(\\d+)\":\n" + line );
+            }
+        }
+        pattern = "_echo_delay=([+-]?\\d+(\\.\\d+)?)";
+        if (std::regex_search(line, matches, pattern)) {
+            if (matches.size() == 3) {
+                echo_delay = std::stof(matches[1].str());
+                continue;
+            } else {
+                throw std::invalid_argument("Following line does not follow the pattern \"_echo_delay=([+-]?\\d+(\\.\\d+)?)\":\n" + line );
+            }
+        }
+    }
+
+
+    // create module with read data
+    if (id_input == -1) {
+        throw std::invalid_argument("Can not create an EchoNode module with id_input= " + std::to_string(id_input));
+    }
+    if (id_output == -1) {
+        throw std::invalid_argument("Can not create an EchoNode module with id_output= " + std::to_string(id_output));
+    }
+    if (id_echo_delay == -1) {
+        throw std::invalid_argument("Can not create an EchoNode module with id_echo_delay= " + std::to_string(id_echo_delay));
+    }
+    if (echo_delay == -1) {
+        throw std::invalid_argument("Can not create an EchoNode module with echo_delay= " + std::to_string(echo_delay));
+    }
+    return std::make_shared<EchoNode>(EchoNode(module_id, id_input, id_output, id_echo_delay, echo_delay));
 }

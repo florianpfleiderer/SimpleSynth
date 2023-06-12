@@ -25,14 +25,14 @@ class EchoNode : public Module {
     const int _id_echo_delay;
     float _echo_delay;
 
-    /*
+    /**
     * @brief Echo object from stk library
     * @see https://ccrma.stanford.edu/software/stk/classstk_1_1Echo.html
     * 
     */
     stk::Echo _echo;
 
-    /*
+    /**
     * @brief Sets the echo delay
     * @param echo_delay
     * @return true if successful
@@ -45,8 +45,21 @@ public:
      */
     explicit EchoNode();
 
+    /**
+     * @brief Construct a new Echo Node object with full controll
+     * 
+     * @param id_input 
+     * @param id_output 
+     * @param id_echo_delay 
+     * @param echo_delay 
+     */
+    explicit EchoNode(int module_id, int id_input, int id_output, int id_echo_delay, float echo_delay);
+
     void draw() override;
     bool tick(stk::StkFrames &frames, double streamTime, int output_id) override;
+    
+    void serialize_settings(std::ostream &ostream) override;
+    static std::shared_ptr<Module> unserialize(std::stringstream& module_str, int module_id);
 };
 
 #endif // SIMPLESYNTH_ECHO_H

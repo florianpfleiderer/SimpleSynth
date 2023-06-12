@@ -11,14 +11,17 @@
 class RectOscillator : public Oscillator {
 public:
     RectOscillator();
+    RectOscillator(int id, int id_output, float frequency);
+
+    static std::shared_ptr<Module> unserialize(std::stringstream& module_str, int module_id);
 
     bool tick(stk::StkFrames &frames, double streamTime, int output_id) override;
-     void draw() override;
+    void draw() override;
 
 private:
-    int _id_output;
     stk::BlitSquare rectangle;
 
+    void updateFrequency(float freqency) override;
 };
 
 #endif //SIMPLESYNTH_RECTOSCILLATOR_H

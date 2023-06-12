@@ -11,8 +11,13 @@ class Output : public Module {
     int _id_input;
 public:
     Output();
-    void draw() override;
+    Output(int id, int id_input);
 
+    static std::shared_ptr<Module> unserialize(std::stringstream& module_str, int module_id);
+    
+    void draw() override;
+    void serialize_settings(std::ostream &ostream) override;
+    
     bool tick(stk::StkFrames &frames, double streamTime, int output_id) override;
 };
 
