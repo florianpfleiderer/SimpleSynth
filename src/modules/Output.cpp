@@ -29,10 +29,53 @@ void Output::draw()
 }
 
 bool Output::tick(stk::StkFrames &frames, double streamTime, int output_id) {
-    (void)frames;
+    parameters.deviceId = dac.getDefaultOutputDevice();
+    parameters.nChannels = frames.channels();
+    
+    for (unsigned int i = 0; i < frames.frames(); i++) {
+        stk::StkFloat* frame = &frames[i];
+        
+        try {
+            dac.openStream(&parameters, NULL, format, (unsigned int)stk::Stk::sampleRate(), &bufferFrames, &tick_output, (void*)frame);
+        }
+        catch (RtAudioError &error) {
+            error.printMessage();
+            goto cleanup;
+        }
+        
+        try {
+            dac.startStream();
+        }
+        catch (RtAudioError &error) {
+            error.printMessage();
+            goto cleanup;
+        }
+    }
+    
     (void)streamTime;
     (void)output_id;
     return true;
+
+cleanup:
+    dac.closeStream();
+    return false;
+}
+
+
+int tick_output( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
+         double streamTime, RtAudioStreamStatus status, void *dataPointer ) {
+        
+        stk::StkFloat *samples = (stk::StkFloat *) outputBuffer;
+        stk::StkFloat *frame = (stk::StkFloat *) dataPointer;
+        for ( unsigned int i=0; i<nBufferFrames; i++ ) {
+            *samples++ = *frame;
+        }
+        (void)inputBuffer; // We're not using inputBuffer here, but it's required by the RtAudio API.
+        (void)streamTime;  // We're not using streamTime here, but it's required by the RtAudio API.
+        (void)status;      // We're not using status here, but it's required by the RtAudio API.
+        
+
+        return 0;
 }
 
 void Output::serialize_settings(std::ostream &ostream)
