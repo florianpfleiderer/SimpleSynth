@@ -13,14 +13,16 @@
 
 class Sweep : public Module {
 public:
-    Sweep(std::string name = "Sweep", double startFreq = 500, double endFreq = 10000, float duration = 10);
+    Sweep(float startFreq = 500, float endFreq = 10000, float duration = 10);
+
+    Sweep(float startFreq, float endFreq, float duration, int module_id, int id_output, int id_start_freq, int id_end_freq, int id_duration);
 
     void startSweep();
     void stopSweep();
     void draw();
     bool tick(stk::StkFrames &frames, double streamTime, int output_id);
-    void updateFrequency(float frequency);
     void serialize_settings(std::ostream &ostream) override;
+    static std::shared_ptr<Module> unserialize(std::stringstream& module_str, int module_id);
 
 private:
     stk::SineWave sineWave;

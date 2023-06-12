@@ -508,6 +508,7 @@ std::shared_ptr<Module> ModuleEditor::unserialize_module(std::stringstream &modu
     unserializer_map["RectOscillator"] = &RectOscillator::unserialize;
     unserializer_map["SawOscillator"] = &SawOscillator::unserialize;
     unserializer_map["SineOscillator"] = &SineOscillator::unserialize;
+    unserializer_map["Sweep"] = &Sweep::unserialize;
     
 
     // unserialize general module data
