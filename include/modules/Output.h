@@ -12,10 +12,11 @@
 class Output : public Module {
     int _id_input;
     RtAudio dac;
+    stk::StkFrames _frames;
     RtAudio::StreamParameters parameters;
     RtAudioFormat format = ( sizeof(stk::StkFloat) == 8 ) ? RTAUDIO_FLOAT64 : RTAUDIO_FLOAT32;
     unsigned int bufferFrames = stk::RT_BUFFER_SIZE;
-    
+
 public:
     Output();
     Output(int id, std::vector<Connector> connectors, int id_in);

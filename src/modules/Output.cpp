@@ -7,12 +7,15 @@
 
 #include "../../include/modules/Output.h"
 
-Output::Output() : Module("Output"), _id_input(IdGenerator::generateId()) {
+Output::Output() : Module("Output"), _id_input(IdGenerator::generateId()), _frames(stk::RT_BUFFER_SIZE, 1) {
     _connectors.emplace_back(ConnectorType::INPUT, _id_input);
+    this->tick(_frames, 0, 0); /* TODO output_id */
 }
 
 Output::Output(int id, std::vector<Connector> connectors, int id_in)
-                : Module("Output", id, connectors), _id_input(id_in) {}
+                : Module("Output", id, connectors), _id_input(id_in),  _frames(stk::RT_BUFFER_SIZE, 1) {
+    this->tick(_frames, 0, 0); /* TODO output_id */
+}
 
 void Output::draw()
 {
@@ -44,23 +47,19 @@ bool Output::tick(stk::StkFrames &frames, double streamTime, int output_id) {
     parameters.deviceId = dac.getDefaultOutputDevice();
     parameters.nChannels = frames.channels();
     //set dataPointer to first sample of frames
-    void *dataPointer = &frames[0];
-    
+    //void *dataPointer = &frames[0];
+
     // open Stream
     try {
-        dac.openStream(&parameters, NULL, format, (unsigned int)stk::Stk::sampleRate(), &bufferFrames, &tick_output, (void *)dataPointer );
+        dac.openStream(&parameters, NULL, format, (unsigned int)stk::Stk::sampleRate(), &bufferFrames, &tick_output,
+                       this);
     }
     catch (RtAudioError &error) {
         error.printMessage();
-        goto cleanup;
+//        goto cleanup;
     }
 
-    //go thru all connections and tick them
-    for(auto &conn: this->_connections) {
-        streamTime = dac.getStreamTime();
-        conn.module->tick(frames, streamTime, output_id);
-    }
-    
+
     
     //start Stream
     try {
@@ -68,23 +67,27 @@ bool Output::tick(stk::StkFrames &frames, double streamTime, int output_id) {
     }
     catch (RtAudioError &error) {
         error.printMessage();
-        goto cleanup;
+       // goto cleanup;
     }
 
     //wait for keypress
-    (void)output_id;
-    dac.closeStream();
-    return true;
+    //(void)output_id;
+    //dac.closeStream();
+    //return true;
 
-cleanup:
-    dac.closeStream();
-    return false;
+//cleanup:
+//    dac.closeStream();
+    return true;
 }
 
 
 int tick_output( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
          double streamTime, RtAudioStreamStatus status, void *dataPointer ) {
-        
+        Output* module = (Output*)dataPointer;
+
+        stk::StkFrames *frames = module;
+        stk::StkFloat *dp = (stk::StkFloat*)&frames[0];
+
         stk::StkFloat *samples = (stk::StkFloat *) outputBuffer;
         stk::StkFloat *frame = (stk::StkFloat *) dataPointer;
         for ( unsigned int i=0; i<nBufferFrames; i++ ) {
@@ -95,6 +98,10 @@ int tick_output( void *outputBuffer, void *inputBuffer, unsigned int nBufferFram
         //print status message
         if ( status ) std::cout << "Stream underflow detected!" << std::endl;
 
+        //go thru all connections and tick them
+        for(auto &conn: this->_connections) {
+            conn.module->tick(dp, streamTime, 0); /* TODO ouput id */
+        }
 
         return 0;
 }
