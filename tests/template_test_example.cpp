@@ -1,3 +1,8 @@
+//
+// This Template is for testing Catch2 and experimenting with it.
+// It is taken directly from the Catch2 Documentation on Github.
+//
+
 #include <catch2/catch_template_test_macros.hpp>
 #include <string>
 #include <tuple>

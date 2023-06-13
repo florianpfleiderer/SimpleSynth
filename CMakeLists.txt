@@ -22,7 +22,7 @@ FetchContent_Declare(glad
 # glfw
 FetchContent_Declare(glfw
         GIT_REPOSITORY https://github.com/glfw/glfw.git
-        GIT_TAG 3.3.2
+        GIT_TAG 3.3.8
         )
 # imgui
 FetchContent_Declare(
@@ -42,6 +42,14 @@ FetchContent_Declare(
         GIT_REPOSITORY https://github.com/thestk/stk.git
         GIT_TAG cc2dd22e9752bf5fd94f0799e01d19d5e8399058
 )
+
+# only for licence
+FETCHCONTENT_DECLARE(
+        imguitemplate
+        GIT_REPOSITORY https://github.com/JulesFouchy/Simple-ImGui-Setup.git
+        GIT_TAG origin/main
+)
+FetchContent_Populate(imguitemplate)
 
 FetchContent_MakeAvailable(glad)
 FetchContent_MakeAvailable(glfw)
@@ -72,10 +80,22 @@ add_executable(${PROJECT_NAME}
         src/main.cpp
         src/ModuleEditor.cpp
         include/ModuleEditor.h
+        src/modules/DelayNode.cpp
+        src/modules/EchoNode.cpp
         src/modules/Module.cpp
         src/modules/Output.cpp
         src/modules/Oscillator.cpp
-        include/IdGenerator.h include/modules/Sequencer.h src/modules/Sequencer.cpp src/modules/DelayNode.cpp src/modules/EchoNode.cpp src/modules/SineOscillator.cpp src/modules/RectOscillator.cpp)
+        include/IdGenerator.h
+        include/modules/Sequencer.h
+        src/modules/Sequencer.cpp
+        src/modules/SineOscillator.cpp
+        src/modules/RectOscillator.cpp
+        include/modules/SawOscillator.h
+        src/modules/SawOscillator.cpp
+        include/modules/NoiseGenerator.h
+        src/modules/NoiseGenerator.cpp
+        src/modules/Sweep.cpp
+        include/modules/Sweep.h)
 
 target_link_libraries(${PROJECT_NAME} glad glfw imgui imnodes stk)
 include_directories(${imnodes_SOURCE_DIR})

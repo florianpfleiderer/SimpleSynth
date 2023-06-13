@@ -23,6 +23,32 @@ public:
     }
 
     /**
+     * @brief Reset id to 0
+     */
+    static void resetId() {
+        _id = 0;
+    }
+    
+    /**
+     * @brief only used for loading id value from save-file
+     * TODO: change access rights so it can only be accessed by ModuleEditor::load
+     * 
+     * @param id 
+     */
+    static void loadId(int id) {
+        _id = id;
+    }
+
+    /**
+     * @brief returns the current value of id without changing it
+     * 
+     * @return int current value of id
+     */
+    static int saveId() {
+        return _id;
+    }
+
+    /**
      * Delete copy constructor
      */
     IdGenerator(IdGenerator const&)     = delete;

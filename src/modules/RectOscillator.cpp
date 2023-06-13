@@ -4,19 +4,17 @@
 #include "../../include/modules/RectOscillator.h"
 #include "imnodes.h"
 #include <iostream>
-#include "Stk.h"
 
-RectOscillator::RectOscillator() : Oscillator("RectOscillator"), _id_output(IdGenerator::generateId()) {
-    _connectors.emplace_back(ConnectorType::OUTPUT, _id_output);
-    rectangle.setFrequency(440.0);
+RectOscillator::RectOscillator() : Oscillator("RectOscillator") {
+    updateFrequency(440.0);
 }
+
+RectOscillator::RectOscillator(int module_id, int id_output, float frequency)
+                                : Oscillator("RectOscillator", module_id, id_output, frequency) {}
 
 bool RectOscillator::tick(stk::StkFrames &frames, double streamTime, int output_id) {
     (void)output_id;
     (void)streamTime;
-
-    // for (unsigned int i = 0; i < nBufferFrames; i++)
-    //     *buffer++ = rectangle.tick();
     
     frames = rectangle.tick(frames);
     return true;
@@ -31,4 +29,17 @@ void RectOscillator::draw() {
     ImNodes::EndOutputAttribute();
 
     ImNodes::EndNode();
+}
+
+void RectOscillator::updateFrequency(float frequency) {
+    rectangle.setFrequency(frequency);
+    _frequency = frequency;
+}
+
+std::shared_ptr<Module> RectOscillator::unserialize(std::stringstream &module_str, int module_id) {
+    int id_output;
+    float frequency;
+    Oscillator::getSettingsFromText(module_str, id_output, frequency);
+    // create module with read data
+    return std::make_shared<RectOscillator>(RectOscillator(module_id, id_output, frequency));
 }
