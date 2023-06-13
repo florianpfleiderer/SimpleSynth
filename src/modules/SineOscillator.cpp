@@ -34,6 +34,8 @@ void SineOscillator::draw() {
     ImNodes::EndOutputAttribute();
 
     ImNodes::EndNode();
+
+    updateFrequency(_frequency);
 }
 
 void SineOscillator::updateFrequency(float frequency) {
