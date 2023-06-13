@@ -18,11 +18,13 @@ FetchContent_MakeAvailable(Catch2)
 include(CTest)
 include(Catch)
 
-file(GLOB CPP_FILES "../src/modules/*.cpp")
+file(GLOB CPP_FILES "../src/modules/*.cpp" "../src/*cpp")
 
 set(TEST_NAMES "")
+list(APPEND TEST_NAMES "id_generator_test")
 list(APPEND TEST_NAMES "node_test")
-list(APPEND TEST_NAMES "template_test_example")
+# list(APPEND TEST_NAMES "template_test_example")
+list(APPEND TEST_NAMES "save_load_test")
 
 foreach(TEST_NAME ${TEST_NAMES})
         add_executable(${TEST_NAME}
