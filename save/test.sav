@@ -7,38 +7,37 @@ _id_output=2
 _frequency=440
 
 [module_name]
-RectOscillator
+Noise
 [module_id]
 4
 [module_settings]
 _id_output=5
-_frequency=440
 
 [module_name]
-Noise
+RectOscillator
 [module_id]
-7
+6
 [module_settings]
-_id_output=8
-_frequency=0
+_id_output=7
+_frequency=440
 
 [module_name]
 SawOscillator
 [module_id]
-10
+9
 [module_settings]
-_id_output=11
+_id_output=10
 _frequency=440
 
 [module_name]
 Sweep
 [module_id]
-13
+12
 [module_settings]
-_id_output=14
-_id_start_frequency=14
-_id_end_frequency=14
-_id_duration=14
+_id_output=13
+_id_start_frequency=13
+_id_end_frequency=13
+_id_duration=13
 sweepStartFrequency=500
 sweepEndFrequency=10000
 sweepDuration=10
@@ -46,86 +45,23 @@ sweepDuration=10
 [module_name]
 Delay
 [module_id]
-18
+17
 [module_settings]
-_id_input=19
-_id_output=20
-_id_delay_length=21
+_id_input=18
+_id_output=19
+_id_delay_length=20
 _delay_length=0
 
 [module_name]
 Echo
 [module_id]
-22
+21
 [module_settings]
-_id_input=23
-_id_output=24
-_id_echo_delay=25
+_id_input=22
+_id_output=23
+_id_echo_delay=24
 _echo_delay=0
 
-[module_name]
-Output
-[module_id]
-27
-[module_settings]
-_id_input=28
-
-[module_name]
-Output
-[module_id]
-29
-[module_settings]
-_id_input=30
-
-[module_name]
-Output
-[module_id]
-31
-[module_settings]
-_id_input=32
-
-[module_name]
-Output
-[module_id]
-33
-[module_settings]
-_id_input=34
-
-[module_name]
-Output
-[module_id]
-35
-[module_settings]
-_id_input=36
-
-[module_name]
-Output
-[module_id]
-37
-[module_settings]
-_id_input=38
-
-[module_name]
-Sweep
-[module_id]
-39
-[module_settings]
-_id_output=40
-_id_start_frequency=40
-_id_end_frequency=40
-_id_duration=40
-sweepStartFrequency=500
-sweepEndFrequency=10000
-sweepDuration=10
-
 [IdGenerator_state]
-50
+24
 [connections]
-conn_id=26 input_id=2 output_id=19
-conn_id=44 input_id=40 output_id=28
-conn_id=45 input_id=8 output_id=30
-conn_id=46 input_id=14 output_id=32
-conn_id=47 input_id=24 output_id=34
-conn_id=48 input_id=11 output_id=23
-conn_id=49 input_id=5 output_id=36
-conn_id=50 input_id=20 output_id=38

@@ -20,6 +20,8 @@
 #include "../include/modules/NoiseGenerator.h"
 #include "../include/modules/Sweep.h"
 #include "../include/modules/Sequencer.h"
+#include "../include/modules/Amplifier.h"
+#include "../include/modules/Mixer.h"
 
 ModuleEditor::ModuleEditor() : window(nullptr), activeFileName("") {
     ImNodes::CreateContext();
@@ -231,7 +233,7 @@ void ModuleEditor::show() {
 
     const bool KEY_ESCAPE = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
                             ImGui::IsKeyDown(ImGuiKey_Escape);
-    
+
     const bool KEY_CTRL_O = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
                             ImNodes::IsEditorHovered() &&
                             (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl)) &&
@@ -241,13 +243,13 @@ void ModuleEditor::show() {
                             ImNodes::IsEditorHovered() &&
                             (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl)) &&
                             ImGui::IsKeyReleased(ImGuiKey_S);
-                            
+
     const bool KEY_Ctrl_Shift_S = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
                                   ImNodes::IsEditorHovered() &&
                                   (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl)) &&
                                   (ImGui::IsKeyDown(ImGuiKey_LeftShift) || ImGui::IsKeyDown(ImGuiKey_RightShift)) &&
                                   ImGui::IsKeyReleased(ImGuiKey_S);
-    
+
     const bool KEY_Ctrl_Alt_N = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
                                 ImNodes::IsEditorHovered() &&
                                 (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl)) &&
@@ -266,7 +268,7 @@ void ModuleEditor::show() {
     if (KEY_Ctrl_Shift_S) { saveAsPopup = true; }
     if (KEY_Ctrl_Alt_N) { newWorkspacePopup = true; }
     if (KEY_Ctrl_Alt_Q) { exitPopup = true; }
-    
+
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8.f, 8.f));
     if (!ImGui::IsAnyItemHovered() && KEY_A)
@@ -326,6 +328,20 @@ void ModuleEditor::show() {
             _modules.emplace_back(module);
         }
 
+        // Create amplifier node
+        if (ImGui::MenuItem("amplifier"))
+        {
+            auto module = std::make_shared<Amplifier>();
+            _modules.emplace_back(module);
+        }
+
+        // Create mixer node
+        if (ImGui::MenuItem("mixer"))
+        {
+            auto module = std::make_shared<Mixer>();
+            _modules.emplace_back(module);
+        }
+
         if (ImGui::MenuItem("sequencer"))
         {
             auto module = std::make_shared<Sequencer>();
@@ -357,6 +373,71 @@ void ModuleEditor::show() {
     if (ImNodes::IsLinkCreated(&start_id, &end_id))
     {
         create_connection(start_id, end_id, IdGenerator::generateId());
+    }
+
+    /* delete connections */
+    /* TODO move to function */
+    const int num_selected_conns = ImNodes::NumSelectedLinks();
+    if (num_selected_conns > 0 && ImGui::IsKeyReleased(ImGuiKey_X))
+    {
+        static std::vector<int> selected_conns;
+        selected_conns.resize(static_cast<size_t>(num_selected_conns));
+        ImNodes::GetSelectedLinks(selected_conns.data());
+        for (const int conn_id : selected_conns)
+        {
+            /* remove from modules */
+            for (auto m : _modules) {
+                m->removeConnection(conn_id);
+            }
+            /* delete from _connections vector */
+            // erase-remove idom
+            _connections.erase(std::remove_if(_connections.begin(),
+                                              _connections.end(),
+                                              [conn_id](auto conn) { return conn.conn_id == conn_id; }),
+                               _connections.end());
+        }
+    }
+
+    /* delete modules */
+    const int num_selected_modules = ImNodes::NumSelectedNodes();
+    if (num_selected_modules > 0 && ImGui::IsKeyReleased(ImGuiKey_X))
+    {
+        static std::vector<int> selected_modules;
+        selected_modules.resize(static_cast<size_t>(num_selected_modules));
+        ImNodes::GetSelectedNodes(selected_modules.data());
+        for (const int module_id : selected_modules)
+        {
+            /* remove all connections */
+            /*  get all connectors */
+            auto module = std::find_if(_modules.begin(),
+                                       _modules.end(),
+                                       [module_id](auto mod) { return mod->getId() == module_id; });
+            auto connectors = (*module)->getConnectors();
+
+            /*  get all connections connected with connectors */
+            std::vector<int> connector_ids;
+            std::transform(connectors.begin(), connectors.end(), std::back_inserter(connector_ids), [](auto c){return c.id; });
+
+            for (const int c : connector_ids)
+            {
+                /*  remove all connections from all modules */
+                for (const auto& m : _modules)
+                {
+                    m->removeConnection(c);
+                }
+                /*  remove connections from list */
+                _connections.erase(std::remove_if(_connections.begin(),
+                                                  _connections.end(),
+                                                  [c](auto conn) { return conn.conn_id == c || conn.input_id == c || conn.output_id == c; }),
+                                   _connections.end());
+            }
+
+            /* remove module */
+            _modules.erase(std::remove_if(_modules.begin(),
+                                          _modules.end(),
+                                          [module_id](auto mod) { return mod->getId() == module_id; }),
+                           _modules.end());
+        }
     }
 
     // menu navigation
@@ -444,8 +525,20 @@ void ModuleEditor::show() {
             exitPopup = false;
         }
     }
+    if (ImGui::BeginPopup("exit")) {
+        ImGui::Text("Exit programm? Unsaved changes will be lost.");
+        if (ImGui::Button("yes") || KEY_ENTER) {
+            std::exit(0);
+        }
+        if (ImGui::Button("Cancel") || KEY_ESCAPE) {
+            ImGui::CloseCurrentPopup();
+            exitPopup = false;
+        }
+    }
 
-    
+
+
+
 
     ModuleEditor::end_frame(window, {0.45f, 0.55f, 0.60f, 1.00f});
 }
@@ -499,15 +592,16 @@ std::shared_ptr<Module> ModuleEditor::find_module_by_id(int id, Connector &conn)
     std::shared_ptr<Module> module;
     for (const auto &m : _modules)
     {
-        auto connections = m->getConnections();
-        auto found = std::find_if(connections.begin(), connections.end(),
+        auto connectors = m->getConnectors();
+        auto found = std::find_if(connectors.begin(), connectors.end(),
                                   [id](const Connector& m) -> bool { return m.id == id; });
-        if (found != connections.end())
+        if (found != connectors.end())
         {
             conn = *found;
             return m;
         }
     }
+
     throw std::invalid_argument("No module with id=" + std::to_string(id) + " in _modules.");
 }
 

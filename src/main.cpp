@@ -7,6 +7,7 @@
 
 int main() {
 
+    stk::Stk::setSampleRate(44100.0);
     ModuleEditor editor(WindowHost::create_window(1280, 720, "SimpleSynth"));
 
     while (!glfwWindowShouldClose(editor.getWindow())) {

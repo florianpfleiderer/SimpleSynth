@@ -19,12 +19,12 @@ Sweep::Sweep(float startFreq, float endFreq, float duration)
     _connectors.emplace_back(ConnectorType::OUTPUT, _id_output);
 }
 
-Sweep::Sweep(float startFreq, float endFreq, float duration, int module_id, int id_output, int id_start_freq, int id_end_freq, int id_duration)
-    : Module("Sweep", module_id), sweepStartFrequency(startFreq), sweepEndFrequency(endFreq),
-      sweepDuration(duration), startTime(0.0), isSweeping(false), _id_output(id_output),
-      _id_start_frequency(id_start_freq), _id_end_frequency(id_end_freq), _id_duration(id_duration) {
-        _connectors.emplace_back(ConnectorType::OUTPUT, _id_output);
-      }
+Sweep::Sweep(float startFreq, float endFreq, float duration, int module_id, int id_output, int id_start_frequency, int id_end_frequency, int id_duration )
+        : Module("Sweep", module_id), sweepStartFrequency(startFreq), sweepEndFrequency(endFreq),
+          sweepDuration(duration), startTime(0.0), isSweeping(false), _id_output(id_output),
+          _id_start_frequency(id_start_frequency), _id_end_frequency(id_end_frequency), _id_duration(id_duration){
+            _connectors.emplace_back(ConnectorType::OUTPUT, _id_output);
+          }
 
 void Sweep::startSweep()
 {
