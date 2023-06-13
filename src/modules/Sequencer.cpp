@@ -15,48 +15,42 @@ Sequencer::~Sequencer(){
 
 bool Sequencer::tick(stk::StkFrames &frames, double streamTime, int output_id){
 
+    bool valid_result = false;
     unsigned long step_duration = 1 / (_bpm/60); // step duration is one divided by beats per second
     int step_index = (int)( ( (long)(streamTime / step_duration) ) % _ids_input.size() );
     int frame_start_ind = (int)(streamTime / (1 / frames.dataRate())); // position in frame via index according to streamTime and dataRate
     int frame_len = (int)(step_duration / (1 / frames.dataRate()));
 
     stk::StkFrames input_frame = stk::StkFrames(frame_len, 1);
-
     std::shared_ptr<Module> module = nullptr;
     int module_output = -1;
+
     for(auto c : _connections){
         if(_ids_input[step_index] == c.input_id){
             module = c.module;
             module_output = c.output_id;
+            valid_result = true;
             break;
         }
     }
 
-    module->tick(input_frame, streamTime, module_output);
+    if(valid_result){
+        valid_result = module->tick(input_frame, streamTime, module_output);
 
-    for(int index = 0; index < frame_len; index++){
-        frames[frame_start_ind + index] = input_frame[index];
+        if(valid_result){
+            for(int index = 0; index < frame_len; index++){
+                frames[frame_start_ind + index] = input_frame[index];
+            }
+            return true;
+        }
     }
-
-    // 1. create empty frame
-    // 1.1 find correcet input module
-    // 2. get date from appropiate input
-    // 3. select data range
-    // 4. iterate and copy data accordingly
-
-
-
-    (void) frames;
-    (void) streamTime;
-    (void) output_id;
     return false;
 
-    // TODO: uncomment in node_test.cpp line 59 & 60
-    // stk::StkFloat sampleRate = frames.dataRate();
-    //
-    // TODO do I need to set sample rate?
-    // stk::StkFrames
-
+    // 1. create empty frame
+    // 1.1 find correct input module
+    // 2. get data from appropiate input
+    // 3. select data range
+    // 4. iterate and copy data accordingly
 }
 
 void Sequencer::draw() {
