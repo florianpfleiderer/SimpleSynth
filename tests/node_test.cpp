@@ -38,19 +38,19 @@ TEST_CASE("Delay Node Test", "DelayNode") {
 
 // test member function of echo node
 TEST_CASE("Echo Node Test", "EchoNode") {
-    EchoNode echoNode = EchoNode();
+    IdGenerator::resetId();
+    EchoNode echoNode{};
 
     SECTION("basic tests") {
         REQUIRE(echoNode.getName() == "Echo");
-        REQUIRE(echoNode.getId() == 13);
+        REQUIRE(echoNode.getId() == 1);
         REQUIRE(echoNode.getConnections().size() == 2);
     }
 }
 
-void IdGenerator::resetId();
-
 // test member function of Sine Oscillator node
 TEST_CASE("SineOscillator Node Test", "SineOscillator") {
+    IdGenerator::resetId();
     SineOscillator sineOscillator = SineOscillator();
     // std::cout << sineOscillator.getConnections().at(1).type << std::endl;
     SECTION("basic tests") {
@@ -61,10 +61,9 @@ TEST_CASE("SineOscillator Node Test", "SineOscillator") {
     }
 }
 
-void IdGenerator::resetId();
-
 // test member function of Rect Oscillator node
 TEST_CASE("RectOscillator Node Test", "RectOscillator") {
+    IdGenerator::resetId();
     RectOscillator rectOscillator = RectOscillator();
 
     SECTION("basic tests") {
@@ -75,10 +74,9 @@ TEST_CASE("RectOscillator Node Test", "RectOscillator") {
     }
 }
 
-void IdGenerator::resetId();
-
 // test member function of Sweep node
 TEST_CASE("Sweep Node Test", "Sweep") {
+    IdGenerator::resetId();
     Sweep sweep = Sweep();
 
     SECTION("basic tests") {
@@ -89,10 +87,9 @@ TEST_CASE("Sweep Node Test", "Sweep") {
     }
 }
 
-void IdGenerator::resetId();
-
 // test member function of Noise Generator node
 TEST_CASE("NoiseGenerator Node Test", "NoiseGenerator") {
+    IdGenerator::resetId();
     NoiseGenerator noiseGenerator = NoiseGenerator();
 
     SECTION("basic tests") {
@@ -103,10 +100,9 @@ TEST_CASE("NoiseGenerator Node Test", "NoiseGenerator") {
     }
 }
 
-void IdGenerator::resetId();
-
 // test member function of Output node
 TEST_CASE("Output Node Test", "Output") {
+    IdGenerator::resetId();
     Output output = Output();
 
     SECTION("basic tests") {
