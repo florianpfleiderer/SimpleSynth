@@ -503,7 +503,7 @@ std::shared_ptr<Module> ModuleEditor::unserialize_module(std::stringstream &modu
     std::map<std::string, std::shared_ptr<Module>(*)(std::stringstream&, int)> unserializer_map;
     unserializer_map["Delay"] = &DelayNode::unserialize;
     unserializer_map["Echo"] = &EchoNode::unserialize;
-    unserializer_map["Noise"] = &NoiseGenerator::unserialize;
+    //unserializer_map["Noise"] = &NoiseGenerator::unserialize;
     unserializer_map["Output"] = &Output::unserialize;
     unserializer_map["RectOscillator"] = &RectOscillator::unserialize;
     unserializer_map["SawOscillator"] = &SawOscillator::unserialize;
