@@ -19,6 +19,12 @@
 #include <memory>
 
 
+#include <memory>
+
+
+#include <memory>
+
+
 class ModuleEditor {
 public:
 
