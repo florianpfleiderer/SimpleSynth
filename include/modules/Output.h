@@ -12,7 +12,6 @@
 class Output : public Module {
     int _id_input;
     RtAudio dac;
-    stk::StkFrames _frames;
     RtAudio::StreamParameters parameters;
     RtAudioFormat format = ( sizeof(stk::StkFloat) == 8 ) ? RTAUDIO_FLOAT64 : RTAUDIO_FLOAT32;
     unsigned int bufferFrames = stk::RT_BUFFER_SIZE;
@@ -20,6 +19,8 @@ class Output : public Module {
 public:
     Output();
     Output(int id, std::vector<Connector> connectors, int id_in);
+    ~Output();
+    stk::StkFrames _frames;
     bool PLAY = false;
     void draw() override;
     void serialize_settings(std::ostream &ostream) override;
