@@ -11,12 +11,11 @@
 #ifndef SIMPLESYNTH_MODULEEDITOR_H
 #define SIMPLESYNTH_MODULEEDITOR_H
 
-#include "GLFW/glfw3.h"
 
 #include "IdGenerator.h"
 
+#include "WindowHost.h"
 #include "modules/Module.h"
-#include <memory>
 
 
 #include <memory>
@@ -31,9 +30,12 @@ public:
     ModuleEditor();
     virtual ~ModuleEditor();
     [[nodiscard]] GLFWwindow* getWindow() const;
+    // void setWindow(GLFWwindow* window);
     void show();
     void save(std::string filename);
     void load(std::string filename);
+    [[nodiscard]] std::vector<std::shared_ptr<Module>> get_modules() const;
+    [[nodiscard]] std::vector<Connection> get_connections() const;
 
 private:
     GLFWwindow* const window;
