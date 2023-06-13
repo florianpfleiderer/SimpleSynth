@@ -15,6 +15,15 @@ public:
     NoiseGenerator(int id, int id_output);
 
     /**
+     * @brief creates a NoiseGenerator object from the given module string of the save-file
+     * 
+     * @param module_str NoiseGenerator module string from the save-file
+     * @param module_id id of the NoiseGenerator object
+     * @return std::shared_ptr<Module> to unserialized NoiseGenerator object
+     */
+    static std::shared_ptr<Module> unserialize(std::stringstream& module_str, int module_id);
+
+    /**
      * Generate a tick of noise signal
      *
      * @param frames StkFrames object to store the generated samples

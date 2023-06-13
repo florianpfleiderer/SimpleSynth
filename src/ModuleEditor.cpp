@@ -1,19 +1,13 @@
 //
 // Created by Robert Ristic on 19.05.23.
 //
-#include <iostream>
+
 #include <algorithm>
-#include <fstream>
 #include <vector>
-#include <memory>
 #include <map>
-#include <regex>
 
-
-#include "backends/imgui_impl_glfw.h"
-#include "backends/imgui_impl_opengl3.h"
-#include "glad/glad.h"
 #include "imnodes.h"
+#include "glad/glad.h"
 
 #include "../include/ModuleEditor.h"
 
@@ -25,90 +19,97 @@
 #include "../include/modules/DelayNode.h"
 #include "../include/modules/NoiseGenerator.h"
 #include "../include/modules/Sweep.h"
+#include "../include/modules/Sequencer.h"
 
-ModuleEditor::ModuleEditor() : window(ModuleEditor::create_window(1280, 720, "Simple Synth")), _idGenerator() , openSavePopup(false), openOpenPopup(false){
+ModuleEditor::ModuleEditor() : window(WindowHost::create_window(1280, 720, "Simple Synth")), _idGenerator(), activeFileName("") {
     ImNodes::CreateContext();
+    // init menu popup flags
+    openPopup = false;
+    saveAsPopup = false;
+    newWorkspacePopup = false;
+    exitPopup = false;
+    quickSave = false;
 }
 
-void ModuleEditor::glfw_error_callback(int error, const char *description) {
-    std::cerr << "[Glfw Error] " << error << ": " << description << "\n";
-}
+// void ModuleEditor::glfw_error_callback(int error, const char *description) {
+//     std::cerr << "[Glfw Error] " << error << ": " << description << "\n";
+// }
 
-/**
- * @brief create window
- * based on https://github.com/JulesFouchy/Simple-ImGui-Setup
- * CC0 1.0 Universal
- *
- * @param width
- * @param height
- * @param title
- * @return
- */
-GLFWwindow* ModuleEditor::create_window(int width, int height, const char* title)
-{ // Setup window
-    glfwSetErrorCallback(glfw_error_callback);
-    if (!glfwInit()) {
-        std::cerr << "Failed to initialize Glfw\n";
-        std::terminate();
-    }
+// /**
+//  * @brief create window
+//  * based on https://github.com/JulesFouchy/Simple-ImGui-Setup
+//  * CC0 1.0 Universal
+//  *
+//  * @param width
+//  * @param height
+//  * @param title
+//  * @return
+//  */
+// GLFWwindow* ModuleEditor::create_window(int width, int height, const char* title)
+// { // Setup window
+//     glfwSetErrorCallback(glfw_error_callback);
+//     if (!glfwInit()) {
+//         std::cerr << "Failed to initialize Glfw\n";
+//         std::terminate();
+//     }
 
-#if defined(__APPLE__)
-    // GL 3.2 + GLSL 150
-    const char* glsl_version = "#version 150";
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // 3.2+ only
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);           // Required on Mac
-#else
-    // GL 3.0 + GLSL 130
-    const char* glsl_version = "#version 130";
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-    //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
-    //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
-#endif
+// #if defined(__APPLE__)
+//     // GL 3.2 + GLSL 150
+//     const char* glsl_version = "#version 150";
+//     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+//     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+//     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // 3.2+ only
+//     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);           // Required on Mac
+// #else
+//     // GL 3.0 + GLSL 130
+//     const char* glsl_version = "#version 130";
+//     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+//     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+//     //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
+//     //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
+// #endif
 
-    // Create window with graphics context
-    GLFWwindow* window = glfwCreateWindow(width, height, title, nullptr, nullptr);
-    if (!window) {
-        std::cerr << "Failed to create a window\n";
-        std::terminate();
-    }
-    glfwMakeContextCurrent(window);
-    if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress))) { // NOLINT
-        std::cerr << "Failed to initialize glad\n";
-        std::terminate();
-    }
-    glfwSwapInterval(1); // Enable vsync
+//     // Create window with graphics context
+//     GLFWwindow* window = glfwCreateWindow(width, height, title, nullptr, nullptr);
+//     if (!window) {
+//         std::cerr << "Failed to create a window\n";
+//         std::terminate();
+//     }
+//     glfwMakeContextCurrent(window);
+//     if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress))) { // NOLINT
+//         std::cerr << "Failed to initialize glad\n";
+//         std::terminate();
+//     }
+//     glfwSwapInterval(1); // Enable vsync
 
-    // Setup Dear ImGui context
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO();
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
-    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-    //io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;   // Enable Docking
-    //io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // Enable Multi-Viewport / Platform Windows
-    //io.ConfigViewportsNoAutoMerge = true;
-    //io.ConfigViewportsNoTaskBarIcon = true;
+//     // Setup Dear ImGui context
+//     IMGUI_CHECKVERSION();
+//     ImGui::CreateContext();
+//     ImGuiIO& io = ImGui::GetIO();
+//     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
+//     //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+//     //io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;   // Enable Docking
+//     //io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // Enable Multi-Viewport / Platform Windows
+//     //io.ConfigViewportsNoAutoMerge = true;
+//     //io.ConfigViewportsNoTaskBarIcon = true;
 
-    // Setup Dear ImGui style
-    // ImGui::StyleColorsDark();
-    ImGui::StyleColorsClassic();
+//     // Setup Dear ImGui style
+//     // ImGui::StyleColorsDark();
+//     ImGui::StyleColorsClassic();
 
-    // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
-    ImGuiStyle& style = ImGui::GetStyle();
-    if (io.ConfigFlags /*& ImGuiConfigFlags_ViewportsEnable*/) {
-        style.WindowRounding              = 0.0f;
-        style.Colors[ImGuiCol_WindowBg].w = 1.0f;
-    }
+//     // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
+//     ImGuiStyle& style = ImGui::GetStyle();
+//     if (io.ConfigFlags /*& ImGuiConfigFlags_ViewportsEnable*/) {
+//         style.WindowRounding              = 0.0f;
+//         style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+//     }
 
-    // Setup Platform/Renderer backends
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init(glsl_version);
+//     // Setup Platform/Renderer backends
+//     ImGui_ImplGlfw_InitForOpenGL(window, true);
+//     ImGui_ImplOpenGL3_Init(glsl_version);
 
-    return window;
-}
+//     return window;
+// }
 
 /**
  * @brief begin frame
@@ -175,28 +176,31 @@ void ModuleEditor::end_frame(GLFWwindow *window, ImVec4 background_color) {
     glfwSwapBuffers(window);
 }
 
-/**
- * @brief end window
- * from https://github.com/JulesFouchy/Simple-ImGui-Setup
- * CC0 1.0 Universal
- *
- * @param window
- */
-void ModuleEditor::shutdown(GLFWwindow* window)
-{
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
+// /**
+//  * @brief end window
+//  * from https://github.com/JulesFouchy/Simple-ImGui-Setup
+//  * CC0 1.0 Universal
+//  *
+//  * @param window
+//  */
+// void ModuleEditor::shutdown(GLFWwindow* window)
+// {
+//     ImGui_ImplOpenGL3_Shutdown();
+//     ImGui_ImplGlfw_Shutdown();
+//     ImGui::DestroyContext();
 
-    glfwDestroyWindow(window);
-    glfwTerminate();
-}
+//     glfwDestroyWindow(window);
+//     glfwTerminate();
+// }
 
 void ModuleEditor::draw_menu() {
     if (ImGui::BeginMainMenuBar()) {
         if (ImGui::BeginMenu("File")) {
-            if (ImGui::MenuItem("Save..", "Strg+S")) { openSavePopup = true; }
-            if (ImGui::MenuItem("Open..", "Strg+O")) { openOpenPopup = true; }
+            if (ImGui::MenuItem("Open..", "Ctrl+O")) { openPopup = true; }
+            if (ImGui::MenuItem("Save", "Ctrl+S")) { quickSave = true; }
+            if (ImGui::MenuItem("Save As..", "Ctrl+Shift+S")) { saveAsPopup = true; }
+            if (ImGui::MenuItem("New Workspace", "Ctrl+Alt+N")) { newWorkspacePopup = true; }
+            if (ImGui::MenuItem("Exit", "Ctrl+Alt+Q")) { exitPopup = true; }
             ImGui::EndMenu();
         }
         ImGui::EndMainMenuBar();
@@ -218,18 +222,41 @@ void ModuleEditor::show() {
     const bool KEY_ESCAPE = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
                             ImGui::IsKeyDown(ImGuiKey_Escape);
 
-    const bool KEY_STRG_S = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
-                            ImNodes::IsEditorHovered() &&
-                            (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl)) &&
-                            ImGui::IsKeyReleased(ImGuiKey_S);
-
-    const bool KEY_STRG_O = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
+    const bool KEY_CTRL_O = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
                             ImNodes::IsEditorHovered() &&
                             (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl)) &&
                             ImGui::IsKeyReleased(ImGuiKey_O);
 
-    if (KEY_STRG_S) { openSavePopup = true; }
-    if (KEY_STRG_O) { openOpenPopup = true; }
+    const bool KEY_CTRL_S = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
+                            ImNodes::IsEditorHovered() &&
+                            (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl)) &&
+                            ImGui::IsKeyReleased(ImGuiKey_S);
+
+    const bool KEY_Ctrl_Shift_S = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
+                                  ImNodes::IsEditorHovered() &&
+                                  (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl)) &&
+                                  (ImGui::IsKeyDown(ImGuiKey_LeftShift) || ImGui::IsKeyDown(ImGuiKey_RightShift)) &&
+                                  ImGui::IsKeyReleased(ImGuiKey_S);
+
+    const bool KEY_Ctrl_Alt_N = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
+                                ImNodes::IsEditorHovered() &&
+                                (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl)) &&
+                                (ImGui::IsKeyDown(ImGuiKey_LeftAlt) || ImGui::IsKeyDown(ImGuiKey_RightAlt)) &&
+                                ImGui::IsKeyReleased(ImGuiKey_N);
+
+    const bool KEY_Ctrl_Alt_Q = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
+                                ImNodes::IsEditorHovered() &&
+                                (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl)) &&
+                                (ImGui::IsKeyDown(ImGuiKey_LeftAlt) || ImGui::IsKeyDown(ImGuiKey_RightAlt)) &&
+                                ImGui::IsKeyReleased(ImGuiKey_Q);
+
+    // shortcut activations
+    if (KEY_CTRL_O) { openPopup = true; }
+    if (KEY_CTRL_S) { quickSave = true;}
+    if (KEY_Ctrl_Shift_S) { saveAsPopup = true; }
+    if (KEY_Ctrl_Alt_N) { newWorkspacePopup = true; }
+    if (KEY_Ctrl_Alt_Q) { exitPopup = true; }
+
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8.f, 8.f));
     if (!ImGui::IsAnyItemHovered() && KEY_A)
@@ -289,6 +316,12 @@ void ModuleEditor::show() {
             _modules.emplace_back(module);
         }
 
+        if (ImGui::MenuItem("sequencer"))
+        {
+            auto module = std::make_shared<Sequencer>();
+            _modules.emplace_back(module);
+        }
+
         ImGui::EndPopup();
     }
 
@@ -316,33 +349,85 @@ void ModuleEditor::show() {
         create_connection(start_id, end_id, IdGenerator::generateId());
     }
 
-
-    // menu bar -> save
-    if (openSavePopup) {
-        ImGui::OpenPopup("save");
-    }
-    if (ImGui::BeginPopup("save")) {
-        static char textBuffer[256] = "";
-        size_t bufferSize = sizeof(textBuffer) - 1;
-
-        ImGui::Text("Save:");
-        ImGui::InputText("##Eingabe", textBuffer, bufferSize);
-        if (ImGui::Button("Ok") || KEY_ENTER) {
-            this->save(textBuffer);
-            openSavePopup = false;
-            ImGui::CloseCurrentPopup();
+    /* delete connections */
+    /* TODO move to function */
+    const int num_selected_conns = ImNodes::NumSelectedLinks();
+    if (num_selected_conns > 0 && ImGui::IsKeyReleased(ImGuiKey_X))
+    {
+        static std::vector<int> selected_conns;
+        selected_conns.resize(static_cast<size_t>(num_selected_conns));
+        ImNodes::GetSelectedLinks(selected_conns.data());
+        for (const int conn_id : selected_conns)
+        {
+            /* remove from modules */
+            for (auto m : _modules) {
+                m->removeConnection(conn_id);
+            }
+            /* delete from _connections vector */
+            // erase-remove idom
+            _connections.erase(std::remove_if(_connections.begin(),
+                                              _connections.end(),
+                                              [conn_id](auto conn) { return conn.conn_id == conn_id; }),
+                               _connections.end());
         }
-        if (ImGui::Button("Cancel") || KEY_ESCAPE) {
-            openSavePopup = false;
-            ImGui::CloseCurrentPopup();
-        }
-        ImGui::EndPopup();
     }
 
-    //menu bar -> open
-    if (openOpenPopup) {
+    /* delete modules */
+    const int num_selected_modules = ImNodes::NumSelectedNodes();
+    if (num_selected_modules > 0 && ImGui::IsKeyReleased(ImGuiKey_X))
+    {
+        static std::vector<int> selected_modules;
+        selected_modules.resize(static_cast<size_t>(num_selected_modules));
+        ImNodes::GetSelectedNodes(selected_modules.data());
+        for (const int module_id : selected_modules)
+        {
+            /* remove all connections */
+            /*  get all connectors */
+            auto module = std::find_if(_modules.begin(),
+                                       _modules.end(),
+                                       [module_id](auto mod) { return mod->getId() == module_id; });
+            auto connectors = (*module)->getConnectors();
+
+            /*  get all connections connected with connectors */
+            std::vector<int> connector_ids;
+            std::transform(connectors.begin(), connectors.end(), std::back_inserter(connector_ids), [](auto c){return c.id; });
+
+            for (const int c : connector_ids)
+            {
+                /*  remove all connections from all modules */
+                for (const auto& m : _modules)
+                {
+                    m->removeConnection(c);
+                }
+                /*  remove connections from list */
+                _connections.erase(std::remove_if(_connections.begin(),
+                                                  _connections.end(),
+                                                  [c](auto conn) { return conn.conn_id == c || conn.input_id == c || conn.output_id == c; }),
+                                   _connections.end());
+            }
+
+            /* remove module */
+            _modules.erase(std::remove_if(_modules.begin(),
+                                          _modules.end(),
+                                          [module_id](auto mod) { return mod->getId() == module_id; }),
+                           _modules.end());
+        }
+    }
+
+    // menu navigation
+    if (openPopup) {
         ImGui::OpenPopup("open");
     }
+    if (saveAsPopup) {
+        ImGui::OpenPopup("save_as");
+    }
+    if (newWorkspacePopup) {
+        ImGui::OpenPopup("new_ws");
+    }
+    if (exitPopup) {
+        ImGui::OpenPopup("exit");
+    }
+
     if (ImGui::BeginPopup("open")) {
         static char textBuffer[256] = "";
         size_t bufferSize = sizeof(textBuffer) - 1;
@@ -351,15 +436,71 @@ void ModuleEditor::show() {
         ImGui::InputText("##Eingabe", textBuffer, bufferSize);
         if (ImGui::Button("Ok") || KEY_ENTER) {
             this->load(textBuffer);
-            openOpenPopup = false;
+            strcpy(activeFileName, textBuffer);
             ImGui::CloseCurrentPopup();
+            openPopup = false;
         }
         if (ImGui::Button("Cancel") || KEY_ESCAPE) {
-            openOpenPopup = false;
             ImGui::CloseCurrentPopup();
+            openPopup = false;
         }
         ImGui::EndPopup();
     }
+    if (ImGui::BeginPopup("save_as")) {
+        static char textBuffer[256] = "";
+        size_t bufferSize = sizeof(textBuffer) - 1;
+
+        if(saveAsPopup) {
+            ImGui::Text("Save as..:");
+            ImGui::InputText("##Eingabe", textBuffer, bufferSize);
+        }
+        if (ImGui::Button("Ok") || KEY_ENTER) {
+                this->save(textBuffer);
+                strcpy(activeFileName, textBuffer);
+                ImGui::CloseCurrentPopup();
+                saveAsPopup = false;
+            }
+        if (ImGui::Button("Cancel") || KEY_ESCAPE) {
+            ImGui::CloseCurrentPopup();
+            saveAsPopup = false;
+        }
+        ImGui::EndPopup();
+    }
+    if (quickSave) {
+        if (strcmp(activeFileName, "") == 0) {
+            saveAsPopup = true;
+        } else {
+            this->save(activeFileName);
+        }
+        quickSave = false;
+    }
+    if (ImGui::BeginPopup("new_ws")) {
+        ImGui::Text("Create new workspace? Unsaved changes will be lost.");
+        if (ImGui::Button("yes") || KEY_ENTER) {
+            _modules.clear();
+            _connections.clear();
+            IdGenerator::loadId(0);
+            strcpy(activeFileName, "");
+            ImGui::CloseCurrentPopup();
+            newWorkspacePopup = false;
+        }
+        if (ImGui::Button("Cancel") || KEY_ESCAPE) {
+            ImGui::CloseCurrentPopup();
+            newWorkspacePopup = false;
+        }
+    }
+    if (ImGui::BeginPopup("exit")) {
+        ImGui::Text("Exit programm? Unsaved changes will be lost.");
+        if (ImGui::Button("yes") || KEY_ENTER) {
+            std::exit(0);
+        }
+        if (ImGui::Button("Cancel") || KEY_ESCAPE) {
+            ImGui::CloseCurrentPopup();
+            exitPopup = false;
+        }
+    }
+
+
 
     ModuleEditor::end_frame(window, {0.45f, 0.55f, 0.60f, 1.00f});
 }
@@ -369,11 +510,11 @@ GLFWwindow *ModuleEditor::getWindow() const {
 }
 
 ModuleEditor::~ModuleEditor() {
-    ModuleEditor::shutdown(window);
+    WindowHost::shutdown(window);
 }
 
 void ModuleEditor::create_connection(int start_id, int end_id,  int conn_id){
-    Connector start(INPUT, 0), end(INPUT, 0);
+    Connector start(ConnectorType::INPUT, 0), end(ConnectorType::INPUT, 0);
     std::shared_ptr<Module> start_module, end_module;
 
     auto input_module = getModuleByConnectorId(start_id);
@@ -383,7 +524,7 @@ void ModuleEditor::create_connection(int start_id, int end_id,  int conn_id){
     // TODO check if pointer valid
 
     /* swap if input is not actually the input */
-    if (input_connector->type != INPUT) {
+    if (input_connector->type != ConnectorType::INPUT) {
        std::swap(input_module, output_module);
        std::swap(input_connector, output_connector);
     }
@@ -402,7 +543,7 @@ void ModuleEditor::create_connection(int start_id, int end_id,  int conn_id){
     if (input_connector->type != output_connector->type)
     {
         /* add link to list */
-        Connection conn(output_module, IdGenerator::generateId(), start_id, end_id);
+        Connection conn(output_module, conn_id, start_id, end_id);
         _connections.emplace_back(conn);
         /* add link to corresponding module */
         input_module->addConnection(conn);
@@ -413,15 +554,16 @@ std::shared_ptr<Module> ModuleEditor::find_module_by_id(int id, Connector &conn)
     std::shared_ptr<Module> module;
     for (const auto &m : _modules)
     {
-        auto connections = m->getConnections();
-        auto found = std::find_if(connections.begin(), connections.end(),
+        auto connectors = m->getConnectors();
+        auto found = std::find_if(connectors.begin(), connectors.end(),
                                   [id](const Connector& m) -> bool { return m.id == id; });
-        if (found != connections.end())
+        if (found != connectors.end())
         {
             conn = *found;
             return m;
         }
     }
+
     throw std::invalid_argument("No module with id=" + std::to_string(id) + " in _modules.");
 }
 
@@ -431,10 +573,11 @@ void ModuleEditor::save(std::string filename) {
     */
 
     // save the internal imnodes state
-    ImNodes::SaveCurrentEditorStateToIniFile((filename + ".ini").c_str());
+    std::string path = getSaveFolderPath() + filename;
+    ImNodes::SaveCurrentEditorStateToIniFile((path + ".ini").c_str());
 
     // save all modules
-    std::ofstream ostream(filename + ".txt");
+    std::ofstream ostream(path + ".sav");
     for(auto &module_ptr : _modules) {
         module_ptr->serialize(ostream);
     }
@@ -464,13 +607,14 @@ void ModuleEditor::load(std::string filename) {
     _modules.clear();
     _connections.clear();
 
+    std::string path = getSaveFolderPath() + filename;
     // Load the internal imnodes state
-    ImNodes::LoadCurrentEditorStateFromIniFile((filename + ".ini").c_str());
+    ImNodes::LoadCurrentEditorStateFromIniFile((path + ".ini").c_str());
 
     // Load all modules with their settings
     std::stringstream buffer;
     std::string line;
-    std::ifstream ifstream(filename + ".txt");
+    std::ifstream ifstream(path + ".sav");
     while(std::getline(ifstream, line)){
         //save all lines to buffer until empty line
         //then unserialize this buffer and go on with next line
@@ -503,12 +647,13 @@ std::shared_ptr<Module> ModuleEditor::unserialize_module(std::stringstream &modu
     std::map<std::string, std::shared_ptr<Module>(*)(std::stringstream&, int)> unserializer_map;
     unserializer_map["Delay"] = &DelayNode::unserialize;
     unserializer_map["Echo"] = &EchoNode::unserialize;
-    //unserializer_map["Noise"] = &NoiseGenerator::unserialize;
+    unserializer_map["Noise"] = &NoiseGenerator::unserialize;
     unserializer_map["Output"] = &Output::unserialize;
     unserializer_map["RectOscillator"] = &RectOscillator::unserialize;
     unserializer_map["SawOscillator"] = &SawOscillator::unserialize;
     unserializer_map["SineOscillator"] = &SineOscillator::unserialize;
-    
+    unserializer_map["Sweep"] = &Sweep::unserialize;
+
 
     // unserialize general module data
     // variable buffers
@@ -520,7 +665,7 @@ std::shared_ptr<Module> ModuleEditor::unserialize_module(std::stringstream &modu
     std::regex pattern;
     std::smatch matches;
     while(std::getline(module_str, line)) {
-        
+
         // search for keywords
         if (line == "[module_name]") {          //get module_name
             std::getline(module_str, line);
@@ -572,10 +717,44 @@ void ModuleEditor::unserialize_connections(std::istream &istream) {
                 conn_id = std::stoi(matches[1].str());
                 input_id = std::stoi(matches[2].str());
                 output_id = std::stoi(matches[3].str());
-                create_connection(output_id, input_id, conn_id);
+                create_connection(input_id, output_id, conn_id);
             } else {
                 throw std::invalid_argument("Following line does not follow the pattern \"con_id=(\\d+) out_id=(\\d+) in_id=(\\d+)\":\n" + line );
             }
         }
     }
 }
+
+std::string ModuleEditor::getSaveFolderPath() {
+    char buffer[FILENAME_MAX];
+    std::string currentPath;
+    std::string pathSymbol("/");
+
+    #ifdef _WIN32
+        if (GetCurrentDirectoryA(sizeof(buffer), buffer) != 0) {
+            currentPath = std::string(buffer);
+        }
+        pathSymbol = "\\";
+    #else
+        if (getcwd(buffer, sizeof(buffer)) != nullptr) {
+            currentPath = std::string(buffer);
+        }
+    #endif
+
+    size_t lastSlash = currentPath.find_last_of(pathSymbol);
+    if (lastSlash != std::string::npos) {
+        return currentPath.substr(0, lastSlash) + pathSymbol + "save" + pathSymbol;
+    }
+    return "";
+}
+std::vector<std::shared_ptr<Module>> ModuleEditor::get_modules() const {
+    return this->_modules;
+}
+
+std::vector<Connection> ModuleEditor::get_connections() const {
+    return this->_connections;
+}
+
+// void ModuleEditor::setWindow(GLFWwindow *window) {
+//     this->window = window;
+// }

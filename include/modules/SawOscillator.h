@@ -21,20 +21,21 @@ public:
     SawOscillator();
 
     /**
-     * @brief Parameterized constructor
-     * Construct a SawOscillator with specified parameters
-     * @param id ID of the module
-     * @param id_output ID of the output connector
-     * @param frequency Frequency of the sawtooth waveform
+     * @brief Construct a new SawOscillator object with full controll
+     * 
+     * @param id id of the module
+     * @param id_output id of the output
+     * @param frequency frequency of the sawwave
      */
     SawOscillator(int id, int id_output, float frequency);
 
-    /**
-     * @brief Unserialize a SawOscillator module from a stringstream
-     * Create a SawOscillator module and initializes its settings from the serialized data
-     * @param module_str Stringstream containing the serialized data
-     * @param module_id ID of the module
-     * @return Shared pointer to the created SawOscillator module
+
+     /**
+     * @brief creates a SawOscillator object from the given module string of the save-file
+     * 
+     * @param module_str SawOscillator module string from the save-file
+     * @param module_id id of the SawOscillator object
+     * @return std::shared_ptr<Module> to unserialized SawOscillator object
      */
     static std::shared_ptr<Module> unserialize(std::stringstream& module_str, int module_id);
 

@@ -18,12 +18,25 @@ class Sweep : public Module {
 public:
     /**
      * @brief Constructor for the Sweep class
-     * @param name Name of the module
      * @param startFreq Start frequency of the sweep
      * @param endFreq End frequency of the sweep
      * @param duration Duration of the sweep in seconds
      */
-    Sweep(std::string name = "Sweep", double startFreq = 500, double endFreq = 10000, float duration = 10);
+    Sweep(float startFreq = 500, float endFreq = 10000, float duration = 10);
+
+    /**
+     * @brief Construct a new Sweep object with full controll
+     * 
+     * @param startFreq 
+     * @param endFreq 
+     * @param duration 
+     * @param module_id 
+     * @param id_output 
+     * @param id_start_frequency 
+     * @param id_end_frequency 
+     * @param id_duration 
+     */
+    Sweep(float startFreq, float endFreq, float duration, int module_id, int id_output, int id_start_frequency, int id_end_frequency, int id_duration );
 
     /**
      * @brief Draw the module node in the user interface
@@ -39,17 +52,15 @@ public:
      */
     bool tick(stk::StkFrames &frames, double streamTime, int output_id) override;
 
-    /**
-     * @brief Update the frequency of the sweep
-     * @param frequency New frequency value
-     */
-    void updateFrequency(float frequency);
+    void startSweep();
+    void stopSweep();
 
     /**
      * @brief Serialize the module settings to an output stream
      * @param ostream Output stream to write the settings to
      */
     void serialize_settings(std::ostream &ostream) override;
+    static std::shared_ptr<Module> unserialize(std::stringstream& module_str, int module_id);
 
 private:
     stk::SineWave sineWave;        /**< Sine wave generator used for the sweep. */

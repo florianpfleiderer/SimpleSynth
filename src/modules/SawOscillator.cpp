@@ -18,7 +18,7 @@ bool SawOscillator::tick(stk::StkFrames &frames, double streamTime, int output_i
     (void)output_id;
     (void)streamTime;
 
-    frames = saw.tick(frames);
+    saw.tick(frames);
     return true;
 }
 

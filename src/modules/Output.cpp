@@ -7,14 +7,69 @@
 
 #include "../../include/modules/Output.h"
 
-Output::Output() : Module("Output"), _id_input(IdGenerator::generateId()) {
+Output::Output() : Module("Output"), _id_input(IdGenerator::generateId()), _frames(stk::RT_BUFFER_SIZE, 1) {
     _connectors.emplace_back(ConnectorType::INPUT, _id_input);
+
+    parameters.deviceId = dac.getDefaultOutputDevice();
+    parameters.nChannels = 1;
+
+    try {
+        dac.openStream( &parameters,
+                        NULL,
+                        format,
+                        (unsigned int)stk::Stk::sampleRate(),
+                        &bufferFrames,
+                        &tick_output,
+                        this);
+    }
+    catch ( RtAudioError &error ) {
+        error.printMessage();
+    }
+
+    try {
+        dac.startStream();
+    }
+    catch ( RtAudioError &error ) {
+        error.printMessage();
+    }
 }
 
 Output::Output(int module_id, int id_input)
                 : Module("Output", module_id), _id_input(id_input) {
                     _connectors.emplace_back(ConnectorType::INPUT, _id_input);
-                }
+                    parameters.deviceId = dac.getDefaultOutputDevice();
+    parameters.nChannels = 1;
+
+    try {
+        dac.openStream( &parameters,
+                        NULL,
+                        format,
+                        (unsigned int)stk::Stk::sampleRate(),
+                        &bufferFrames,
+                        &tick_output,
+                        this);
+    }
+    catch ( RtAudioError &error ) {
+        error.printMessage();
+    }
+
+    try {
+        dac.startStream();
+    }
+    catch ( RtAudioError &error ) {
+        error.printMessage();
+    }
+}
+
+//Destructor
+Output::~Output() {
+    try {
+        dac.closeStream();
+    }
+    catch (RtAudioError &error) {
+        error.printMessage();
+    }
+}
 
 void Output::draw()
 {
@@ -31,10 +86,29 @@ void Output::draw()
 }
 
 bool Output::tick(stk::StkFrames &frames, double streamTime, int output_id) {
-    (void)frames;
-    (void)streamTime;
-    (void)output_id;
+    if (_connections.empty() == false)
+        _connections[0].module->tick(frames, streamTime, output_id);
+
     return true;
+}
+
+int tick_output( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
+                 double streamTime, RtAudioStreamStatus status, void *dataPointer )
+{
+    (void)inputBuffer;
+    (void)streamTime;
+    (void)status;
+    (void)nBufferFrames;
+    Output* module = (Output*) dataPointer;
+
+    module->tick(module->_frames, streamTime, 0); /* TODO output */
+
+    /* copy frame to output */
+    stk::StkFloat *samples = (stk::StkFloat *) outputBuffer;
+    for ( unsigned int i=0; i<nBufferFrames; i++ )
+        *samples++ = module->_frames[i];
+
+    return 0;
 }
 
 void Output::serialize_settings(std::ostream &ostream)
@@ -44,7 +118,7 @@ void Output::serialize_settings(std::ostream &ostream)
 }
 
 std::shared_ptr<Module> Output::unserialize(std::stringstream& module_str, int module_id)
-{   
+{
     // variables
     int id_input(-1);
 

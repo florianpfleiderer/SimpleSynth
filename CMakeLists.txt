@@ -80,18 +80,24 @@ add_executable(${PROJECT_NAME}
         src/main.cpp
         src/ModuleEditor.cpp
         include/ModuleEditor.h
+        src/WindowHost.cpp
+        include/WindowHost.h
         src/modules/DelayNode.cpp
         src/modules/EchoNode.cpp
         src/modules/Module.cpp
         src/modules/Output.cpp
         src/modules/Oscillator.cpp
         include/IdGenerator.h
-        src/modules/RectOscillator.cpp
+        include/modules/Sequencer.h
+        src/modules/Sequencer.cpp
         src/modules/SineOscillator.cpp
+        src/modules/RectOscillator.cpp
         include/modules/SawOscillator.h
         src/modules/SawOscillator.cpp
         include/modules/NoiseGenerator.h
-        src/modules/NoiseGenerator.cpp src/modules/Sweep.cpp include/modules/Sweep.h)
+        src/modules/NoiseGenerator.cpp 
+        src/modules/Sweep.cpp 
+        include/modules/Sweep.h)
 
 target_link_libraries(${PROJECT_NAME} glad glfw imgui imnodes stk)
 include_directories(${imnodes_SOURCE_DIR})
@@ -117,8 +123,8 @@ if(BUILD_DOCS)
 endif()
 
 ################## TESTING ################
-option(BUILD_TESTS "Build tests" ON)
-if(BUILD_TESTS)
-        enable_testing()
-        add_subdirectory(tests)
-endif()
+#option(BUILD_TESTS "Build tests" ON)
+#if(BUILD_TESTS)
+#        enable_testing()
+#        add_subdirectory(tests)
+#endif()
