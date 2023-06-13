@@ -28,6 +28,7 @@ class ModuleEditor {
 public:
 
     ModuleEditor();
+    ModuleEditor(GLFWwindow* window);
     virtual ~ModuleEditor();
     [[nodiscard]] GLFWwindow* getWindow() const;
     // void setWindow(GLFWwindow* window);
