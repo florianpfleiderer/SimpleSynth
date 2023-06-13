@@ -50,6 +50,10 @@ void Sweep::draw()
     ImGui::PopItemWidth();
     ImNodes::EndStaticAttribute();
 
+    if (sweepStartFrequency > sweepEndFrequency) {
+        sweepEndFrequency = sweepStartFrequency;
+    }
+
     ImNodes::BeginStaticAttribute(_id_end_frequency);
     ImGui::PushItemWidth(150.0f);
     ImGui::SliderFloat("End Frequency", &sweepEndFrequency, sweepStartFrequency, 16000);
