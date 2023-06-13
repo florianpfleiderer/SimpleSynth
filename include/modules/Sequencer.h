@@ -28,6 +28,8 @@ public:
 
     void draw() override;
 
+    void serialize_settings(std::ostream &ostream) override;
+
 };
 
 #endif //SIMPLESYNTH_SEQUENCER_H

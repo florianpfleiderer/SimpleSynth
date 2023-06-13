@@ -85,3 +85,7 @@ void Sequencer::draw() {
     ImNodes::EndNode();
 }
 
+void Sequencer::serialize_settings(std::ostream &ostream){
+    (void) ostream;
+}
+
