@@ -249,9 +249,6 @@ void ModuleEditor::show() {
             stk::StkFrames frames(nFrames, 1);
             auto module = std::make_shared<Output>();
             _modules.emplace_back(module);
-            if(module->PLAY){
-                module->tick(frames, 0, 0);
-            }
         }
 
         if (ImGui::MenuItem("SineOscillator"))
@@ -265,7 +262,6 @@ void ModuleEditor::show() {
             auto module = std::make_shared<RectOscillator>();
             _modules.emplace_back(module);
         }
-/*
         if (ImGui::MenuItem("NoiseGenerator"))
         {
             auto module = std::make_shared<NoiseGenerator>();
