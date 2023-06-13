@@ -46,7 +46,7 @@ public:
     void serialize_settings(std::ostream &ostream) override;
 
 private:
-    stk::Noise noise;  ///< TNoise generator object
+    stk::Noise noise;  ///< Noise generator object
     int _id_output;    ///< ID of the output connector
 };
 
