@@ -25,6 +25,7 @@
 #include "../include/modules/DelayNode.h"
 #include "../include/modules/NoiseGenerator.h"
 #include "../include/modules/Sweep.h"
+#include "../include/modules/Sequencer.h"
 
 ModuleEditor::ModuleEditor() : window(ModuleEditor::create_window(1280, 720, "Simple Synth")), _idGenerator() , openSavePopup(false), openOpenPopup(false){
     ImNodes::CreateContext();
@@ -289,6 +290,12 @@ void ModuleEditor::show() {
             _modules.emplace_back(module);
         }
 
+        if (ImGui::MenuItem("sequencer"))
+        {
+            auto module = std::make_shared<Sequencer>();
+            _modules.emplace_back(module);
+        }
+
         ImGui::EndPopup();
     }
 
@@ -509,7 +516,7 @@ std::shared_ptr<Module> ModuleEditor::unserialize_module(std::stringstream &modu
     unserializer_map["SawOscillator"] = &SawOscillator::unserialize;
     unserializer_map["SineOscillator"] = &SineOscillator::unserialize;
     unserializer_map["Sweep"] = &Sweep::unserialize;
-    
+
 
     // unserialize general module data
     // variable buffers
@@ -521,7 +528,7 @@ std::shared_ptr<Module> ModuleEditor::unserialize_module(std::stringstream &modu
     std::regex pattern;
     std::smatch matches;
     while(std::getline(module_str, line)) {
-        
+
         // search for keywords
         if (line == "[module_name]") {          //get module_name
             std::getline(module_str, line);
