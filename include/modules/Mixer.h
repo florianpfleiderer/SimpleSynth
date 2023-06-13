@@ -6,6 +6,7 @@
 #define SIMPLESYNTH_MIXER_H
 
 #include "Module.h"
+#include "Stk.h"
 
 //! Mixer class
 /*!
@@ -30,7 +31,7 @@ public:
     //! Create the GUI of the node
     void draw() override;
     //! Mix the signals pending on input 1 and input 2
-    bool mix();
+    stk::StkFrames mix(stk::StkFrames& audio_signal_1, stk::StkFrames& audio_signal_2);
 
     virtual bool tick(stk::StkFrames& frames, double streamTime, int output_id) override;
 };

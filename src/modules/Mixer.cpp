@@ -5,26 +5,38 @@
 #include "imnodes.h"
 
 #include "../../include/modules/Mixer.h"
+#include "Stk.h"
+
 
 Mixer::Mixer() : Module("Mixer"), _id_output(IdGenerator::generateId()),
-                         _id_input_1(IdGenerator::generateId()), _id_input_2(IdGenerator::generateId())   {}
+                         _id_input_1(IdGenerator::generateId()), _id_input_2(IdGenerator::generateId())   {
+    _connectors.emplace_back(ConnectorType::INPUT, _id_input_1);
+    _connectors.emplace_back(ConnectorType::INPUT, _id_input_2);
+    _connectors.emplace_back(ConnectorType::OUTPUT, _id_output);
+}
 
+stk::StkFrames Mixer::mix(stk::StkFrames& audio_signal_1, stk::StkFrames& audio_signal_2) {
 
-bool mix() {
+    stk::StkFrames mixed_signal = audio_signal_1 + audio_signal_2;
 
-    return true;
+    return mixed_signal;
 }
 
 bool Mixer::tick(stk::StkFrames &frames, double streamTime, int output_id) {
 
-    for(auto & conn : this->_connections){
-        // Annahme: Jedes Module befüllt frames mit seinen Werten
-        conn.module->tick(frames, streamTime, output_id);
+    //Create Frame variables for mixing
+    stk::StkFrames *audio_signals = new stk::StkFrames[_connectors.size()];
+
+    for(unsigned int i = 0; i < this->_connections.size(); i++) {
+        this->_connections[i].module->tick(audio_signals[i], streamTime, output_id);
     }
 
+    stk::StkFrames mixed_signal = mix(audio_signals[0], audio_signals[1]);
+    frames = mixed_signal;
 
+    delete [] audio_signals;
 
-
+    return  true;
 }
 
 void Mixer::draw()
