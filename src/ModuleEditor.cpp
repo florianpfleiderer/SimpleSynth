@@ -25,7 +25,17 @@
 #include "../include/modules/Amplifier.h"
 #include "../include/modules/Mixer.h"
 
-ModuleEditor::ModuleEditor() : window(WindowHost::create_window(1280, 720, "Simple Synth")), _idGenerator(), activeFileName("") {
+ModuleEditor::ModuleEditor() : window(nullptr), activeFileName("") {
+    // ImNodes::CreateContext();
+    // init menu popup flags
+    openPopup = false;
+    saveAsPopup = false;
+    newWorkspacePopup = false;
+    exitPopup = false;
+    quickSave = false;
+}
+
+ModuleEditor::ModuleEditor(GLFWwindow* window_) : window(window_), _idGenerator(), activeFileName("") {
     ImNodes::CreateContext();
     // init menu popup flags
     openPopup = false;

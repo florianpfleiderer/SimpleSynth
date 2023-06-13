@@ -23,7 +23,7 @@ TEST_CASE("Delay Node Test", "DelayNode") {
         REQUIRE(delayNode.getName() == "Delay");
         REQUIRE(delayNode.getId() == 1);
         REQUIRE(delayNode.getDelayLength() == 0.0f);
-        REQUIRE(delayNode.getConnections().size() == 2);
+        REQUIRE(delayNode.getConnectors().size() == 2);
     }
     SECTION("change delay length") {
         delayNode.setDelayLength(100.0f);
@@ -44,7 +44,7 @@ TEST_CASE("Echo Node Test", "EchoNode") {
     SECTION("basic tests") {
         REQUIRE(echoNode.getName() == "Echo");
         REQUIRE(echoNode.getId() == 1);
-        REQUIRE(echoNode.getConnections().size() == 2);
+        REQUIRE(echoNode.getConnectors().size() == 2);
     }
 }
 
@@ -52,12 +52,12 @@ TEST_CASE("Echo Node Test", "EchoNode") {
 TEST_CASE("SineOscillator Node Test", "SineOscillator") {
     IdGenerator::resetId();
     SineOscillator sineOscillator = SineOscillator();
-    // std::cout << sineOscillator.getConnections().at(1).type << std::endl;
+    // std::cout << sineOscillator.getConnectors().at(1).type << std::endl;
     SECTION("basic tests") {
         REQUIRE(sineOscillator.getName() == "SineOscillator");
         REQUIRE(sineOscillator.getId() == 1);
-        REQUIRE(sineOscillator.getConnections().size() == 1);
-        REQUIRE(sineOscillator.getConnections().at(0).type == ConnectorType::OUTPUT);
+        REQUIRE(sineOscillator.getConnectors().size() == 1);
+        REQUIRE(sineOscillator.getConnectors().at(0).type == ConnectorType::OUTPUT);
     }
 }
 
@@ -69,8 +69,8 @@ TEST_CASE("RectOscillator Node Test", "RectOscillator") {
     SECTION("basic tests") {
         REQUIRE(rectOscillator.getName() == "RectOscillator");
         REQUIRE(rectOscillator.getId() == 1);
-        REQUIRE(rectOscillator.getConnections().size() == 1);
-        REQUIRE(rectOscillator.getConnections().at(0).type == ConnectorType::OUTPUT);
+        REQUIRE(rectOscillator.getConnectors().size() == 1);
+        REQUIRE(rectOscillator.getConnectors().at(0).type == ConnectorType::OUTPUT);
     }
 }
 
@@ -82,8 +82,8 @@ TEST_CASE("Sweep Node Test", "Sweep") {
     SECTION("basic tests") {
         REQUIRE(sweep.getName() == "Sweep");
         REQUIRE(sweep.getId() == 1);
-        REQUIRE(sweep.getConnections().size() == 1);
-        REQUIRE(sweep.getConnections().at(0).type == ConnectorType::OUTPUT);
+        REQUIRE(sweep.getConnectors().size() == 1);
+        REQUIRE(sweep.getConnectors().at(0).type == ConnectorType::OUTPUT);
     }
 }
 
@@ -95,8 +95,8 @@ TEST_CASE("NoiseGenerator Node Test", "NoiseGenerator") {
     SECTION("basic tests") {
         REQUIRE(noiseGenerator.getName() == "Noise");
         REQUIRE(noiseGenerator.getId() == 1);
-        REQUIRE(noiseGenerator.getConnections().size() == 1);
-        REQUIRE(noiseGenerator.getConnections().at(0).type == ConnectorType::OUTPUT);
+        REQUIRE(noiseGenerator.getConnectors().size() == 1);
+        REQUIRE(noiseGenerator.getConnectors().at(0).type == ConnectorType::OUTPUT);
     }
 }
 
@@ -108,8 +108,8 @@ TEST_CASE("Output Node Test", "Output") {
     SECTION("basic tests") {
         REQUIRE(output.getName() == "Output");
         REQUIRE(output.getId() == 1);
-        REQUIRE(output.getConnections().size() == 1);
-        REQUIRE(output.getConnections().at(0).type == ConnectorType::INPUT);
+        REQUIRE(output.getConnectors().size() == 1);
+        REQUIRE(output.getConnectors().at(0).type == ConnectorType::INPUT);
     }
 }
 
@@ -121,7 +121,7 @@ TEMPLATE_TEST_CASE( "test module.h functions in modules", "[nodes][template]",
 
     SECTION( "test default initialisation") {
         REQUIRE(test_type.getId() > 0);
-        REQUIRE(test_type.getConnections().size() > 0);
+        REQUIRE(test_type.getConnectors().size() > 0);
     }
 
     SECTION("test tick") {
@@ -139,8 +139,8 @@ TEMPLATE_TEST_CASE( "test output only nodes", "[output][template]",
     TestType test_type = TestType();
 
     SECTION( "test output connector") {
-        REQUIRE(test_type.getConnections().size() == 1);
-        REQUIRE(test_type.getConnections().at(0).type == ConnectorType::OUTPUT);
+        REQUIRE(test_type.getConnectors().size() == 1);
+        REQUIRE(test_type.getConnectors().at(0).type == ConnectorType::OUTPUT);
     }
 }
 
@@ -149,8 +149,8 @@ TEMPLATE_TEST_CASE( "test input only nodes", "[input][template]", Output) {
     TestType test_type = TestType();
 
     SECTION( "test output connector") {
-        REQUIRE(test_type.getConnections().size() == 1);
-        REQUIRE(test_type.getConnections().at(0).type == ConnectorType::INPUT);
+        REQUIRE(test_type.getConnectors().size() == 1);
+        REQUIRE(test_type.getConnectors().at(0).type == ConnectorType::INPUT);
     }
 }
 
@@ -161,8 +161,8 @@ TEMPLATE_TEST_CASE( "test input output nodes", "[in-out][template]",
     std::vector<ConnectorType::ConnectorType> ctype = {ConnectorType::OUTPUT, ConnectorType::INPUT};
 
     SECTION( "test input output connector") {
-        REQUIRE(test_type.getConnections().size() >= 2);
-        //REQUIRE(std::find(ctype.begin(), ctype.end(), test_type.getConnections().at(0).type) != ctype.end());
-        //REQUIRE(std::find(ctype.begin(), ctype.end(), test_type.getConnections().at(1).type) != ctype.end());
+        REQUIRE(test_type.getConnectors().size() >= 2);
+        //REQUIRE(std::find(ctype.begin(), ctype.end(), test_type.getConnectors().at(0).type) != ctype.end());
+        //REQUIRE(std::find(ctype.begin(), ctype.end(), test_type.getConnectors().at(1).type) != ctype.end());
     }
 }

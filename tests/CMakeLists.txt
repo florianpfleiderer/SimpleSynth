@@ -18,7 +18,7 @@ FetchContent_MakeAvailable(Catch2)
 include(CTest)
 include(Catch)
 
-file(GLOB CPP_FILES "../src/modules/*.cpp" "../src/*cpp")
+file(GLOB CPP_FILES "../src/modules/*.cpp")
 
 set(TEST_NAMES "")
 list(APPEND TEST_NAMES "id_generator_test")
@@ -30,6 +30,8 @@ foreach(TEST_NAME ${TEST_NAMES})
         add_executable(${TEST_NAME}
                 ${CPP_FILES}
                 ${TEST_NAME}.cpp
+                ../src/ModuleEditor.cpp
+                ../src/WindowHost.cpp
         )
 
         target_link_libraries(${TEST_NAME}
