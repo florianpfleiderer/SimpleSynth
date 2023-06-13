@@ -37,6 +37,14 @@ void Sweep::stopSweep()
     isSweeping = false;
 }
 
+void Sweep::restartSweep()
+{
+    if (isSweeping) {
+        stopSweep();
+        startSweep();
+    }
+}
+
 void Sweep::draw()
 {
     ImNodes::BeginNode(getId());
@@ -46,7 +54,9 @@ void Sweep::draw()
 
     ImNodes::BeginStaticAttribute(_id_start_frequency);
     ImGui::PushItemWidth(150.0f);
-    ImGui::SliderFloat("Start Frequency", &sweepStartFrequency, 0, 16000.0);
+    if (ImGui::SliderFloat("Start Frequency", &sweepStartFrequency, 0, 16000.0)) {
+        restartSweep();
+    }
     ImGui::PopItemWidth();
     ImNodes::EndStaticAttribute();
 
@@ -56,13 +66,17 @@ void Sweep::draw()
 
     ImNodes::BeginStaticAttribute(_id_end_frequency);
     ImGui::PushItemWidth(150.0f);
-    ImGui::SliderFloat("End Frequency", &sweepEndFrequency, sweepStartFrequency, 16000);
+    if (ImGui::SliderFloat("End Frequency", &sweepEndFrequency, sweepStartFrequency, 16000)) {
+        restartSweep();
+    }
     ImGui::PopItemWidth();
     ImNodes::EndStaticAttribute();
 
     ImNodes::BeginStaticAttribute(_id_duration);
     ImGui::PushItemWidth(150.0f);
-    ImGui::SliderFloat("Duration", &sweepDuration, 0.0f, 20.0);
+    if (ImGui::SliderFloat("Duration", &sweepDuration, 0.0f, 20.0)) {
+        restartSweep();
+    }
     ImGui::PopItemWidth();
     ImNodes::EndStaticAttribute();
 
@@ -74,6 +88,7 @@ void Sweep::draw()
 }
 
 void Sweep::serialize_settings(std::ostream &ostream) {
+    /*
     ostream << "[module_settings]" << std::endl
             << "_id_output=" << _id_output << std::endl
             << "_id_start_frequency=" << _id_output << std::endl
@@ -82,6 +97,16 @@ void Sweep::serialize_settings(std::ostream &ostream) {
             << "sweepStartFrequency=" << sweepStartFrequency << std::endl
             << "sweepEndFrequency=" << sweepEndFrequency << std::endl
             << "sweepDuration=" << sweepDuration << std::endl;
+    */
+    ostream << "[module_settings]" << std::endl
+            << "_id_output=" << _id_output << std::endl
+            << "_id_start_frequency=" << _id_start_frequency << std::endl
+            << "_id_end_frequency=" << _id_end_frequency << std::endl
+            << "_id_duration=" << _id_duration << std::endl
+            << "sweepStartFrequency=" << sweepStartFrequency << std::endl
+            << "sweepEndFrequency=" << sweepEndFrequency << std::endl
+            << "sweepDuration=" << sweepDuration << std::endl;
+
 }
 
 std::shared_ptr<Module> Sweep::unserialize(std::stringstream &module_str, int module_id) {
@@ -99,6 +124,7 @@ std::shared_ptr<Module> Sweep::unserialize(std::stringstream &module_str, int mo
     std::regex pattern;
     std::smatch matches;
     while(std::getline(module_str, line)) {
+        /*
         pattern = "_id_output=(\\d+)";
         if (std::regex_search(line, matches, pattern)) {
             if (matches.size() == 2) {
@@ -162,6 +188,69 @@ std::shared_ptr<Module> Sweep::unserialize(std::stringstream &module_str, int mo
                 throw std::invalid_argument("Following line does not follow the pattern \"sweepDuration=([+-]?\\d+(\\.\\d+)?)\":\n" + line );
             }
         }
+        */
+        pattern = "_id_output=(\\d+)";
+        if (std::regex_search(line, matches, pattern)) {
+            if (matches.size() == 2) {
+                id_output = std::stoi(matches[1].str());
+                continue;;
+            } else {
+                throw std::invalid_argument(
+                        "Following line does not follow the pattern \"_id_output=(\\d+)\":\n" + line);
+            }
+        }
+        pattern = "_id_start_frequency=(\\d+)";
+        if (std::regex_search(line, matches, pattern)) {
+            if (matches.size() == 2) {
+                id_start_frequency = std::stoi(matches[1].str());
+                continue;
+            } else {
+                throw std::invalid_argument(
+                        "Following line does not follow the pattern \"_id_start_frequency=(\\d+)\":\n" + line);
+            }
+        }
+        pattern = "_id_end_frequency=(\\d+)";
+        if (std::regex_search(line, matches, pattern)) {
+            if (matches.size() == 2) {
+                id_end_frequency = std::stoi(matches[1].str());
+                continue;
+            } else {
+                throw std::invalid_argument(
+                        "Following line does not follow the pattern \"_id_end_frequency=(\\d+)\":\n" + line);
+            }
+        }
+        pattern = "_id_duration=(\\d+)";
+        if (std::regex_search(line, matches, pattern)) {
+            if (matches.size() == 2) {
+                id_duration = std::stoi(matches[1].str());
+                continue;
+            } else {
+                throw std::invalid_argument(
+                        "Following line does not follow the pattern \"_id_duration=(\\d+)\":\n" + line);
+            }
+        }
+        pattern = "sweepStartFrequency=([+-]?\\d+(\\.\\d+)?)";
+        if (std::regex_search(line, matches, pattern)) {
+            if (matches.size() == 3) {
+                sweep_start_frequency = std::stof(matches[1].str());
+                continue;
+            } else {
+                throw std::invalid_argument(
+                        "Following line does not follow the pattern \"sweepStartFrequency=([+-]?\\d+(\\.\\d+)?)\":\n" +
+                        line);
+            }
+        }
+        pattern = "sweepEndFrequency=([+-]?\\d+(\\.\\d+)?)";
+        if (std::regex_search(line, matches, pattern)) {
+            if (matches.size() == 3) {
+                sweep_end_frequency = std::stof(matches[1].str());
+                continue;
+            } else {
+                throw std::invalid_argument(
+                        "Following line does not follow the pattern \"sweepEndFrequency=([+-]?\\d+(\\.\\d+)?)\":\n" +
+                        line);
+            }
+        }
     }
 
     // create module with read data
@@ -196,7 +285,7 @@ bool Sweep::tick(stk::StkFrames &frames, double streamTime, int output_id)
 
     if (isSweeping)
     {
-        double currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() - startTime;;
+        double currentTime = (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() - startTime) / 1000.0;
         if (currentTime <= sweepDuration)
         {
             double t = currentTime / sweepDuration;
@@ -205,7 +294,7 @@ bool Sweep::tick(stk::StkFrames &frames, double streamTime, int output_id)
         }
         else
         {
-            isSweeping = false;
+            stopSweep();
             sineWave.setFrequency(sweepEndFrequency);
         }
     }

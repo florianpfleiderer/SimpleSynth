@@ -29,6 +29,8 @@ void RectOscillator::draw() {
     ImNodes::EndOutputAttribute();
 
     ImNodes::EndNode();
+
+    updateFrequency(_frequency);
 }
 
 void RectOscillator::updateFrequency(float frequency) {

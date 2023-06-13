@@ -31,6 +31,8 @@ void SawOscillator::draw() {
     ImNodes::EndOutputAttribute();
 
     ImNodes::EndNode();
+
+    updateFrequency(_frequency);
 }
 
 void SawOscillator::updateFrequency(float frequency) {
