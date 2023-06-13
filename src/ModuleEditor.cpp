@@ -27,8 +27,14 @@
 #include "../include/modules/Sweep.h"
 #include "../include/modules/Sequencer.h"
 
-ModuleEditor::ModuleEditor() : window(ModuleEditor::create_window(1280, 720, "Simple Synth")), _idGenerator() , openSavePopup(false), openOpenPopup(false){
+ModuleEditor::ModuleEditor() : window(ModuleEditor::create_window(1280, 720, "Simple Synth")), _idGenerator(), activeFileName("") {
     ImNodes::CreateContext();
+    // init menu popup flags
+    openPopup = false;
+    saveAsPopup = false;
+    newWorkspacePopup = false;
+    exitPopup = false;
+    quickSave = false;
 }
 
 void ModuleEditor::glfw_error_callback(int error, const char *description) {
@@ -190,14 +196,17 @@ void ModuleEditor::shutdown(GLFWwindow* window)
     ImGui::DestroyContext();
 
     glfwDestroyWindow(window);
-    glfwTerminate();
+    glfwTerminate(); 
 }
 
 void ModuleEditor::draw_menu() {
     if (ImGui::BeginMainMenuBar()) {
         if (ImGui::BeginMenu("File")) {
-            if (ImGui::MenuItem("Save..", "Strg+S")) { openSavePopup = true; }
-            if (ImGui::MenuItem("Open..", "Strg+O")) { openOpenPopup = true; }
+            if (ImGui::MenuItem("Open..", "Ctrl+O")) { openPopup = true; }
+            if (ImGui::MenuItem("Save", "Ctrl+S")) { quickSave = true; }
+            if (ImGui::MenuItem("Save As..", "Ctrl+Shift+S")) { saveAsPopup = true; }
+            if (ImGui::MenuItem("New Workspace", "Ctrl+Alt+N")) { newWorkspacePopup = true; }
+            if (ImGui::MenuItem("Exit", "Ctrl+Alt+Q")) { exitPopup = true; }
             ImGui::EndMenu();
         }
         ImGui::EndMainMenuBar();
@@ -218,19 +227,42 @@ void ModuleEditor::show() {
 
     const bool KEY_ESCAPE = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
                             ImGui::IsKeyDown(ImGuiKey_Escape);
-
-    const bool KEY_STRG_S = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
-                            ImNodes::IsEditorHovered() &&
-                            (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl)) &&
-                            ImGui::IsKeyReleased(ImGuiKey_S);
-
-    const bool KEY_STRG_O = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
+    
+    const bool KEY_CTRL_O = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
                             ImNodes::IsEditorHovered() &&
                             (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl)) &&
                             ImGui::IsKeyReleased(ImGuiKey_O);
 
-    if (KEY_STRG_S) { openSavePopup = true; }
-    if (KEY_STRG_O) { openOpenPopup = true; }
+    const bool KEY_CTRL_S = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
+                            ImNodes::IsEditorHovered() &&
+                            (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl)) &&
+                            ImGui::IsKeyReleased(ImGuiKey_S);
+                            
+    const bool KEY_Ctrl_Shift_S = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
+                                  ImNodes::IsEditorHovered() &&
+                                  (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl)) &&
+                                  (ImGui::IsKeyDown(ImGuiKey_LeftShift) || ImGui::IsKeyDown(ImGuiKey_RightShift)) &&
+                                  ImGui::IsKeyReleased(ImGuiKey_S);
+    
+    const bool KEY_Ctrl_Alt_N = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
+                                ImNodes::IsEditorHovered() &&
+                                (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl)) &&
+                                (ImGui::IsKeyDown(ImGuiKey_LeftAlt) || ImGui::IsKeyDown(ImGuiKey_RightAlt)) &&
+                                ImGui::IsKeyReleased(ImGuiKey_N);
+
+    const bool KEY_Ctrl_Alt_Q = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
+                                ImNodes::IsEditorHovered() &&
+                                (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl)) &&
+                                (ImGui::IsKeyDown(ImGuiKey_LeftAlt) || ImGui::IsKeyDown(ImGuiKey_RightAlt)) &&
+                                ImGui::IsKeyReleased(ImGuiKey_Q);
+
+    // shortcut activations
+    if (KEY_CTRL_O) { openPopup = true; }
+    if (KEY_CTRL_S) { quickSave = true;}
+    if (KEY_Ctrl_Shift_S) { saveAsPopup = true; }
+    if (KEY_Ctrl_Alt_N) { newWorkspacePopup = true; }
+    if (KEY_Ctrl_Alt_Q) { exitPopup = true; }
+    
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8.f, 8.f));
     if (!ImGui::IsAnyItemHovered() && KEY_A)
@@ -323,33 +355,20 @@ void ModuleEditor::show() {
         create_connection(start_id, end_id, IdGenerator::generateId());
     }
 
-
-    // menu bar -> save
-    if (openSavePopup) {
-        ImGui::OpenPopup("save");
-    }
-    if (ImGui::BeginPopup("save")) {
-        static char textBuffer[256] = "";
-        size_t bufferSize = sizeof(textBuffer) - 1;
-
-        ImGui::Text("Save:");
-        ImGui::InputText("##Eingabe", textBuffer, bufferSize);
-        if (ImGui::Button("Ok") || KEY_ENTER) {
-            this->save(textBuffer);
-            openSavePopup = false;
-            ImGui::CloseCurrentPopup();
-        }
-        if (ImGui::Button("Cancel") || KEY_ESCAPE) {
-            openSavePopup = false;
-            ImGui::CloseCurrentPopup();
-        }
-        ImGui::EndPopup();
-    }
-
-    //menu bar -> open
-    if (openOpenPopup) {
+    // menu navigation
+    if (openPopup) {
         ImGui::OpenPopup("open");
     }
+    if (saveAsPopup) {
+        ImGui::OpenPopup("save_as");
+    }
+    if (newWorkspacePopup) {
+        ImGui::OpenPopup("new_ws");
+    }
+    if (exitPopup) {
+        ImGui::OpenPopup("exit");
+    }
+
     if (ImGui::BeginPopup("open")) {
         static char textBuffer[256] = "";
         size_t bufferSize = sizeof(textBuffer) - 1;
@@ -358,15 +377,71 @@ void ModuleEditor::show() {
         ImGui::InputText("##Eingabe", textBuffer, bufferSize);
         if (ImGui::Button("Ok") || KEY_ENTER) {
             this->load(textBuffer);
-            openOpenPopup = false;
+            strcpy(activeFileName, textBuffer);
             ImGui::CloseCurrentPopup();
+            openPopup = false;
         }
         if (ImGui::Button("Cancel") || KEY_ESCAPE) {
-            openOpenPopup = false;
             ImGui::CloseCurrentPopup();
+            openPopup = false;
         }
         ImGui::EndPopup();
     }
+    if (ImGui::BeginPopup("save_as")) {
+        static char textBuffer[256] = "";
+        size_t bufferSize = sizeof(textBuffer) - 1;
+
+        if(saveAsPopup) {
+            ImGui::Text("Save as..:");
+            ImGui::InputText("##Eingabe", textBuffer, bufferSize);
+        }
+        if (ImGui::Button("Ok") || KEY_ENTER) {
+                this->save(textBuffer);
+                strcpy(activeFileName, textBuffer);
+                ImGui::CloseCurrentPopup();
+                saveAsPopup = false;
+            }
+        if (ImGui::Button("Cancel") || KEY_ESCAPE) {
+            ImGui::CloseCurrentPopup();
+            saveAsPopup = false;
+        }
+        ImGui::EndPopup();
+    }
+    if (quickSave) {
+        if (strcmp(activeFileName, "") == 0) {
+            saveAsPopup = true;
+        } else {
+            this->save(activeFileName);
+        }
+        quickSave = false;
+    }
+    if (ImGui::BeginPopup("new_ws")) {
+        ImGui::Text("Create new workspace? Unsaved changes will be lost.");
+        if (ImGui::Button("yes") || KEY_ENTER) {
+            _modules.clear();
+            _connections.clear();
+            IdGenerator::loadId(0);
+            strcpy(activeFileName, "");
+            ImGui::CloseCurrentPopup();
+            newWorkspacePopup = false;
+        }
+        if (ImGui::Button("Cancel") || KEY_ESCAPE) {
+            ImGui::CloseCurrentPopup();
+            newWorkspacePopup = false;
+        }
+    }
+    if (ImGui::BeginPopup("exit")) {
+        ImGui::Text("Exit programm? Unsaved changes will be lost.");
+        if (ImGui::Button("yes") || KEY_ENTER) {
+            std::exit(0);
+        }
+        if (ImGui::Button("Cancel") || KEY_ESCAPE) {
+            ImGui::CloseCurrentPopup();
+            exitPopup = false;
+        }
+    }
+
+    
 
     ModuleEditor::end_frame(window, {0.45f, 0.55f, 0.60f, 1.00f});
 }
@@ -380,7 +455,7 @@ ModuleEditor::~ModuleEditor() {
 }
 
 void ModuleEditor::create_connection(int start_id, int end_id,  int conn_id){
-    Connector start(INPUT, 0), end(INPUT, 0);
+    Connector start(ConnectorType::INPUT, 0), end(ConnectorType::INPUT, 0);
     std::shared_ptr<Module> start_module, end_module;
 
     auto input_module = getModuleByConnectorId(start_id);
@@ -390,7 +465,7 @@ void ModuleEditor::create_connection(int start_id, int end_id,  int conn_id){
     // TODO check if pointer valid
 
     /* swap if input is not actually the input */
-    if (input_connector->type != INPUT) {
+    if (input_connector->type != ConnectorType::INPUT) {
        std::swap(input_module, output_module);
        std::swap(input_connector, output_connector);
     }
@@ -409,7 +484,7 @@ void ModuleEditor::create_connection(int start_id, int end_id,  int conn_id){
     if (input_connector->type != output_connector->type)
     {
         /* add link to list */
-        Connection conn(output_module, IdGenerator::generateId(), start_id, end_id);
+        Connection conn(output_module, conn_id, start_id, end_id);
         _connections.emplace_back(conn);
         /* add link to corresponding module */
         input_module->addConnection(conn);
@@ -438,10 +513,11 @@ void ModuleEditor::save(std::string filename) {
     */
 
     // save the internal imnodes state
-    ImNodes::SaveCurrentEditorStateToIniFile((filename + ".ini").c_str());
+    std::string path = getSaveFolderPath() + filename;
+    ImNodes::SaveCurrentEditorStateToIniFile((path + ".ini").c_str());
 
     // save all modules
-    std::ofstream ostream(filename + ".txt");
+    std::ofstream ostream(path + ".sav");
     for(auto &module_ptr : _modules) {
         module_ptr->serialize(ostream);
     }
@@ -471,13 +547,14 @@ void ModuleEditor::load(std::string filename) {
     _modules.clear();
     _connections.clear();
 
+    std::string path = getSaveFolderPath() + filename;
     // Load the internal imnodes state
-    ImNodes::LoadCurrentEditorStateFromIniFile((filename + ".ini").c_str());
+    ImNodes::LoadCurrentEditorStateFromIniFile((path + ".ini").c_str());
 
     // Load all modules with their settings
     std::stringstream buffer;
     std::string line;
-    std::ifstream ifstream(filename + ".txt");
+    std::ifstream ifstream(path + ".sav");
     while(std::getline(ifstream, line)){
         //save all lines to buffer until empty line
         //then unserialize this buffer and go on with next line
@@ -580,10 +657,33 @@ void ModuleEditor::unserialize_connections(std::istream &istream) {
                 conn_id = std::stoi(matches[1].str());
                 input_id = std::stoi(matches[2].str());
                 output_id = std::stoi(matches[3].str());
-                create_connection(output_id, input_id, conn_id);
+                create_connection(input_id, output_id, conn_id);
             } else {
                 throw std::invalid_argument("Following line does not follow the pattern \"con_id=(\\d+) out_id=(\\d+) in_id=(\\d+)\":\n" + line );
             }
         }
     }
+}
+
+std::string ModuleEditor::getSaveFolderPath() {
+    char buffer[FILENAME_MAX];
+    std::string currentPath;
+    std::string pathSymbol("/");
+
+    #ifdef _WIN32
+        if (GetCurrentDirectoryA(sizeof(buffer), buffer) != 0) {
+            currentPath = std::string(buffer);
+        }
+        pathSymbol = "\\";
+    #else
+        if (getcwd(buffer, sizeof(buffer)) != nullptr) {
+            currentPath = std::string(buffer);
+        }
+    #endif
+
+    size_t lastSlash = currentPath.find_last_of(pathSymbol);
+    if (lastSlash != std::string::npos) {
+        return currentPath.substr(0, lastSlash) + pathSymbol + "save" + pathSymbol;
+    }
+    return "";
 }

@@ -27,3 +27,8 @@ xcuserdata
 
 # imgui
 *.ini
+
+# saves
+save/*
+!test.ini
+!test.sav

@@ -11,10 +11,12 @@
 #include "../IdGenerator.h"
 #include <memory>
 
-enum ConnectorType {
-    INPUT,
-    OUTPUT
-};
+namespace ConnectorType{
+    enum ConnectorType {
+        INPUT,
+        OUTPUT
+    };
+}
 
 class Module;
 
@@ -23,10 +25,10 @@ class Module;
  * Create input and output definitions here
  */
 struct Connector {
-    ConnectorType type;
+    ConnectorType::ConnectorType type;
     int id;
 
-    Connector(ConnectorType type, int id) : type(type), id(id) {}
+    Connector(ConnectorType::ConnectorType type, int id) : type(type), id(id) {}
 };
 
 /**
