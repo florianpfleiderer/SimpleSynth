@@ -92,7 +92,6 @@ add_executable(${PROJECT_NAME}
         src/modules/Sequencer.cpp
         src/modules/SineOscillator.cpp
         src/modules/RectOscillator.cpp
-        src/modules/SineOscillator.cpp
         include/IdGenerator.h
         include/modules/Amplifier.h
         src/modules/Amplifier.cpp

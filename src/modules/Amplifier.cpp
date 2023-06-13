@@ -70,3 +70,9 @@ void Amplifier::draw()
 
     ImNodes::EndNode();
 }
+
+//TODO: implement
+void Amplifier::serialize_settings(std::ostream &ostream)
+{
+    (void) ostream;
+}

@@ -22,7 +22,7 @@ public:
     Output();
     Output(int id, int id_input);
     ~Output();
-
+    
     /**
      * @brief creates a Output object from the given module string of the save-file
      *

@@ -60,6 +60,8 @@ public:
      */
     void setGain(unsigned int g);
 
+    void serialize_settings(std::ostream &ostream) override;
+
 };
 
 #endif

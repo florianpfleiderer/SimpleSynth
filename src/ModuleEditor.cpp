@@ -22,7 +22,7 @@
 #include "../include/modules/Sequencer.h"
 #include "../include/modules/Amplifier.h"
 
-ModuleEditor::ModuleEditor() : window(ModuleEditor::create_window(1280, 720, "Simple Synth")), _idGenerator() {
+ModuleEditor::ModuleEditor() : window(WindowHost::create_window(1280, 720, "Simple Synth")), _idGenerator(), activeFileName("") {
     ImNodes::CreateContext();
     // init menu popup flags
     openPopup = false;
@@ -514,6 +514,18 @@ void ModuleEditor::show() {
             exitPopup = false;
         }
     }
+    if (ImGui::BeginPopup("exit")) {
+        ImGui::Text("Exit programm? Unsaved changes will be lost.");
+        if (ImGui::Button("yes") || KEY_ENTER) {
+            std::exit(0);
+        }
+        if (ImGui::Button("Cancel") || KEY_ESCAPE) {
+            ImGui::CloseCurrentPopup();
+            exitPopup = false;
+        }
+    }
+
+
 
 
 

@@ -37,7 +37,29 @@ Output::Output() : Module("Output"), _id_input(IdGenerator::generateId()), _fram
 Output::Output(int module_id, int id_input)
                 : Module("Output", module_id), _id_input(id_input) {
                     _connectors.emplace_back(ConnectorType::INPUT, _id_input);
-                }
+                    parameters.deviceId = dac.getDefaultOutputDevice();
+    parameters.nChannels = 1;
+
+    try {
+        dac.openStream( &parameters,
+                        NULL,
+                        format,
+                        (unsigned int)stk::Stk::sampleRate(),
+                        &bufferFrames,
+                        &tick_output,
+                        this);
+    }
+    catch ( RtAudioError &error ) {
+        error.printMessage();
+    }
+
+    try {
+        dac.startStream();
+    }
+    catch ( RtAudioError &error ) {
+        error.printMessage();
+    }
+}
 
 //Destructor
 Output::~Output() {
