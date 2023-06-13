@@ -2,14 +2,25 @@
 // Created by Robert Ristic on 19.05.23.
 //
 
+#ifdef _WIN32
+    #include <windows.h>
+#else
+    #include <unistd.h>
+#endif
+
 #ifndef SIMPLESYNTH_MODULEEDITOR_H
 #define SIMPLESYNTH_MODULEEDITOR_H
 
-#include "GLFW/glfw3.h"
 
 #include "IdGenerator.h"
 
+#include "WindowHost.h"
 #include "modules/Module.h"
+
+
+#include <memory>
+
+
 #include <memory>
 
 
@@ -19,17 +30,26 @@ public:
     ModuleEditor();
     virtual ~ModuleEditor();
     [[nodiscard]] GLFWwindow* getWindow() const;
+    // void setWindow(GLFWwindow* window);
     void show();
     void save(std::string filename);
     void load(std::string filename);
+    [[nodiscard]] std::vector<std::shared_ptr<Module>> get_modules() const;
+    [[nodiscard]] std::vector<Connection> get_connections() const;
 
 private:
     GLFWwindow* const window;
     const IdGenerator _idGenerator;
     std::vector<std::shared_ptr<Module>> _modules;
     std::vector<Connection> _connections;
-    bool openSavePopup;
-    bool openOpenPopup;
+
+    // menu popup flags
+    bool openPopup;
+    bool saveAsPopup;
+    bool newWorkspacePopup;
+    bool exitPopup;
+    bool quickSave;
+    char activeFileName[256];
 
     void begin_frame();
 
@@ -72,6 +92,14 @@ private:
      * @return std::shared_ptr<Module> 
      */
     std::shared_ptr<Module> find_module_by_id(int id, Connector &conn);
+
+
+    /**
+     * @brief gets the save folder path
+     * 
+     * @return std::string current path
+     */
+    std::string getSaveFolderPath();
 
 
     [[nodiscard]] std::shared_ptr<Module> getModuleByConnectorId(int id) const;
