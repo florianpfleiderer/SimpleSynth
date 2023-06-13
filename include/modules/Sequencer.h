@@ -17,7 +17,7 @@ private:
     const int _id_output;
     std::vector<int> _ids_input;
     int _bpm = 60;
-    int _selected_bpm = 1;
+    [[maybe_unused]] int _selected_bpm = 1;
 
 public:
     Sequencer(unsigned int input_size = 4);
