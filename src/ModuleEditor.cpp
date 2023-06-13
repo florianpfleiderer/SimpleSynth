@@ -1,19 +1,13 @@
 //
 // Created by Robert Ristic on 19.05.23.
 //
-#include <iostream>
+
 #include <algorithm>
-#include <fstream>
 #include <vector>
-#include <memory>
 #include <map>
-#include <regex>
 
-
-#include "backends/imgui_impl_glfw.h"
-#include "backends/imgui_impl_opengl3.h"
-#include "glad/glad.h"
 #include "imnodes.h"
+#include "glad/glad.h"
 
 #include "../include/ModuleEditor.h"
 
@@ -26,89 +20,89 @@
 #include "../include/modules/NoiseGenerator.h"
 #include "../include/modules/Sweep.h"
 
-ModuleEditor::ModuleEditor() : window(ModuleEditor::create_window(1280, 720, "Simple Synth")), _idGenerator() , openSavePopup(false), openOpenPopup(false){
+ModuleEditor::ModuleEditor() : window(WindowHost::create_window(1280, 720, "Simple Synth")), _idGenerator() , openSavePopup(false), openOpenPopup(false){
     ImNodes::CreateContext();
 }
 
-void ModuleEditor::glfw_error_callback(int error, const char *description) {
-    std::cerr << "[Glfw Error] " << error << ": " << description << "\n";
-}
+// void ModuleEditor::glfw_error_callback(int error, const char *description) {
+//     std::cerr << "[Glfw Error] " << error << ": " << description << "\n";
+// }
 
-/**
- * @brief create window
- * based on https://github.com/JulesFouchy/Simple-ImGui-Setup
- * CC0 1.0 Universal
- *
- * @param width
- * @param height
- * @param title
- * @return
- */
-GLFWwindow* ModuleEditor::create_window(int width, int height, const char* title)
-{ // Setup window
-    glfwSetErrorCallback(glfw_error_callback);
-    if (!glfwInit()) {
-        std::cerr << "Failed to initialize Glfw\n";
-        std::terminate();
-    }
+// /**
+//  * @brief create window
+//  * based on https://github.com/JulesFouchy/Simple-ImGui-Setup
+//  * CC0 1.0 Universal
+//  *
+//  * @param width
+//  * @param height
+//  * @param title
+//  * @return
+//  */
+// GLFWwindow* ModuleEditor::create_window(int width, int height, const char* title)
+// { // Setup window
+//     glfwSetErrorCallback(glfw_error_callback);
+//     if (!glfwInit()) {
+//         std::cerr << "Failed to initialize Glfw\n";
+//         std::terminate();
+//     }
 
-#if defined(__APPLE__)
-    // GL 3.2 + GLSL 150
-    const char* glsl_version = "#version 150";
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // 3.2+ only
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);           // Required on Mac
-#else
-    // GL 3.0 + GLSL 130
-    const char* glsl_version = "#version 130";
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-    //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
-    //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
-#endif
+// #if defined(__APPLE__)
+//     // GL 3.2 + GLSL 150
+//     const char* glsl_version = "#version 150";
+//     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+//     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+//     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // 3.2+ only
+//     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);           // Required on Mac
+// #else
+//     // GL 3.0 + GLSL 130
+//     const char* glsl_version = "#version 130";
+//     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+//     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+//     //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
+//     //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
+// #endif
 
-    // Create window with graphics context
-    GLFWwindow* window = glfwCreateWindow(width, height, title, nullptr, nullptr);
-    if (!window) {
-        std::cerr << "Failed to create a window\n";
-        std::terminate();
-    }
-    glfwMakeContextCurrent(window);
-    if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress))) { // NOLINT
-        std::cerr << "Failed to initialize glad\n";
-        std::terminate();
-    }
-    glfwSwapInterval(1); // Enable vsync
+//     // Create window with graphics context
+//     GLFWwindow* window = glfwCreateWindow(width, height, title, nullptr, nullptr);
+//     if (!window) {
+//         std::cerr << "Failed to create a window\n";
+//         std::terminate();
+//     }
+//     glfwMakeContextCurrent(window);
+//     if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress))) { // NOLINT
+//         std::cerr << "Failed to initialize glad\n";
+//         std::terminate();
+//     }
+//     glfwSwapInterval(1); // Enable vsync
 
-    // Setup Dear ImGui context
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO();
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
-    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-    //io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;   // Enable Docking
-    //io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // Enable Multi-Viewport / Platform Windows
-    //io.ConfigViewportsNoAutoMerge = true;
-    //io.ConfigViewportsNoTaskBarIcon = true;
+//     // Setup Dear ImGui context
+//     IMGUI_CHECKVERSION();
+//     ImGui::CreateContext();
+//     ImGuiIO& io = ImGui::GetIO();
+//     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
+//     //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+//     //io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;   // Enable Docking
+//     //io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // Enable Multi-Viewport / Platform Windows
+//     //io.ConfigViewportsNoAutoMerge = true;
+//     //io.ConfigViewportsNoTaskBarIcon = true;
 
-    // Setup Dear ImGui style
-    // ImGui::StyleColorsDark();
-    ImGui::StyleColorsClassic();
+//     // Setup Dear ImGui style
+//     // ImGui::StyleColorsDark();
+//     ImGui::StyleColorsClassic();
 
-    // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
-    ImGuiStyle& style = ImGui::GetStyle();
-    if (io.ConfigFlags /*& ImGuiConfigFlags_ViewportsEnable*/) {
-        style.WindowRounding              = 0.0f;
-        style.Colors[ImGuiCol_WindowBg].w = 1.0f;
-    }
+//     // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
+//     ImGuiStyle& style = ImGui::GetStyle();
+//     if (io.ConfigFlags /*& ImGuiConfigFlags_ViewportsEnable*/) {
+//         style.WindowRounding              = 0.0f;
+//         style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+//     }
 
-    // Setup Platform/Renderer backends
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init(glsl_version);
+//     // Setup Platform/Renderer backends
+//     ImGui_ImplGlfw_InitForOpenGL(window, true);
+//     ImGui_ImplOpenGL3_Init(glsl_version);
 
-    return window;
-}
+//     return window;
+// }
 
 /**
  * @brief begin frame
@@ -175,22 +169,22 @@ void ModuleEditor::end_frame(GLFWwindow *window, ImVec4 background_color) {
     glfwSwapBuffers(window);
 }
 
-/**
- * @brief end window
- * from https://github.com/JulesFouchy/Simple-ImGui-Setup
- * CC0 1.0 Universal
- *
- * @param window
- */
-void ModuleEditor::shutdown(GLFWwindow* window)
-{
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
+// /**
+//  * @brief end window
+//  * from https://github.com/JulesFouchy/Simple-ImGui-Setup
+//  * CC0 1.0 Universal
+//  *
+//  * @param window
+//  */
+// void ModuleEditor::shutdown(GLFWwindow* window)
+// {
+//     ImGui_ImplOpenGL3_Shutdown();
+//     ImGui_ImplGlfw_Shutdown();
+//     ImGui::DestroyContext();
 
-    glfwDestroyWindow(window);
-    glfwTerminate();
-}
+//     glfwDestroyWindow(window);
+//     glfwTerminate();
+// }
 
 void ModuleEditor::draw_menu() {
     if (ImGui::BeginMainMenuBar()) {
@@ -369,7 +363,7 @@ GLFWwindow *ModuleEditor::getWindow() const {
 }
 
 ModuleEditor::~ModuleEditor() {
-    ModuleEditor::shutdown(window);
+    WindowHost::shutdown(window);
 }
 
 void ModuleEditor::create_connection(int start_id, int end_id,  int conn_id){
@@ -580,3 +574,15 @@ void ModuleEditor::unserialize_connections(std::istream &istream) {
         }
     }
 }
+
+std::vector<std::shared_ptr<Module>> ModuleEditor::get_modules() const {
+    return this->_modules;
+}
+
+std::vector<Connection> ModuleEditor::get_connections() const {
+    return this->_connections;
+}
+
+// void ModuleEditor::setWindow(GLFWwindow *window) {
+//     this->window = window;
+// }
