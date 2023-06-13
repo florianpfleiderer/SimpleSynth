@@ -506,7 +506,6 @@ void ModuleEditor::save(std::string filename) {
 
     // save the internal imnodes state
     std::string path = getSaveFolderPath() + filename;
-    std::cout << path << std::endl;
     ImNodes::SaveCurrentEditorStateToIniFile((path + ".ini").c_str());
 
     // save all modules
@@ -541,7 +540,6 @@ void ModuleEditor::load(std::string filename) {
     _connections.clear();
 
     std::string path = getSaveFolderPath() + filename;
-    std::cout << path << std::endl;
     // Load the internal imnodes state
     ImNodes::LoadCurrentEditorStateFromIniFile((path + ".ini").c_str());
 
