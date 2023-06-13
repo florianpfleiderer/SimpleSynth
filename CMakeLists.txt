@@ -92,11 +92,16 @@ add_executable(${PROJECT_NAME}
         src/modules/Sequencer.cpp
         src/modules/SineOscillator.cpp
         src/modules/RectOscillator.cpp
+        include/IdGenerator.h
+        include/modules/Amplifier.h
+        src/modules/Amplifier.cpp
+        include/modules/Mixer.h
+        src/modules/Mixer.cpp
         include/modules/SawOscillator.h
         src/modules/SawOscillator.cpp
         include/modules/NoiseGenerator.h
-        src/modules/NoiseGenerator.cpp 
-        src/modules/Sweep.cpp 
+        src/modules/NoiseGenerator.cpp
+        src/modules/Sweep.cpp
         include/modules/Sweep.h)
 
 target_link_libraries(${PROJECT_NAME} glad glfw imgui imnodes stk)

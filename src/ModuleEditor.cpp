@@ -20,6 +20,7 @@
 #include "../include/modules/NoiseGenerator.h"
 #include "../include/modules/Sweep.h"
 #include "../include/modules/Sequencer.h"
+#include "../include/modules/Amplifier.h"
 
 ModuleEditor::ModuleEditor() : window(WindowHost::create_window(1280, 720, "Simple Synth")), _idGenerator(), activeFileName("") {
     ImNodes::CreateContext();
@@ -316,6 +317,20 @@ void ModuleEditor::show() {
             _modules.emplace_back(module);
         }
 
+        // Create amplifier node
+        if (ImGui::MenuItem("ampflifier"))
+        {
+            auto module = std::make_shared<Amplifier>();
+            _modules.emplace_back(module);
+        }
+
+        // Create mixer node
+        if (ImGui::MenuItem("mixer"))
+        {
+            auto module = std::make_shared<Amplifier>();
+            _modules.emplace_back(module);
+        }
+
         if (ImGui::MenuItem("sequencer"))
         {
             auto module = std::make_shared<Sequencer>();
@@ -499,6 +514,18 @@ void ModuleEditor::show() {
             exitPopup = false;
         }
     }
+    if (ImGui::BeginPopup("exit")) {
+        ImGui::Text("Exit programm? Unsaved changes will be lost.");
+        if (ImGui::Button("yes") || KEY_ENTER) {
+            std::exit(0);
+        }
+        if (ImGui::Button("Cancel") || KEY_ESCAPE) {
+            ImGui::CloseCurrentPopup();
+            exitPopup = false;
+        }
+    }
+
+
 
 
 
