@@ -30,3 +30,5 @@ xcuserdata
 
 # saves
 save/*
+!test.ini
+!test.sav
