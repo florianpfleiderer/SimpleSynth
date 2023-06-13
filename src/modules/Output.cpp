@@ -9,32 +9,33 @@
 
 Output::Output() : Module("Output"), _id_input(IdGenerator::generateId()), _frames(stk::RT_BUFFER_SIZE, 1) {
     _connectors.emplace_back(ConnectorType::INPUT, _id_input);
-    parameters.deviceId = dac.getDefaultOutputDevice();
-    parameters.nChannels = _frames.channels();
 
-    // open Stream
+    parameters.deviceId = dac.getDefaultOutputDevice();
+    parameters.nChannels = 1;
+
     try {
-            dac.openStream(&parameters, NULL, format, (unsigned int)stk::Stk::sampleRate(), &bufferFrames, &tick_output,
+        dac.openStream( &parameters,
+                        NULL,
+                        format,
+                        (unsigned int)stk::Stk::sampleRate(),
+                        &bufferFrames,
+                        &tick_output,
                         this);
-        }
-        catch (RtAudioError &error) {
-            error.printMessage();
-    //      goto cleanup;
-        }
-        //start Stream
+    }
+    catch ( RtAudioError &error ) {
+        error.printMessage();
+    }
+
     try {
-            dac.startStream();
-        }
-        catch (RtAudioError &error) {
-            error.printMessage();
-        //  goto cleanup;
-        }
-    this->tick(_frames, 0, 0); /* TODO output_id */
+        dac.startStream();
+    }
+    catch ( RtAudioError &error ) {
+        error.printMessage();
+    }
 }
 
 Output::Output(int id, std::vector<Connector> connectors, int id_in)
                 : Module("Output", id, connectors), _id_input(id_in),  _frames(stk::RT_BUFFER_SIZE, 1) {
-    this->tick(_frames, 0, 0); /* TODO output_id */
 }
 
 //Destructor
@@ -58,39 +59,33 @@ void Output::draw()
     ImGui::Text("out");
     ImNodes::EndInputAttribute();
 
-    // Button to trigger action
-    if (ImGui::Button("Play"))
-    {
-        PLAY = true;
-    }
     ImNodes::EndNode();
 }
     
-
 bool Output::tick(stk::StkFrames &frames, double streamTime, int output_id) {
+    if (_connections.empty() == false)
+        _connections[0].module->tick(frames, streamTime, output_id);
 
-    //go thru all connections and tick them
-        for(auto &conn: this->_connections) {
-            conn.module->tick(frames, streamTime, output_id); /* TODO ouput id */
-        }
     return true;
 }
 
-
 int tick_output( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
-         double streamTime, RtAudioStreamStatus status, void *dataPointer ) {
-        Output* module = (Output*)dataPointer;
-        module->tick(module->_frames, streamTime, 0); /* TODO output_id */
-        stk::StkFloat *samples = (stk::StkFloat *) outputBuffer;
-        for ( unsigned int i=0; i<nBufferFrames; i++ ) {
-            *samples++ = module->_frames[i*module->_frames.channels()];
-        }
-        (void)inputBuffer; // We're not using inputBuffer here, but it's required by the RtAudio API.
-        (void)streamTime;  // We're not using streamTime here, but it's required by the RtAudio API.
-        //print status message
-        if ( status ) std::cout << "Stream underflow detected!" << std::endl;
+                 double streamTime, RtAudioStreamStatus status, void *dataPointer )
+{
+    (void)inputBuffer;
+    (void)streamTime;
+    (void)status;
+    (void)nBufferFrames;
+    Output* module = (Output*) dataPointer;
 
-        return 0;
+    module->tick(module->_frames, streamTime, 0); /* TODO output */
+
+    /* copy frame to output */
+    stk::StkFloat *samples = (stk::StkFloat *) outputBuffer;
+    for ( unsigned int i=0; i<nBufferFrames; i++ )
+        *samples++ = module->_frames[i];
+
+    return 0;
 }
 
 void Output::serialize_settings(std::ostream &ostream)

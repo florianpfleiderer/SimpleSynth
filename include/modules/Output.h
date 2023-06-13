@@ -9,6 +9,14 @@
 #include "Stk.h"
 #include "RtAudio.h"
 
+class freeFrames : public stk::StkFrames {
+public:
+    freeFrames( unsigned int nFrames = 0, unsigned int nChannels = 0 ) : stk::StkFrames(nFrames, nChannels) {}
+
+    stk::StkFloat* getData();
+    void setData(stk::StkFloat *data);
+};
+
 class Output : public Module {
     int _id_input;
     RtAudio dac;
@@ -26,7 +34,6 @@ public:
     void serialize_settings(std::ostream &ostream) override;
     static std::shared_ptr<Module> unserialize(std::stringstream& module_str, int module_id, std::vector<Connector> module_connectors);
     bool tick(stk::StkFrames &frames, double streamTime, int output_id) override;
-    
 };
 int tick_output( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
              double streamTime, RtAudioStreamStatus status, void *dataPointer );
