@@ -50,7 +50,7 @@ TEST_CASE("SineOscillator Node Test", "SineOscillator") {
         REQUIRE(sineOscillator.getName() == "SineOscillator");
         REQUIRE(sineOscillator.getId() == 17);
         REQUIRE(sineOscillator.getConnections().size() == 1);
-        REQUIRE(sineOscillator.getConnections().at(0).type == OUTPUT);
+        REQUIRE(sineOscillator.getConnections().at(0).type == ConnectorType::OUTPUT);
     }
 }
 
@@ -62,7 +62,7 @@ TEST_CASE("RectOscillator Node Test", "RectOscillator") {
         REQUIRE(rectOscillator.getName() == "RectOscillator");
         REQUIRE(rectOscillator.getId() == 19);
         REQUIRE(rectOscillator.getConnections().size() == 1);
-        REQUIRE(rectOscillator.getConnections().at(0).type == OUTPUT);
+        REQUIRE(rectOscillator.getConnections().at(0).type == ConnectorType::OUTPUT);
     }
 }
 
@@ -74,7 +74,7 @@ TEST_CASE("NoiseGenerator Node Test", "NoiseGenerator") {
         REQUIRE(noiseGenerator.getName() == "Noise");
         REQUIRE(noiseGenerator.getId() == 21);
         REQUIRE(noiseGenerator.getConnections().size() == 1);
-        REQUIRE(noiseGenerator.getConnections().at(0).type == OUTPUT);
+        REQUIRE(noiseGenerator.getConnections().at(0).type == ConnectorType::OUTPUT);
     }
 }
 
@@ -122,7 +122,7 @@ TEMPLATE_TEST_CASE( "test input output nodes", "[in-out][template]",
                     DelayNode, EchoNode) {
     // call default constructor for each type
     TestType test_type = TestType();
-    std::vector<ConnectorType> ctype = {ConnectorType::OUTPUT, ConnectorType::INPUT};
+    std::vector<ConnectorType::ConnectorType> ctype = {ConnectorType::OUTPUT, ConnectorType::INPUT};
 
     SECTION( "test input output connector") {
         REQUIRE(test_type.getConnections().size() >= 2);

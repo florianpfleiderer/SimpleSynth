@@ -447,7 +447,7 @@ ModuleEditor::~ModuleEditor() {
 }
 
 void ModuleEditor::create_connection(int start_id, int end_id,  int conn_id){
-    Connector start(INPUT, 0), end(INPUT, 0);
+    Connector start(ConnectorType::INPUT, 0), end(ConnectorType::INPUT, 0);
     std::shared_ptr<Module> start_module, end_module;
 
     auto input_module = getModuleByConnectorId(start_id);
@@ -457,7 +457,7 @@ void ModuleEditor::create_connection(int start_id, int end_id,  int conn_id){
     // TODO check if pointer valid
 
     /* swap if input is not actually the input */
-    if (input_connector->type != INPUT) {
+    if (input_connector->type != ConnectorType::INPUT) {
        std::swap(input_module, output_module);
        std::swap(input_connector, output_connector);
     }
