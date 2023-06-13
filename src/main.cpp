@@ -7,6 +7,9 @@
 
 int main() {
 
+    stk::Stk::setSampleRate(44100.0);
+
+
     ModuleEditor editor;
 
     while (!glfwWindowShouldClose(editor.getWindow())) {

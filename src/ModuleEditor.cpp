@@ -221,7 +221,7 @@ void ModuleEditor::show() {
 
     const bool KEY_ESCAPE = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
                             ImGui::IsKeyDown(ImGuiKey_Escape);
-    
+
     const bool KEY_CTRL_O = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
                             ImNodes::IsEditorHovered() &&
                             (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl)) &&
@@ -231,13 +231,13 @@ void ModuleEditor::show() {
                             ImNodes::IsEditorHovered() &&
                             (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl)) &&
                             ImGui::IsKeyReleased(ImGuiKey_S);
-                            
+
     const bool KEY_Ctrl_Shift_S = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
                                   ImNodes::IsEditorHovered() &&
                                   (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl)) &&
                                   (ImGui::IsKeyDown(ImGuiKey_LeftShift) || ImGui::IsKeyDown(ImGuiKey_RightShift)) &&
                                   ImGui::IsKeyReleased(ImGuiKey_S);
-    
+
     const bool KEY_Ctrl_Alt_N = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
                                 ImNodes::IsEditorHovered() &&
                                 (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl)) &&
@@ -256,7 +256,7 @@ void ModuleEditor::show() {
     if (KEY_Ctrl_Shift_S) { saveAsPopup = true; }
     if (KEY_Ctrl_Alt_N) { newWorkspacePopup = true; }
     if (KEY_Ctrl_Alt_Q) { exitPopup = true; }
-    
+
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8.f, 8.f));
     if (!ImGui::IsAnyItemHovered() && KEY_A)
@@ -435,7 +435,7 @@ void ModuleEditor::show() {
         }
     }
 
-    
+
 
     ModuleEditor::end_frame(window, {0.45f, 0.55f, 0.60f, 1.00f});
 }

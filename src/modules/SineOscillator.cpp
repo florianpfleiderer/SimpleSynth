@@ -21,7 +21,7 @@ bool SineOscillator::tick(stk::StkFrames &frames, double streamTime, int output_
     // for (unsigned int i = 0; i < nBufferFrames; i++)
     //     *buffer++ = sine.tick();
 
-    frames = sine.tick(frames);
+    sine.tick(frames);
     return true;
 }
 
