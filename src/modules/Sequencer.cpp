@@ -24,6 +24,7 @@ bool Sequencer::tick(stk::StkFrames &frames, double streamTime, int output_id){
     stk::StkFrames input_frame = stk::StkFrames(frame_len, 1);
     std::shared_ptr<Module> module = nullptr;
     int module_output = -1;
+    (void) output_id; // not used because only one output exists
 
     for(auto c : _connections){
         if(_ids_input[step_index] == c.input_id){
