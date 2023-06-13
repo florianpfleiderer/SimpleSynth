@@ -46,7 +46,7 @@ public:
     explicit EchoNode();
 
     /**
-     * @brief Construct a new Echo Node object with full controll
+     * @brief Construct a new Echo Node object with full control
      * 
      * @param id_input 
      * @param id_output 

@@ -82,10 +82,18 @@ add_executable(${PROJECT_NAME}
         include/ModuleEditor.h
         src/WindowHost.cpp
         include/WindowHost.h
+        # effects
         src/modules/DelayNode.cpp
+        include/modules/DelayNode.h
         src/modules/EchoNode.cpp
+        include/modules/EchoNode.h
+        src/modules/PitchShiftNode.cpp
+        include/modules/PitchShiftNode.h
+        src/modules/ChorusNode.cpp
+        include/modules/ChorusNode.h
         src/modules/Module.cpp
         src/modules/Output.cpp
+        # generators
         src/modules/Oscillator.cpp
         include/IdGenerator.h
         include/modules/Sequencer.h

@@ -17,6 +17,8 @@
 #include "../include/modules/SawOscillator.h"
 #include "../include/modules/EchoNode.h"
 #include "../include/modules/DelayNode.h"
+#include "../include/modules/PitchShiftNode.h"
+#include "../include/modules/ChorusNode.h"
 #include "../include/modules/NoiseGenerator.h"
 #include "../include/modules/Sweep.h"
 #include "../include/modules/Sequencer.h"
@@ -316,15 +318,27 @@ void ModuleEditor::show() {
             _modules.emplace_back(module);
         }
 
-        if (ImGui::MenuItem("delay"))
-        {
-            auto module = std::make_shared<DelayNode>();
-            _modules.emplace_back(module);
-        }
+        // if (ImGui::MenuItem("delay"))
+        // {
+        //     auto module = std::make_shared<DelayNode>();
+        //     _modules.emplace_back(module);
+        // }
 
         if (ImGui::MenuItem("echo"))
         {
             auto module = std::make_shared<EchoNode>();
+            _modules.emplace_back(module);
+        }
+
+        if (ImGui::MenuItem("pitchShift"))
+        {
+            auto module = std::make_shared<PitchShiftNode>();
+            _modules.emplace_back(module);
+        }
+
+        if (ImGui::MenuItem("chorus"))
+        {
+            auto module = std::make_shared<ChorusNode>();
             _modules.emplace_back(module);
         }
 
