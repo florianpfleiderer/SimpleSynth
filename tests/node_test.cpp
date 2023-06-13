@@ -83,7 +83,7 @@ TEST_CASE("Sweep Node Test", "Sweep") {
         REQUIRE(sweep.getName() == "Sweep");
         REQUIRE(sweep.getId() == 1);
         REQUIRE(sweep.getConnections().size() == 1);
-        REQUIRE(sweep.getConnections().at(0).type == OUTPUT);
+        REQUIRE(sweep.getConnections().at(0).type == ConnectorType::OUTPUT);
     }
 }
 
@@ -109,7 +109,7 @@ TEST_CASE("Output Node Test", "Output") {
         REQUIRE(output.getName() == "Output");
         REQUIRE(output.getId() == 1);
         REQUIRE(output.getConnections().size() == 1);
-        REQUIRE(output.getConnections().at(0).type == INPUT);
+        REQUIRE(output.getConnections().at(0).type == ConnectorType::INPUT);
     }
 }
 
