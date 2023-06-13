@@ -86,7 +86,7 @@ private:
     std::shared_ptr<Module> find_module_by_id(int id, Connector &conn);
 
 
-    /** TODO: test for windows
+    /**
      * @brief gets the save folder path
      * 
      * @return std::string current path
