@@ -91,7 +91,7 @@ add_executable(${PROJECT_NAME}
         include/modules/SawOscillator.h
         src/modules/SawOscillator.cpp
         include/modules/NoiseGenerator.h
-        src/modules/NoiseGenerator.cpp)
+        src/modules/NoiseGenerator.cpp src/modules/Sweep.cpp include/modules/Sweep.h)
 
 target_link_libraries(${PROJECT_NAME} glad glfw imgui imnodes stk)
 include_directories(${imnodes_SOURCE_DIR})

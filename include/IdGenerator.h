@@ -21,6 +21,13 @@ public:
     static int generateId() {
         return ++_id;
     }
+
+    /**
+     * @brief Reset id to 0
+     */
+    static void resetId() {
+        _id = 0;
+    }
     
     /**
      * @brief only used for loading id value from save-file
