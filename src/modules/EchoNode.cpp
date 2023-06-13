@@ -6,6 +6,10 @@
 #include "../../include/modules/EchoNode.h"
 #include <regex>
 
+/**
+ * @brief Default constructor
+ * 
+*/
 EchoNode::EchoNode() : Module("Echo"), 
                  _id_input(IdGenerator::generateId()), 
                  _id_output(IdGenerator::generateId()),
@@ -18,6 +22,16 @@ EchoNode::EchoNode() : Module("Echo"),
     _echo = stk::Echo();
 }
 
+/**
+ * @brief Construct a new Echo Node object with fixed parameters
+ * 
+ * @param module_id
+ * @param id_input
+ * @param id_output
+ * @param id_echo_delay
+ * @param echo_delay
+ * 
+*/
 EchoNode::EchoNode(int module_id, int id_input, int id_output, int id_echo_delay, float echo_delay)
                  : Module("Echo", module_id), 
                  _id_input(id_input), 
@@ -31,8 +45,6 @@ EchoNode::EchoNode(int module_id, int id_input, int id_output, int id_echo_delay
     _echo = stk::Echo();
 }
 
-
-
 void EchoNode::draw() {
 
     ImNodes::BeginNode(getId());
@@ -42,7 +54,7 @@ void EchoNode::draw() {
 
     ImNodes::BeginStaticAttribute(_id_echo_delay);
     ImGui::PushItemWidth(100.0f);
-    ImGui::SliderFloat("echo_delay", &_echo_delay, 0.0f, 100.0f);
+    ImGui::SliderFloat("echo_delay", &_echo_delay, 0.0f, 1000.0f);
     ImGui::PopItemWidth();
     setEchoDelay(_echo_delay);
     ImGui::Text("echo_delay=%03f", _echo_delay);
@@ -62,15 +74,22 @@ void EchoNode::draw() {
 }
 
 bool EchoNode::tick(stk::StkFrames &frames, double streamTime, int output_id) {
-    for(auto &conn: this->_connections) {
-        conn.module->tick(frames, streamTime, output_id);
-    }
-    frames = _echo.tick(frames);
+    if(_connections.empty() == false)
+        _connections[0].module->tick(frames, streamTime, output_id);
+
+    _echo.tick(frames);
     if(frames.empty())
         return false;
     return true;
 }
 
+/**
+ * @brief Sets the echo delay when changed with slider
+ * 
+ * @param echo_delay
+ * 
+ * @return true if successful
+*/
 bool EchoNode::setEchoDelay(float echo_delay) {
     if (echo_delay < 0.0f)
         return false;
