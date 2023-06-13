@@ -15,10 +15,10 @@ class Sweep : public Module {
 public:
     Sweep(std::string name = "Sweep", double startFreq = 500, double endFreq = 10000, float duration = 10);
 
-    void startSweep();
-    void stopSweep();
-    void draw();
-    bool tick(stk::StkFrames &frames, double streamTime, int output_id);
+    //void startSweep();
+    //void stopSweep();
+    void draw() override;
+    bool tick(stk::StkFrames &frames, double streamTime, int output_id) override;
     void updateFrequency(float frequency);
     void serialize_settings(std::ostream &ostream) override;
 

@@ -17,7 +17,7 @@ Sweep::Sweep(std::string name, double startFreq, double endFreq, float duration)
     _id_duration = IdGenerator::generateId();
     _connectors.emplace_back(ConnectorType::OUTPUT, _id_output);
 }
-
+/*
 void Sweep::startSweep()
 {
     isSweeping = true;
@@ -28,7 +28,7 @@ void Sweep::stopSweep()
 {
     isSweeping = false;
 }
-
+*/
 void Sweep::draw()
 {
     ImNodes::BeginNode(getId());
