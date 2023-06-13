@@ -9,6 +9,24 @@
 Mixer::Mixer() : Module("Mixer"), _id_output(IdGenerator::generateId()),
                          _id_input_1(IdGenerator::generateId()), _id_input_2(IdGenerator::generateId())   {}
 
+
+bool mix() {
+
+    return true;
+}
+
+bool Mixer::tick(stk::StkFrames &frames, double streamTime, int output_id) {
+
+    for(auto & conn : this->_connections){
+        // Annahme: Jedes Module befüllt frames mit seinen Werten
+        conn.module->tick(frames, streamTime, output_id);
+    }
+
+
+
+
+}
+
 void Mixer::draw()
 {
     // Create empty node

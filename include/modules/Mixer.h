@@ -27,8 +27,12 @@ public:
      */
     Mixer();
 
-    //! A member function for creating the node GUI
+    //! Create the GUI of the node
     void draw() override;
+    //! Mix the signals pending on input 1 and input 2
+    bool mix();
+
+    virtual bool tick(stk::StkFrames& frames, double streamTime, int output_id) override;
 };
 
 #endif

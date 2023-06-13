@@ -9,7 +9,12 @@
 
 
 Amplifier::Amplifier(unsigned int gain) : Module("Amplifier"), _id_output(IdGenerator::generateId()),
-                           _id_input(IdGenerator::generateId()), _gain(gain)  {}
+                           _id_input(IdGenerator::generateId()), _gain(gain)
+                           {
+    _connectors.emplace_back(ConnectorType::INPUT, _id_input);
+    _connectors.emplace_back(ConnectorType::OUTPUT, _id_output);
+
+}
 
 //! Set the gain factor
 void Amplifier::setGain(unsigned int g) {
@@ -18,11 +23,11 @@ void Amplifier::setGain(unsigned int g) {
 
 //! Amplify the StkFloat values (audio data) contained in frame
 void Amplifier::amplify(stk::StkFrames& frames, unsigned int g) {
-    // Amplify
+    // Amplify and call copy constructor
     stk::StkFrames frames_amplified = frames * g;
 
     //Deep copy the amplified data to the original frames object
-    //Fehlermöglichkeit, evtl. geht Information zu bufferSize_, dataRate_ etc. verloren
+    // TODO: Fehlermöglichkeit, evtl. geht Information zu bufferSize_, dataRate_ etc. verloren
     frames = frames_amplified;
 }
 
@@ -30,7 +35,7 @@ bool Amplifier::tick(stk::StkFrames& frames, double streamTime, int output_id) {
 
     // Fill frames with audio data and amplify the data
     for(auto & conn : this->_connections){
-        // Annahme: Jedes Module befüllt frames mit Werten
+        // Annahme: Jedes Module befüllt frames mit seinen Werten
         conn.module->tick(frames, streamTime, output_id);
     }
 
