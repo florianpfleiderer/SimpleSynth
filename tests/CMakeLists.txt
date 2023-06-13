@@ -18,7 +18,7 @@ FetchContent_MakeAvailable(Catch2)
 include(CTest)
 include(Catch)
 
-file(GLOB CPP_FILES "../src/modules/*.cpp")
+file(GLOB CPP_FILES "../src/modules/*.cpp" "../src/*cpp")
 
 set(TEST_NAMES "")
 list(APPEND TEST_NAMES "id_generator_test")
