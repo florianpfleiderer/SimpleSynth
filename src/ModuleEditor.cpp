@@ -26,7 +26,7 @@
 #include "../include/modules/Mixer.h"
 
 ModuleEditor::ModuleEditor() : window(nullptr), activeFileName("") {
-    ImNodes::CreateContext();
+    // ImNodes::CreateContext();
     // init menu popup flags
     openPopup = false;
     saveAsPopup = false;
