@@ -28,6 +28,8 @@ public:
      */
     Mixer();
 
+    Mixer(int module_id, int id_output, int id_input_1, int id_input_2);
+
     //! Create the GUI of the node
     void draw() override;
     //! Mix the signals pending on input 1 and input 2
@@ -36,6 +38,7 @@ public:
     virtual bool tick(stk::StkFrames& frames, double streamTime, int output_id) override;
 
     void serialize_settings(std::ostream &ostream) override;
+    static std::shared_ptr<Module> unserialize(std::stringstream& module_str, int module_id);
 };
 
 #endif

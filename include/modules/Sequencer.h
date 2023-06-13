@@ -22,14 +22,25 @@ private:
 public:
     Sequencer(unsigned int input_size = 4);
 
+    /**
+     * @brief Construct a new Sequencer object with full controll (for load function)
+     * 
+     * @param module_id 
+     * @param id_output 
+     * @param id_bpm 
+     * @param bpm 
+     * @param ids_input 
+     */
+    Sequencer(int module_id, int id_output, int id_bpm, int bpm, std::vector<int> ids_input);
+
     ~Sequencer() override;
 
     bool tick(stk::StkFrames &frames, double streamTime, int output_id) override;
 
     void draw() override;
-
+    
     void serialize_settings(std::ostream &ostream) override;
-
+    static std::shared_ptr<Module> unserialize(std::stringstream& module_str, int module_id);
 };
 
 #endif //SIMPLESYNTH_SEQUENCER_H

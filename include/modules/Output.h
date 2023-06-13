@@ -36,7 +36,6 @@ public:
     bool tick(stk::StkFrames &frames, double streamTime, int output_id) override;
 
     void serialize_settings(std::ostream &ostream) override;
-    static std::shared_ptr<Module> unserialize(std::stringstream& module_str, int module_id, std::vector<Connector> module_connectors);
 };
 
 int tick_output( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,

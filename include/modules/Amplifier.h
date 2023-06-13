@@ -23,11 +23,17 @@ class Amplifier : public Module {
     unsigned int _gain;
 
 public:
-    /*! Amplifier constructor
+    /** Amplifier constructor
      *
      * @param gain value for amplifying the audio signal
      */
     explicit Amplifier(unsigned int gain = 10);
+
+    /**
+     * @brief Constructor for Amplifier with full controll
+     * 
+     */
+    explicit Amplifier(int module_id, int id_input, int id_output, unsigned int gain);
 
     //! This function is called every frame to draw the module ui.
     void draw() override;
@@ -61,6 +67,7 @@ public:
     void setGain(unsigned int g);
 
     void serialize_settings(std::ostream &ostream) override;
+    static std::shared_ptr<Module> unserialize(std::stringstream& module_str, int module_id);
 
 };
 
