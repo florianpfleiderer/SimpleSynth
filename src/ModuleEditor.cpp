@@ -413,6 +413,7 @@ void ModuleEditor::show() {
         if (ImGui::Button("yes") || KEY_ENTER) {
             _modules.clear();
             _connections.clear();
+            IdGenerator::loadId(0);
             strcpy(activeFileName, "");
             ImGui::CloseCurrentPopup();
             newWorkspacePopup = false;
@@ -476,7 +477,7 @@ void ModuleEditor::create_connection(int start_id, int end_id,  int conn_id){
     if (input_connector->type != output_connector->type)
     {
         /* add link to list */
-        Connection conn(output_module, IdGenerator::generateId(), start_id, end_id);
+        Connection conn(output_module, conn_id, start_id, end_id);
         _connections.emplace_back(conn);
         /* add link to corresponding module */
         input_module->addConnection(conn);
@@ -649,7 +650,7 @@ void ModuleEditor::unserialize_connections(std::istream &istream) {
                 conn_id = std::stoi(matches[1].str());
                 input_id = std::stoi(matches[2].str());
                 output_id = std::stoi(matches[3].str());
-                create_connection(output_id, input_id, conn_id);
+                create_connection(input_id, output_id, conn_id);
             } else {
                 throw std::invalid_argument("Following line does not follow the pattern \"con_id=(\\d+) out_id=(\\d+) in_id=(\\d+)\":\n" + line );
             }
