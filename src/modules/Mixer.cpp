@@ -65,3 +65,7 @@ void Mixer::draw()
 
     ImNodes::EndNode();
 }
+
+void Mixer::serialize_settings(std::ostream &ostream) {
+    ostream << "Mixer" << std::endl;
+}

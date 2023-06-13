@@ -21,6 +21,7 @@
 #include "../include/modules/Sweep.h"
 #include "../include/modules/Sequencer.h"
 #include "../include/modules/Amplifier.h"
+#include "../include/modules/Mixer.h"
 
 ModuleEditor::ModuleEditor() : window(WindowHost::create_window(1280, 720, "Simple Synth")), _idGenerator(), activeFileName("") {
     ImNodes::CreateContext();
@@ -318,7 +319,7 @@ void ModuleEditor::show() {
         }
 
         // Create amplifier node
-        if (ImGui::MenuItem("ampflifier"))
+        if (ImGui::MenuItem("amplifier"))
         {
             auto module = std::make_shared<Amplifier>();
             _modules.emplace_back(module);
@@ -327,7 +328,7 @@ void ModuleEditor::show() {
         // Create mixer node
         if (ImGui::MenuItem("mixer"))
         {
-            auto module = std::make_shared<Amplifier>();
+            auto module = std::make_shared<Mixer>();
             _modules.emplace_back(module);
         }
 
