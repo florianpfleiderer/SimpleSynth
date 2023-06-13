@@ -20,8 +20,9 @@
 #include "../include/modules/NoiseGenerator.h"
 #include "../include/modules/Sweep.h"
 #include "../include/modules/Sequencer.h"
+#include "../include/modules/Amplifier.h"
 
-ModuleEditor::ModuleEditor() : window(WindowHost::create_window(1280, 720, "Simple Synth")), _idGenerator(), activeFileName("") {
+ModuleEditor::ModuleEditor() : window(ModuleEditor::create_window(1280, 720, "Simple Synth")), _idGenerator() {
     ImNodes::CreateContext();
     // init menu popup flags
     openPopup = false;
@@ -313,6 +314,20 @@ void ModuleEditor::show() {
         if (ImGui::MenuItem("echo"))
         {
             auto module = std::make_shared<EchoNode>();
+            _modules.emplace_back(module);
+        }
+
+        // Create amplifier node
+        if (ImGui::MenuItem("ampflifier"))
+        {
+            auto module = std::make_shared<Amplifier>();
+            _modules.emplace_back(module);
+        }
+
+        // Create mixer node
+        if (ImGui::MenuItem("mixer"))
+        {
+            auto module = std::make_shared<Amplifier>();
             _modules.emplace_back(module);
         }
 
