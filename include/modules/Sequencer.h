@@ -24,12 +24,12 @@ public:
 
     /**
      * @brief Construct a new Sequencer object with full controll (for load function)
-     * 
-     * @param module_id 
-     * @param id_output 
-     * @param id_bpm 
-     * @param bpm 
-     * @param ids_input 
+     *
+     * @param module_id
+     * @param id_output
+     * @param id_bpm
+     * @param bpm
+     * @param ids_input
      */
     Sequencer(int module_id, int id_output, int id_bpm, int bpm, std::vector<int> ids_input);
 
@@ -39,12 +39,13 @@ public:
 
     void draw() override;
     bool play(bool state) override;
-    
+
     void serialize_settings(std::ostream &ostream) override;
 
+    int calc_step_index(double streamTime);
     /**
      * @brief creates a Sequencer object from the given module string of the save-file
-     * 
+     *
      * @param module_str Sequencer module string from the save-file
      * @param module_id id of the Sequencer object
      * @return std::shared_ptr<Module> to unserialized Sequencer object
