@@ -22,7 +22,7 @@ private:
 public:
     Sequencer(unsigned int input_size = 4);
 
-    ~Sequencer() override;
+//    ~Sequencer() override;
 
     bool tick(stk::StkFrames &frames, double streamTime, int output_id) override;
 
@@ -30,6 +30,7 @@ public:
 
     void serialize_settings(std::ostream &ostream) override;
 
+    int calc_step_index(double streamTime);
 };
 
 #endif //SIMPLESYNTH_SEQUENCER_H
