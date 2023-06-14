@@ -708,6 +708,8 @@ std::shared_ptr<Module> ModuleEditor::unserialize_module(std::stringstream &modu
     unserializer_map["Amplifier"] = &Amplifier::unserialize;
     unserializer_map["Mixer"] = &Mixer::unserialize;
     unserializer_map["Sequencer"] = &Sequencer::unserialize;
+    unserializer_map["Chorus"] = &ChorusNode::unserialize;
+    unserializer_map["PitchShift"] = &PitchShiftNode::unserialize;
 
 
     // unserialize general module data

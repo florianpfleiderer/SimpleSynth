@@ -102,3 +102,82 @@ void ChorusNode::serialize_settings(std::ostream &ostream) {
             << "_mod_depth=" << _mod_depth << std::endl
             << "_mod_freq=" << _mod_freq << std::endl;
 }
+
+std::shared_ptr<Module> ChorusNode::unserialize(std::stringstream& module_str, int module_id) {
+    // variables
+    int id_input(-1);
+    int id_output(-1);
+    int id_chorus(-1);
+    float mod_depth(-1);
+    float mod_freq(-1);
+
+    // read stringstream
+    std::string line;
+    std::regex pattern;
+    std::smatch matches;
+    while(std::getline(module_str, line)) {
+        pattern = "_id_input=(\\d+)";
+        if (std::regex_search(line, matches, pattern)) {
+            if (matches.size() == 2) {
+                id_input = std::stoi(matches[1].str());
+                continue;;
+            } else {
+                throw std::invalid_argument("Following line does not follow the pattern \"_id_input=(\\d+)\":\n" + line );
+            }
+        }
+        pattern = "_id_output=(\\d+)";
+        if (std::regex_search(line, matches, pattern)) {
+            if (matches.size() == 2) {
+                id_output = std::stoi(matches[1].str());
+                continue;
+            } else {
+                throw std::invalid_argument("Following line does not follow the pattern \"_id_output=(\\d+)\":\n" + line );
+            }
+        }
+        pattern = "_id_chorus=(\\d+)";
+        if (std::regex_search(line, matches, pattern)) {
+            if (matches.size() == 2) {
+                id_chorus = std::stoi(matches[1].str());
+                continue;
+            } else {
+                throw std::invalid_argument("Following line does not follow the pattern \"_id_chorus=(\\d+)\":\n" + line );
+            }
+        }
+        pattern = "_mod_depth=([+-]?\\d+(\\.\\d+)?)";
+        if (std::regex_search(line, matches, pattern)) {
+            if (matches.size() == 3) {
+                mod_depth = std::stof(matches[1].str());
+                continue;
+            } else {
+                throw std::invalid_argument("Following line does not follow the pattern \"_mod_depth=([+-]?\\d+(\\.\\d+)?)\":\n" + line );
+            }
+        }
+        pattern = "_mod_freq=([+-]?\\d+(\\.\\d+)?)";
+        if (std::regex_search(line, matches, pattern)) {
+            if (matches.size() == 3) {
+                mod_freq = std::stof(matches[1].str());
+                continue;
+            } else {
+                throw std::invalid_argument("Following line does not follow the pattern \"_mod_freq=([+-]?\\d+(\\.\\d+)?)\":\n" + line );
+            }
+        }
+    }
+
+    // create module with read data
+    if (id_input == -1) {
+        throw std::invalid_argument("Can not create an ChorusNode module with id_input= " + std::to_string(id_input));
+    }
+    if (id_output == -1) {
+        throw std::invalid_argument("Can not create an ChorusNode module with id_output= " + std::to_string(id_output));
+    }
+    if (id_chorus == -1) {
+        throw std::invalid_argument("Can not create an ChorusNode module with id_chorus= " + std::to_string(id_chorus));
+    }
+    if (mod_depth == -1) {
+        throw std::invalid_argument("Can not create an ChorusNode module with mod_depth= " + std::to_string(mod_depth));
+    }
+    if (mod_freq == -1) {
+        throw std::invalid_argument("Can not create an ChorusNode module with mod_freq= " + std::to_string(mod_freq));
+    }
+    return std::make_shared<ChorusNode>(ChorusNode(module_id, id_input, id_output, id_chorus, mod_depth, mod_freq));
+}

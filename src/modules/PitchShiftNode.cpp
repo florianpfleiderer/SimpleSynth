@@ -95,7 +95,67 @@ void PitchShiftNode::serialize_settings(std::ostream &ostream) {
 }
 
 std::shared_ptr<Module> PitchShiftNode::unserialize(std::stringstream& module_str, int module_id) {
-    (void) module_str;
-    (void) module_id;
-    return nullptr;
+    // variables
+    int id_input(-1);
+    int id_output(-1);
+    int id_pitch_shift(-1);
+    float pitch_shift(-1);
+
+    // read stringstream
+    std::string line;
+    std::regex pattern;
+    std::smatch matches;
+    while(std::getline(module_str, line)) {
+        pattern = "_id_input=(\\d+)";
+        if (std::regex_search(line, matches, pattern)) {
+            if (matches.size() == 2) {
+                id_input = std::stoi(matches[1].str());
+                continue;;
+            } else {
+                throw std::invalid_argument("Following line does not follow the pattern \"_id_input=(\\d+)\":\n" + line );
+            }
+        }
+        pattern = "_id_output=(\\d+)";
+        if (std::regex_search(line, matches, pattern)) {
+            if (matches.size() == 2) {
+                id_output = std::stoi(matches[1].str());
+                continue;
+            } else {
+                throw std::invalid_argument("Following line does not follow the pattern \"_id_output=(\\d+)\":\n" + line );
+            }
+        }
+        pattern = "_id_pitch_shift=(\\d+)";
+        if (std::regex_search(line, matches, pattern)) {
+            if (matches.size() == 2) {
+                id_pitch_shift = std::stoi(matches[1].str());
+                continue;
+            } else {
+                throw std::invalid_argument("Following line does not follow the pattern \"_id_pitch_shift=(\\d+)\":\n" + line );
+            }
+        }
+        pattern = "_pitch_shift=([+-]?\\d+(\\.\\d+)?)";
+        if (std::regex_search(line, matches, pattern)) {
+            if (matches.size() == 3) {
+                pitch_shift = std::stof(matches[1].str());
+                continue;
+            } else {
+                throw std::invalid_argument("Following line does not follow the pattern \"_pitch_shift=([+-]?\\d+(\\.\\d+)?)\":\n" + line );
+            }
+        }
+    }
+
+    // create module with read data
+    if (id_input == -1) {
+        throw std::invalid_argument("Can not create an PitchShiftNode module with id_input= " + std::to_string(id_input));
+    }
+    if (id_output == -1) {
+        throw std::invalid_argument("Can not create an PitchShiftNode module with id_output= " + std::to_string(id_output));
+    }
+    if (id_pitch_shift == -1) {
+        throw std::invalid_argument("Can not create an PitchShiftNode module with id_pitch_shift= " + std::to_string(id_pitch_shift));
+    }
+    if (pitch_shift == -1) {
+        throw std::invalid_argument("Can not create an PitchShiftNode module with mod_depth= " + std::to_string(pitch_shift));
+    }
+    return std::make_shared<PitchShiftNode>(PitchShiftNode(module_id, id_input, id_output, id_pitch_shift, pitch_shift));
 }
