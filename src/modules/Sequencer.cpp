@@ -56,6 +56,9 @@ bool Sequencer::tick(stk::StkFrames &frames, double streamTime, int output_id){
             valid_input = false;
         }
     }
+    if(result_flag == false){
+        frames *= 0;
+    }
     return result_flag;
 
 
