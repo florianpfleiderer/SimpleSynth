@@ -217,10 +217,10 @@ void ModuleEditor::draw_menu() {
             if (ImGui::MenuItem("Save As..", "Ctrl+Shift+S")) { saveAsPopup = true; }
             if (ImGui::MenuItem("New Workspace", "Ctrl+Alt+N")) { newWorkspacePopup = true; }
             if (ImGui::MenuItem("Exit", "Ctrl+Alt+Q")) { exitPopup = true; }
-            if (ImGui::MenuItem("Play", "Space")) { play = true; }
-            if (ImGui::MenuItem("Pause", "Space")) { play = false; }
             ImGui::EndMenu();
         }
+        if (ImGui::MenuItem("Play", "Space")) { play = true; }
+        if (ImGui::MenuItem("Pause", "Space")) { play = false; }
         ImGui::EndMainMenuBar();
     }
 }

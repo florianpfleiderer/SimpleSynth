@@ -151,25 +151,25 @@ std::shared_ptr<Module> Sweep::unserialize(std::stringstream &module_str, int mo
 
     // create module with read data
     if (id_output == -1) {
-        throw std::invalid_argument("Can not create an DelayNode module with id_output= " + std::to_string(id_output));
+        throw std::invalid_argument("Can not create an Sweep module with id_output= " + std::to_string(id_output));
     }
     if (id_start_frequency == -1) {
-        throw std::invalid_argument("Can not create an DelayNode module with id_start_frequency= " + std::to_string(id_start_frequency));
+        throw std::invalid_argument("Can not create an Sweep module with id_start_frequency= " + std::to_string(id_start_frequency));
     }
     if (id_end_frequency == -1) {
-        throw std::invalid_argument("Can not create an DelayNode module with id_end_frequency= " + std::to_string(id_end_frequency));
+        throw std::invalid_argument("Can not create an Sweep module with id_end_frequency= " + std::to_string(id_end_frequency));
     }
     if (id_duration == -1) {
-        throw std::invalid_argument("Can not create an DelayNode module with id_duration= " + std::to_string(id_duration));
+        throw std::invalid_argument("Can not create an Sweep module with id_duration= " + std::to_string(id_duration));
     }
     if (sweep_start_frequency == -1) {
-        throw std::invalid_argument("Can not create an DelayNode module with sweep_start_frequency= " + std::to_string(sweep_start_frequency));
+        throw std::invalid_argument("Can not create an Sweep module with sweep_start_frequency= " + std::to_string(sweep_start_frequency));
     }
     if (sweep_end_frequency == -1) {
-        throw std::invalid_argument("Can not create an DelayNode module with sweep_end_frequency= " + std::to_string(sweep_end_frequency));
+        throw std::invalid_argument("Can not create an Sweep module with sweep_end_frequency= " + std::to_string(sweep_end_frequency));
     }
     if (sweep_duration == -1) {
-        throw std::invalid_argument("Can not create an DelayNode module with sweep_duration= " + std::to_string(sweep_duration));
+        throw std::invalid_argument("Can not create an Sweep module with sweep_duration= " + std::to_string(sweep_duration));
     }
     return std::make_shared<Sweep>(sweep_start_frequency, sweep_end_frequency, sweep_duration, module_id, id_output, id_start_frequency, id_end_frequency, id_duration);
 }
@@ -183,7 +183,7 @@ void Sweep::draw()
 
     ImNodes::BeginStaticAttribute(_id_start_frequency);
     ImGui::PushItemWidth(150.0f);
-    if (ImGui::SliderFloat("Start Frequency", &sweepStartFrequency, 0, 16000.0)) {
+    if (ImGui::SliderFloat("Start Frequency", &sweepStartFrequency, 1, 16000.0)) {
         restartSweep();
     }
     ImGui::PopItemWidth();
@@ -203,7 +203,7 @@ void Sweep::draw()
 
     ImNodes::BeginStaticAttribute(_id_duration);
     ImGui::PushItemWidth(150.0f);
-    if (ImGui::SliderFloat("Duration", &sweepDuration, 0.0f, 20.0)) {
+    if (ImGui::SliderFloat("Duration", &sweepDuration, 0.1f, 20.0)) {
         restartSweep();
     }
     ImGui::PopItemWidth();

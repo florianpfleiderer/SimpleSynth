@@ -27,7 +27,7 @@ void Oscillator::draw()
     ImNodes::EndNodeTitleBar();
 
     ImNodes::BeginStaticAttribute(_id_frequency);
-    ImGui::PushItemWidth(150.0f);
+    ImGui::PushItemWidth(200.0f);
     ImGui::SliderFloat("Frequency", &_frequency, 0.1f, 16000.0f);
     ImGui::PopItemWidth();
     ImNodes::EndStaticAttribute();

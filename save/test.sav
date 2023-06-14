@@ -1,116 +1,192 @@
 [module_name]
+Sequencer
+[module_id]
+3
+[module_settings]
+_id_bpm=4
+_id_output=5
+_bpm=500
+_ids_input:
+6
+7
+8
+9
+
+[module_name]
 SineOscillator
 [module_id]
-1
+16
 [module_settings]
-_id_output=2
-_frequency=440
+_id_output=17
+_frequency=92.176
 
 [module_name]
-RectOscillator
+SineOscillator
 [module_id]
-4
+20
 [module_settings]
-_id_output=5
-_frequency=440
+_id_output=21
+_frequency=151.948
 
 [module_name]
-Noise
+SineOscillator
 [module_id]
-7
+24
 [module_settings]
-_id_output=8
+_id_output=25
+_frequency=70.113
 
 [module_name]
-SawOscillator
+SineOscillator
 [module_id]
-9
+27
 [module_settings]
-_id_output=10
-_frequency=440
-
-[module_name]
-Sweep
-[module_id]
-12
-[module_settings]
-_id_output=13
-_id_start_frequency=14
-_id_end_frequency=15
-_id_duration=16
-sweepStartFrequency=200
-sweepEndFrequency=500
-sweepDuration=10
-
-[module_name]
-Echo
-[module_id]
-17
-[module_settings]
-_id_input=18
-_id_output=19
-_id_echo_delay=20
-_echo_delay=0
-
-[module_name]
-PitchShift
-[module_id]
-21
-[module_settings]
-_id_input=22
-_id_output=23
-_id_pitch_shift=24
-_pitch_shift=0
-
-[module_name]
-Chorus
-[module_id]
-25
-[module_settings]
-_id_input=26
-_id_output=27
-_id_chorus=28
-_mod_depth=0
-_mod_freq=0
-
-[module_name]
-Amplifier
-[module_id]
-29
-[module_settings]
-_id_output=30
-_id_input=31
-_gain=10
+_id_output=28
+_frequency=124.623
 
 [module_name]
 Mixer
 [module_id]
-32
+43
 [module_settings]
-_id_output=33
-_id_input_1=34
-_id_input_2=35
+_id_output=44
+_id_input_1=45
+_id_input_2=46
+
+[module_name]
+Amplifier
+[module_id]
+50
+[module_settings]
+_id_output=51
+_id_input=52
+_gain=0.450000
 
 [module_name]
 Sequencer
 [module_id]
-36
+73
 [module_settings]
-_id_bpm=37
-_id_output=38
-_bpm=60
+_id_bpm=74
+_id_output=75
+_bpm=500
 _ids_input:
-39
-40
-41
-42
+76
+77
+78
+79
+
+[module_name]
+Amplifier
+[module_id]
+81
+[module_settings]
+_id_output=82
+_id_input=83
+_gain=0.450000
+
+[module_name]
+Noise
+[module_id]
+87
+[module_settings]
+_id_output=88
+
+[module_name]
+Noise
+[module_id]
+95
+[module_settings]
+_id_output=96
+
+[module_name]
+SawOscillator
+[module_id]
+98
+[module_settings]
+_id_output=99
+_frequency=81.796
+
+[module_name]
+RectOscillator
+[module_id]
+101
+[module_settings]
+_id_output=102
+_frequency=81.796
+
+[module_name]
+Mixer
+[module_id]
+104
+[module_settings]
+_id_output=105
+_id_input_1=106
+_id_input_2=107
+
+[module_name]
+Mixer
+[module_id]
+110
+[module_settings]
+_id_output=111
+_id_input_1=112
+_id_input_2=113
+
+[module_name]
+PitchShift
+[module_id]
+117
+[module_settings]
+_id_input=118
+_id_output=119
+_id_pitch_shift=120
+_pitch_shift=0.476
+
+[module_name]
+Sweep
+[module_id]
+123
+[module_settings]
+_id_output=124
+_id_start_frequency=125
+_id_end_frequency=126
+_id_duration=127
+sweepStartFrequency=1
+sweepEndFrequency=119.404
+sweepDuration=0.1
+
+[module_name]
+Mixer
+[module_id]
+131
+[module_settings]
+_id_output=132
+_id_input_1=133
+_id_input_2=134
+
+[module_name]
+Output
+[module_id]
+141
+[module_settings]
+_id_input=142
 
 [IdGenerator_state]
-48
+143
 [connections]
-conn_id=43 input_id=2 output_id=26
-conn_id=44 input_id=10 output_id=22
-conn_id=45 input_id=5 output_id=34
-conn_id=46 input_id=8 output_id=35
-conn_id=47 input_id=13 output_id=31
-conn_id=48 input_id=27 output_id=18
+conn_id=19 input_id=17 output_id=7
+conn_id=23 input_id=21 output_id=6
+conn_id=30 input_id=28 output_id=8
+conn_id=31 input_id=25 output_id=9
+conn_id=72 input_id=5 output_id=45
+conn_id=85 input_id=75 output_id=83
+conn_id=94 input_id=88 output_id=78
+conn_id=97 input_id=96 output_id=76
+conn_id=108 input_id=99 output_id=106
+conn_id=109 input_id=102 output_id=107
+conn_id=114 input_id=44 output_id=112
+conn_id=121 input_id=105 output_id=118
+conn_id=135 input_id=111 output_id=134
+conn_id=137 input_id=132 output_id=52
+conn_id=143 input_id=51 output_id=142
