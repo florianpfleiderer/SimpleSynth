@@ -124,7 +124,6 @@ std::shared_ptr<Module> Sweep::unserialize(std::stringstream &module_str, int mo
     std::regex pattern;
     std::smatch matches;
     while(std::getline(module_str, line)) {
-        /*
         pattern = "_id_output=(\\d+)";
         if (std::regex_search(line, matches, pattern)) {
             if (matches.size() == 2) {
@@ -186,69 +185,6 @@ std::shared_ptr<Module> Sweep::unserialize(std::stringstream &module_str, int mo
                 continue;
             } else {
                 throw std::invalid_argument("Following line does not follow the pattern \"sweepDuration=([+-]?\\d+(\\.\\d+)?)\":\n" + line );
-            }
-        }
-        */
-        pattern = "_id_output=(\\d+)";
-        if (std::regex_search(line, matches, pattern)) {
-            if (matches.size() == 2) {
-                id_output = std::stoi(matches[1].str());
-                continue;;
-            } else {
-                throw std::invalid_argument(
-                        "Following line does not follow the pattern \"_id_output=(\\d+)\":\n" + line);
-            }
-        }
-        pattern = "_id_start_frequency=(\\d+)";
-        if (std::regex_search(line, matches, pattern)) {
-            if (matches.size() == 2) {
-                id_start_frequency = std::stoi(matches[1].str());
-                continue;
-            } else {
-                throw std::invalid_argument(
-                        "Following line does not follow the pattern \"_id_start_frequency=(\\d+)\":\n" + line);
-            }
-        }
-        pattern = "_id_end_frequency=(\\d+)";
-        if (std::regex_search(line, matches, pattern)) {
-            if (matches.size() == 2) {
-                id_end_frequency = std::stoi(matches[1].str());
-                continue;
-            } else {
-                throw std::invalid_argument(
-                        "Following line does not follow the pattern \"_id_end_frequency=(\\d+)\":\n" + line);
-            }
-        }
-        pattern = "_id_duration=(\\d+)";
-        if (std::regex_search(line, matches, pattern)) {
-            if (matches.size() == 2) {
-                id_duration = std::stoi(matches[1].str());
-                continue;
-            } else {
-                throw std::invalid_argument(
-                        "Following line does not follow the pattern \"_id_duration=(\\d+)\":\n" + line);
-            }
-        }
-        pattern = "sweepStartFrequency=([+-]?\\d+(\\.\\d+)?)";
-        if (std::regex_search(line, matches, pattern)) {
-            if (matches.size() == 3) {
-                sweep_start_frequency = std::stof(matches[1].str());
-                continue;
-            } else {
-                throw std::invalid_argument(
-                        "Following line does not follow the pattern \"sweepStartFrequency=([+-]?\\d+(\\.\\d+)?)\":\n" +
-                        line);
-            }
-        }
-        pattern = "sweepEndFrequency=([+-]?\\d+(\\.\\d+)?)";
-        if (std::regex_search(line, matches, pattern)) {
-            if (matches.size() == 3) {
-                sweep_end_frequency = std::stof(matches[1].str());
-                continue;
-            } else {
-                throw std::invalid_argument(
-                        "Following line does not follow the pattern \"sweepEndFrequency=([+-]?\\d+(\\.\\d+)?)\":\n" +
-                        line);
             }
         }
     }
