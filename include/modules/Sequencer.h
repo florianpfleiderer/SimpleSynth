@@ -20,6 +20,7 @@ private:
     //[[maybe_unused]] int _selected_bpm = 1;
 
 public:
+
     Sequencer(unsigned int input_size = 4);
 
     /**
@@ -38,6 +39,7 @@ public:
     bool tick(stk::StkFrames &frames, double streamTime, int output_id) override;
 
     void draw() override;
+
     bool play(bool state) override;
 
     void serialize_settings(std::ostream &ostream) override;
