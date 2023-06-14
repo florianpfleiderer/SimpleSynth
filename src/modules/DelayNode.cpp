@@ -155,7 +155,7 @@ std::shared_ptr<Module> DelayNode::unserialize(std::stringstream& module_str, in
     if (delay_length == -1) {
         throw std::invalid_argument("Can not create an DelayNode module with delay_length= " + std::to_string(delay_length));
     }
-    return std::make_shared<DelayNode>(DelayNode(module_id, id_input, id_output, id_delay_length, delay_length));
+    return std::make_shared<DelayNode>(module_id, id_input, id_output, id_delay_length, delay_length);
 }
 
 bool DelayNode::play(bool state){

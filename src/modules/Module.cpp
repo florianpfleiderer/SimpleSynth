@@ -60,3 +60,7 @@ void Module::removeConnection(int id) {
     _connections.erase(std::remove_if(_connections.begin(), _connections.end(),
                                       [id](const auto c){ return c.conn_id == id || c.input_id == id || c.output_id == id; }), _connections.end());
 }
+
+void Module::removeAllConnections() {
+    _connections.clear();
+}

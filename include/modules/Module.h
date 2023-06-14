@@ -92,6 +92,8 @@ public:
 
     void removeConnection(int id);
 
+    void removeAllConnections();
+
     /**
      * @brief Returns the settings of the module
      * @return List of 

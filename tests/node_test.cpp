@@ -14,6 +14,7 @@
 #include "../include/modules/Sweep.h"
 #include "../include/modules/Output.h"
 #include <iostream>
+#include "../include/modules/Sequencer.h"
 
 // test member function of delay node
 TEST_CASE("Delay Node Test", "DelayNode") {
@@ -110,6 +111,16 @@ TEST_CASE("Output Node Test", "Output") {
         REQUIRE(output.getId() == 1);
         REQUIRE(output.getConnectors().size() == 1);
         REQUIRE(output.getConnectors().at(0).type == ConnectorType::INPUT);
+    }
+}
+
+// test member function of sequencer node
+TEST_CASE("Sequencer Node Test", "Sequencer") {
+    Sequencer seqNode = Sequencer();
+
+    SECTION("basic tests") {
+        REQUIRE(seqNode.getName() == "Sequencer");
+        REQUIRE(seqNode.getId() == 1);
     }
 }
 

@@ -48,7 +48,7 @@ std::shared_ptr<Module> SineOscillator::unserialize(std::stringstream &module_st
     float frequency;
     Oscillator::getSettingsFromText(module_str, id_output, frequency);
     // create module with read data
-    return std::make_shared<SineOscillator>(SineOscillator(module_id, id_output, frequency));
+    return std::make_shared<SineOscillator>(module_id, id_output, frequency);
 }
 
 bool SineOscillator::play(bool state){
