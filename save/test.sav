@@ -1,19 +1,36 @@
 [module_name]
-SineOscillator
+Amplifier
 [module_id]
 1
 [module_settings]
 _id_output=2
-_frequency=3701.57
+_id_input=3
+_gain=10
 
 [module_name]
-Output
+Mixer
 [module_id]
 15
 [module_settings]
-_id_input=16
+_id_output=5
+_id_input_1=6
+_id_input_2=7
+
+[module_name]
+Sequencer
+[module_id]
+8
+[module_settings]
+_id_bpm=9
+_id_output=10
+_bpm=452
+_ids_input:
+11
+12
+13
+14
 
 [IdGenerator_state]
-17
+14
 [connections]
 conn_id=17 input_id=2 output_id=16

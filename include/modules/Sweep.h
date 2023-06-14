@@ -55,11 +55,15 @@ public:
     void startSweep();
     void stopSweep();
 
-    /**
-     * @brief Serialize the module settings to an output stream
-     * @param ostream Output stream to write the settings to
-     */
     void serialize_settings(std::ostream &ostream) override;
+
+    /**
+     * @brief creates a Sweep object from the given module string of the save-file
+     * 
+     * @param module_str Sweep module string from the save-file
+     * @param module_id id of the Sweep object
+     * @return std::shared_ptr<Module> to unserialized Sweep object
+     */
     static std::shared_ptr<Module> unserialize(std::stringstream& module_str, int module_id);
 
 private:

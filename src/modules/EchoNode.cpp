@@ -98,8 +98,7 @@ bool EchoNode::setEchoDelay(float echo_delay) {
 }
 
 void EchoNode::serialize_settings(std::ostream &ostream)
-{   //int module_id, std::vector<Connector> connectors, 
-    //int id_input, int id_output, int id_echo_delay, float echo_delay)
+{   
     ostream << "[module_settings]" << std::endl
             << "_id_input=" << _id_input << std::endl
             << "_id_output=" << _id_output << std::endl
