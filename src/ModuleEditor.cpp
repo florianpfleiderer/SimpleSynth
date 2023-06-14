@@ -45,86 +45,6 @@ ModuleEditor::ModuleEditor(GLFWwindow* window_) : window(window_), _idGenerator(
     quickSave = false;
 }
 
-// void ModuleEditor::glfw_error_callback(int error, const char *description) {
-//     std::cerr << "[Glfw Error] " << error << ": " << description << "\n";
-// }
-
-// /**
-//  * @brief create window
-//  * based on https://github.com/JulesFouchy/Simple-ImGui-Setup
-//  * CC0 1.0 Universal
-//  *
-//  * @param width
-//  * @param height
-//  * @param title
-//  * @return
-//  */
-// GLFWwindow* ModuleEditor::create_window(int width, int height, const char* title)
-// { // Setup window
-//     glfwSetErrorCallback(glfw_error_callback);
-//     if (!glfwInit()) {
-//         std::cerr << "Failed to initialize Glfw\n";
-//         std::terminate();
-//     }
-
-// #if defined(__APPLE__)
-//     // GL 3.2 + GLSL 150
-//     const char* glsl_version = "#version 150";
-//     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-//     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-//     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // 3.2+ only
-//     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);           // Required on Mac
-// #else
-//     // GL 3.0 + GLSL 130
-//     const char* glsl_version = "#version 130";
-//     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-//     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-//     //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
-//     //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
-// #endif
-
-//     // Create window with graphics context
-//     GLFWwindow* window = glfwCreateWindow(width, height, title, nullptr, nullptr);
-//     if (!window) {
-//         std::cerr << "Failed to create a window\n";
-//         std::terminate();
-//     }
-//     glfwMakeContextCurrent(window);
-//     if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress))) { // NOLINT
-//         std::cerr << "Failed to initialize glad\n";
-//         std::terminate();
-//     }
-//     glfwSwapInterval(1); // Enable vsync
-
-//     // Setup Dear ImGui context
-//     IMGUI_CHECKVERSION();
-//     ImGui::CreateContext();
-//     ImGuiIO& io = ImGui::GetIO();
-//     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
-//     //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-//     //io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;   // Enable Docking
-//     //io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // Enable Multi-Viewport / Platform Windows
-//     //io.ConfigViewportsNoAutoMerge = true;
-//     //io.ConfigViewportsNoTaskBarIcon = true;
-
-//     // Setup Dear ImGui style
-//     // ImGui::StyleColorsDark();
-//     ImGui::StyleColorsClassic();
-
-//     // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
-//     ImGuiStyle& style = ImGui::GetStyle();
-//     if (io.ConfigFlags /*& ImGuiConfigFlags_ViewportsEnable*/) {
-//         style.WindowRounding              = 0.0f;
-//         style.Colors[ImGuiCol_WindowBg].w = 1.0f;
-//     }
-
-//     // Setup Platform/Renderer backends
-//     ImGui_ImplGlfw_InitForOpenGL(window, true);
-//     ImGui_ImplOpenGL3_Init(glsl_version);
-
-//     return window;
-// }
-
 /**
  * @brief begin frame
  * based on https://github.com/JulesFouchy/Simple-ImGui-Setup
@@ -189,23 +109,6 @@ void ModuleEditor::end_frame(GLFWwindow *window, ImVec4 background_color) {
 
     glfwSwapBuffers(window);
 }
-
-// /**
-//  * @brief end window
-//  * from https://github.com/JulesFouchy/Simple-ImGui-Setup
-//  * CC0 1.0 Universal
-//  *
-//  * @param window
-//  */
-// void ModuleEditor::shutdown(GLFWwindow* window)
-// {
-//     ImGui_ImplOpenGL3_Shutdown();
-//     ImGui_ImplGlfw_Shutdown();
-//     ImGui::DestroyContext();
-
-//     glfwDestroyWindow(window);
-//     glfwTerminate();
-// }
 
 void ModuleEditor::draw_menu() {
     if (ImGui::BeginMainMenuBar()) {
@@ -549,10 +452,6 @@ void ModuleEditor::show() {
         }
     }
 
-
-
-
-
     ModuleEditor::end_frame(window, {0.45f, 0.55f, 0.60f, 1.00f});
 }
 
@@ -599,23 +498,6 @@ void ModuleEditor::create_connection(int start_id, int end_id,  int conn_id){
         /* add link to corresponding module */
         input_module->addConnection(conn);
     }
-}
-
-std::shared_ptr<Module> ModuleEditor::find_module_by_id(int id, Connector &conn){
-    std::shared_ptr<Module> module;
-    for (const auto &m : _modules)
-    {
-        auto connectors = m->getConnectors();
-        auto found = std::find_if(connectors.begin(), connectors.end(),
-                                  [id](const Connector& m) -> bool { return m.id == id; });
-        if (found != connectors.end())
-        {
-            conn = *found;
-            return m;
-        }
-    }
-
-    throw std::invalid_argument("No module with id=" + std::to_string(id) + " in _modules.");
 }
 
 void ModuleEditor::save(std::string filename) {
@@ -819,7 +701,3 @@ void ModuleEditor::clear_workspace() {
     _connections.clear();
     _modules.clear();
 }
-
-// void ModuleEditor::setWindow(GLFWwindow *window) {
-//     this->window = window;
-// }
