@@ -15,11 +15,6 @@
  * These values are added together to create the mixed audio signal.
  */
 class Mixer : public Module {
-    //! Output pin variable
-    int _id_output;
-    //! Input pin variables
-    int _id_input_1;
-    int _id_input_2;
 
 public:
     //! Mixer constructor.
@@ -34,6 +29,12 @@ public:
     void draw() override;
     bool play(bool state) override;
     //! Mix the signals pending on input 1 and input 2
+    /*!
+     *
+     * @param audio_signal_1 vector of audio data, signal 1
+     * @param audio_signal_2 vector of audio data, signal 2
+     * @return the superposition of the two signals
+     */
     stk::StkFrames mix(stk::StkFrames& audio_signal_1, stk::StkFrames& audio_signal_2);
 
     virtual bool tick(stk::StkFrames& frames, double streamTime, int output_id) override;
@@ -48,6 +49,16 @@ public:
      * @return std::shared_ptr<Module> to unserialized Mixer object
      */
     static std::shared_ptr<Module> unserialize(std::stringstream& module_str, int module_id);
+
+    /**
+     * @brief Destructor
+     */
+    virtual ~Mixer();
+
+protected:
+    int _id_output;             /**< ID of the output pin (connector) */
+    int _id_input_1;            /**< ID of the input pin 1 (connector) */
+    int _id_input_2;            /**< ID of the input pin 2 (connector) */
 };
 
 #endif

@@ -371,6 +371,12 @@ void ModuleEditor::show() {
             _modules.emplace_back(module);
         }
 
+        if (ImGui::MenuItem("ampflifier"))
+        {
+            auto module = std::make_shared<Amplifier>();
+            _modules.emplace_back(module);
+        }
+
         ImGui::EndPopup();
     }
 
