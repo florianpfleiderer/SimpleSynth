@@ -22,6 +22,7 @@ stk::StkFrames Mixer::mix(stk::StkFrames& ads_1, stk::StkFrames& ads_2) {
         error << "StkFrames::operator+: frames argument must be of equal dimensions!";
         stk::Stk::handleError(error.str(), stk::StkError::MEMORY_ACCESS);
     }
+    //Mix
     return ads_1 + ads_2;
 }
 
@@ -33,17 +34,15 @@ bool Mixer::tick(stk::StkFrames &frames, double streamTime, int output_id) {
     if(number_of_connections <= 1) {
         return false;
     } else{
-        // Create StkFrames variables for mixing
-        stk::StkFrames audio_signal_1(frames.frames(), frames.channels());
-        stk::StkFrames audio_signal_2(frames.frames(), frames.channels());
-        stk::StkFrames audio_signals[2] = {audio_signal_1, audio_signal_2};
 
+        // Create StkFrames variables (signals) for mixing
+        stk::StkFrames audio_signals[2] = {stk::StkFrames (frames.frames(), frames.channels())
+                                           , stk::StkFrames(frames.frames(), frames.channels())};
+        // Pass the signals to the sound generators to fill them with audio data
         for(unsigned int i = 0; i < this->_connections.size(); i++) {
             this->_connections[i].module->tick(audio_signals[i], streamTime, output_id);
         }
-
         stk::StkFrames mixed_signal = mix(audio_signals[0], audio_signals[1]);
-
         frames = mixed_signal;
 
         return  true;
