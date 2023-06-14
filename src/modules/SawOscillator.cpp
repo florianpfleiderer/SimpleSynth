@@ -45,7 +45,7 @@ std::shared_ptr<Module> SawOscillator::unserialize(std::stringstream &module_str
     float frequency;
     Oscillator::getSettingsFromText(module_str, id_output, frequency);
     // create module with read data
-    return std::make_shared<SawOscillator>(SawOscillator(module_id, id_output, frequency));
+    return std::make_shared<SawOscillator>(module_id, id_output, frequency);
 }
 
 bool SawOscillator::play(bool state){

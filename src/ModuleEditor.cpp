@@ -309,15 +309,15 @@ void ModuleEditor::show() {
             _modules.emplace_back(module);
         }
 
-        if (ImGui::MenuItem("NoiseGenerator"))
-        {
-            auto module = std::make_shared<NoiseGenerator>();
-            _modules.emplace_back(module);
-        }
-
         if (ImGui::MenuItem("SawOscillator"))
         {
             auto module = std::make_shared<SawOscillator>();
+            _modules.emplace_back(module);
+        }
+
+        if (ImGui::MenuItem("NoiseGenerator"))
+        {
+            auto module = std::make_shared<NoiseGenerator>();
             _modules.emplace_back(module);
         }
 
@@ -528,8 +528,7 @@ void ModuleEditor::show() {
         ImGui::Text("Create new workspace? Unsaved changes will be lost.");
         if (ImGui::Button("yes") || KEY_ENTER) {
             play = false;
-            _modules.clear();
-            _connections.clear();
+            this->clear_workspace();
             IdGenerator::loadId(0);
             strcpy(activeFileName, "");
             ImGui::CloseCurrentPopup();
@@ -679,10 +678,8 @@ void ModuleEditor::load(std::string filename) {
     *   4. add unserialize function to unserializer_map in ModuleEditor::unserialize
     */
 
-    // delete all modules and connections from current memory
-    _modules.clear();
-    _connections.clear();
-
+    this->clear_workspace();
+    
     std::string path = getSaveFolderPath() + filename;
     // Load the internal imnodes state
     ImNodes::LoadCurrentEditorStateFromIniFile((path + ".ini").c_str());
@@ -708,10 +705,12 @@ void ModuleEditor::load(std::string filename) {
             if (buffer.str().empty()) {
                 throw std::invalid_argument("ModuleEditor::load -> Can not unserialize empty buffer.");
             }
+            //std::cout << "buffer:\n" << buffer.str() << std::endl;
             _modules.push_back(unserialize_module(buffer));
             buffer.str("");
             buffer.clear();
         } else {
+            //std::cout << "line=" << line << std::endl;
             buffer << line << std::endl;
         }
     }
@@ -828,12 +827,21 @@ std::string ModuleEditor::getSaveFolderPath() {
     }
     return "";
 }
+
 std::vector<std::shared_ptr<Module>> ModuleEditor::get_modules() const {
     return this->_modules;
 }
 
 std::vector<Connection> ModuleEditor::get_connections() const {
     return this->_connections;
+}
+
+void ModuleEditor::clear_workspace() {
+    for(auto &module : _modules) {
+        module->removeAllConnections();
+    }
+    _connections.clear();
+    _modules.clear();
 }
 
 // void ModuleEditor::setWindow(GLFWwindow *window) {

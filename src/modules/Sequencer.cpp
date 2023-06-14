@@ -166,7 +166,7 @@ std::shared_ptr<Module> Sequencer::unserialize(std::stringstream& module_str, in
     if (ids_input.empty() == true) {
         throw std::invalid_argument("Can not create an Sequencer module with bpm= " + std::to_string(bpm));
     }
-    return std::make_shared<Sequencer>(Sequencer(module_id, id_output, id_bpm, bpm, ids_input));
+    return std::make_shared<Sequencer>(module_id, id_output, id_bpm, bpm, ids_input);
 }
 
 bool Sequencer::play(bool state) {
