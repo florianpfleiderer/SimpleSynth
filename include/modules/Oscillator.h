@@ -40,10 +40,6 @@ public:
      */
     virtual void updateFrequency(float freq) = 0;
 
-    /**
-     * @brief Serialize the settings of the oscillator module
-     * @param ostream The output stream to write the serialized data to
-     */
     void serialize_settings(std::ostream &ostream) override;
 
     /**

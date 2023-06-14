@@ -30,8 +30,12 @@ public:
     explicit Amplifier(unsigned int gain = 10);
 
     /**
-     * @brief Constructor for Amplifier with full controll
+     * @brief Construct a new Amplifier object with full controll (for loading function)
      * 
+     * @param module_id 
+     * @param id_input 
+     * @param id_output 
+     * @param gain 
      */
     explicit Amplifier(int module_id, int id_input, int id_output, unsigned int gain);
 
@@ -65,8 +69,16 @@ public:
      * @param g gain factor which is used for multiplying the audio data
      */
     void setGain(unsigned int g);
-
+    
     void serialize_settings(std::ostream &ostream) override;
+
+    /**
+     * @brief creates a Amplifier object from the given module string of the save-file
+     * 
+     * @param module_str Amplifier module string from the save-file
+     * @param module_id id of the Amplifier object
+     * @return std::shared_ptr<Module> to unserialized Amplifier object
+     */
     static std::shared_ptr<Module> unserialize(std::stringstream& module_str, int module_id);
 
 };

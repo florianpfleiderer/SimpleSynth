@@ -22,7 +22,12 @@ public:
     Output();
     Output(int id, int id_input);
     ~Output();
-    
+
+    void draw() override;
+    bool tick(stk::StkFrames &frames, double streamTime, int output_id) override;
+
+    void serialize_settings(std::ostream &ostream) override;
+
     /**
      * @brief creates a Output object from the given module string of the save-file
      *
@@ -31,11 +36,6 @@ public:
      * @return std::shared_ptr<Module> to unserialized Output object
      */
     static std::shared_ptr<Module> unserialize(std::stringstream& module_str, int module_id);
-
-    void draw() override;
-    bool tick(stk::StkFrames &frames, double streamTime, int output_id) override;
-
-    void serialize_settings(std::ostream &ostream) override;
 };
 
 int tick_output( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
