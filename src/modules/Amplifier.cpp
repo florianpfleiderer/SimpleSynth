@@ -29,6 +29,7 @@ void Amplifier::setGain(float g) {
 void Amplifier::amplify(stk::StkFrames& frames, float g) {
     // Amplify and call copy constructor
     frames = frames * g;
+
 }
 
 
