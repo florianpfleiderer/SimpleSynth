@@ -4,8 +4,10 @@
 
 #ifndef SIMPLESYNTH_AMPLIFIER_H
 #define SIMPLESYNTH_AMPLIFIER_H
+#endif
 
 #include "Module.h"
+
 #include "Stk.h"
 
 //! Amplifier class
@@ -69,6 +71,6 @@ protected:
     float _gain;            /**< Gain factor by which the audio signal is amplified */
     int _id_gain;           /**< ID of the gain parameter */
 
+
 };
 
-#endif

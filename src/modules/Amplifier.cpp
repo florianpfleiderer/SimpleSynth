@@ -23,6 +23,7 @@ void Amplifier::amplify(stk::StkFrames& frames, unsigned int g) {
     frames = frames * g;
 }
 
+
 bool Amplifier::tick(stk::StkFrames& frames, double streamTime, int output_id) {
     // Fill frames with audio data and amplify the data
     for(auto & conn : this->_connections){

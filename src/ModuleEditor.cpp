@@ -23,6 +23,7 @@
 #include "../include/modules/Amplifier.h"
 #include "../include/modules/Mixer.h"
 
+
 ModuleEditor::ModuleEditor() : window(WindowHost::create_window(1280, 720, "Simple Synth")), _idGenerator(), activeFileName("") {
     ImNodes::CreateContext();
     // init menu popup flags
@@ -335,6 +336,12 @@ void ModuleEditor::show() {
         if (ImGui::MenuItem("sequencer"))
         {
             auto module = std::make_shared<Sequencer>();
+            _modules.emplace_back(module);
+        }
+
+        if (ImGui::MenuItem("ampflifier"))
+        {
+            auto module = std::make_shared<Amplifier>();
             _modules.emplace_back(module);
         }
 
