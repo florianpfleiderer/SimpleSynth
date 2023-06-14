@@ -6,33 +6,26 @@
 #include "imnodes.h"
 #include <regex>
 
-Sequencer::Sequencer(unsigned int input_size) : Module("Sequencer"), _id_bpm(IdGenerator::generateId()), _id_output(IdGenerator::generateId()){
+Sequencer::Sequencer(unsigned int input_size) : Module("Sequencer"), _id_bpm(IdGenerator::generateId()), _id_output(IdGenerator::generateId()) {
     _ids_input = std::vector<int>(input_size);
     std::generate(_ids_input.begin(), _ids_input.end(), IdGenerator::generateId);
     _connectors.emplace_back(ConnectorType::OUTPUT, _id_output);
-    for(auto id : _ids_input){
+    for (auto id: _ids_input) {
         _connectors.emplace_back(ConnectorType::INPUT, id);
     }
+}
 
 Sequencer::Sequencer(int module_id, int id_output, int id_bpm, int bpm, std::vector<int> ids_input)
                         : Module("Sequencer", module_id), _id_bpm(id_bpm), _id_output(id_output), _ids_input(ids_input), _bpm(bpm) {
                             for(auto &id : ids_input){
                                 _connectors.emplace_back(ConnectorType::INPUT, id);
                             }
-                        }
-
-Sequencer::~Sequencer(){
+}
 
 Sequencer::~Sequencer(){
 }
 
-//Sequencer::~Sequencer(){
-//}
-
 bool Sequencer::tick(stk::StkFrames &frames, double streamTime, int output_id){
-
-
-
 
     bool valid_result = false;
     unsigned int frame_len = frames.size();
