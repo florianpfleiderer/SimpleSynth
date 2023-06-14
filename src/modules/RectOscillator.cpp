@@ -45,3 +45,8 @@ std::shared_ptr<Module> RectOscillator::unserialize(std::stringstream &module_st
     // create module with read data
     return std::make_shared<RectOscillator>(RectOscillator(module_id, id_output, frequency));
 }
+
+bool RectOscillator::play(bool state){
+    /*TODO Clear everything*/
+    return state;
+}

@@ -181,3 +181,8 @@ std::shared_ptr<Module> ChorusNode::unserialize(std::stringstream& module_str, i
     }
     return std::make_shared<ChorusNode>(ChorusNode(module_id, id_input, id_output, id_chorus, mod_depth, mod_freq));
 }
+
+bool ChorusNode::play(bool state){
+    /*TODO Clear everything*/
+    return state;
+}

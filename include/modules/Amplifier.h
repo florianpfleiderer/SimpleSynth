@@ -42,6 +42,8 @@ public:
     //! This function is called every frame to draw the module ui.
     void draw() override;
 
+    bool play(bool state) override;
+
     /*!  \brief Function used for audio processing
      *
      * check if all inputs are connected

@@ -133,3 +133,8 @@ std::shared_ptr<Module> Mixer::unserialize(std::stringstream& module_str, int mo
 }   
     return std::make_shared<Mixer>(Mixer(module_id, id_output, id_input_1, id_input_2));
 }
+
+bool Mixer::play(bool state){
+    /*TODO Clear everything*/
+    return state;
+}

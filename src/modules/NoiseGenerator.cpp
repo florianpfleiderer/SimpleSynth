@@ -71,4 +71,8 @@ std::shared_ptr<Module> NoiseGenerator::unserialize(std::stringstream &module_st
     }
     return std::make_shared<NoiseGenerator>(NoiseGenerator(module_id, id_output));
 }
- 
+
+bool NoiseGenerator::play(bool state){
+    /*TODO Clear everything*/
+    return state;
+} 

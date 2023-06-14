@@ -125,6 +125,13 @@ public:
      */
     virtual bool tick(stk::StkFrames& frames, double streamTime, int output_id) = 0;
 
+    /**
+     * @brief Function to start or stop the module
+     * @param state true to start, false to stop
+     * @return true if module was started and flase if stopped correctly
+    */
+   virtual bool play(bool state) = 0;
+
 
     /**
      * @brief writes the data of the module to a given outputstream

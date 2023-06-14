@@ -142,3 +142,8 @@ std::shared_ptr<Module> Amplifier::unserialize(std::stringstream& module_str, in
     }   
     return std::make_shared<Amplifier>(Amplifier(module_id, id_input, id_output, unsigned_gain));
 }
+
+bool Amplifier::play(bool state){
+    /*TODO Clear everything*/
+    return state;
+}
