@@ -122,13 +122,11 @@ bool Sequencer::tick(stk::StkFrames &frames, double streamTime, int output_id){
 }
 
 int Sequencer::calc_step_index(double streamTime){
-    double step_duration = 1 / (_bpm/60); // step duration in seconds is one divided by beats per second
+    double step_duration = 1 / ((double)_bpm/60); // step duration in seconds is one divided by beats per second
     int step_index = (int)( ( (long)(streamTime / step_duration) ) % _ids_input.size() );
 
     return step_index;
 }
-
-
 
 void Sequencer::draw() {
 

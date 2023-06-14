@@ -21,6 +21,11 @@ private:
 
 public:
 
+    /**
+     * @brief Construct a new Sequencer object with variable input size
+     *
+     * @param input_size number of input ports
+     */
     Sequencer(unsigned int input_size = 4);
 
     /**
@@ -44,7 +49,13 @@ public:
 
     void serialize_settings(std::ostream &ostream) override;
 
+    /**
+     * @brief calculate the currently active step according to the stream time
+     *
+     * @param streamTime time in seconds since the audio stream has started
+     */
     int calc_step_index(double streamTime);
+
     /**
      * @brief creates a Sequencer object from the given module string of the save-file
      *
