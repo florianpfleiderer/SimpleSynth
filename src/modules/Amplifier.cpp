@@ -9,24 +9,24 @@
 #include <regex>
 
 
-Amplifier::Amplifier(unsigned int g) : Module("Amplifier"), _id_output(IdGenerator::generateId()),
+Amplifier::Amplifier(float g) : Module("Amplifier"), _id_output(IdGenerator::generateId()),
                            _id_input(IdGenerator::generateId()),_gain(g), _id_gain(IdGenerator::generateId()) {
     _connectors.emplace_back(ConnectorType::INPUT, _id_input);
     _connectors.emplace_back(ConnectorType::OUTPUT, _id_output);
 }
 
-Amplifier::Amplifier(int module_id, int id_input, int id_output, unsigned int gain) 
+Amplifier::Amplifier(int module_id, int id_input, int id_output, float gain)
                 : Module("Amplifier", module_id), _id_output(id_output), _id_input(id_input), _gain(gain) {
                     _connectors.emplace_back(ConnectorType::INPUT, _id_input);
                     _connectors.emplace_back(ConnectorType::OUTPUT, _id_output);
                 }
 
 //! Set the gain factor
-void Amplifier::setGain(unsigned int g) {
+void Amplifier::setGain(float g) {
     _gain  = g;
 }
 
-void Amplifier::amplify(stk::StkFrames& frames, unsigned int g) {
+void Amplifier::amplify(stk::StkFrames& frames, float g) {
     // Amplify and call copy constructor
     frames = frames * g;
 }

@@ -23,7 +23,7 @@ public:
      *
      * @param Default gain factor for amplifying the audio signal
      */
-    Amplifier(unsigned int _gain = 5);
+    Amplifier(float _gain = 5);
 
     /**
      * @brief Construct a new Amplifier object with full controll (for loading function)
@@ -33,7 +33,7 @@ public:
      * @param id_output 
      * @param gain 
      */
-    explicit Amplifier(int module_id, int id_input, int id_output, unsigned int gain);
+    explicit Amplifier(int module_id, int id_input, int id_output, float gain);
 
     //! This function is called every frame to draw the module ui.
     void draw() override;
@@ -59,14 +59,14 @@ public:
      * @param frames vector of audio data
      * @param g gain factor
      */
-    void amplify(stk::StkFrames& frames, unsigned int g);
+    void amplify(stk::StkFrames& frames, float g);
 
     //! Set requested value for gain
     /*!
      *
      * @param g gain factor which is used for multiplying the audio data
      */
-    void setGain(unsigned int g);
+    void setGain(float g);
     
     void serialize_settings(std::ostream &ostream) override;
 
