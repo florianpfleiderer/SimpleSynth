@@ -40,7 +40,7 @@ public:
     static std::shared_ptr<Module> unserialize(std::stringstream& module_str, int module_id);
 
 private:
-    stk::Noise noise;  ///< TNoise generator object
+    stk::Noise noise;  ///< Noise generator object
     int _id_output;    ///< ID of the output connector
 };
 

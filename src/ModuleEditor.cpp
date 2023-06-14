@@ -17,13 +17,25 @@
 #include "../include/modules/SawOscillator.h"
 #include "../include/modules/EchoNode.h"
 #include "../include/modules/DelayNode.h"
+#include "../include/modules/PitchShiftNode.h"
+#include "../include/modules/ChorusNode.h"
 #include "../include/modules/NoiseGenerator.h"
 #include "../include/modules/Sweep.h"
 #include "../include/modules/Sequencer.h"
 #include "../include/modules/Amplifier.h"
 #include "../include/modules/Mixer.h"
 
-ModuleEditor::ModuleEditor() : window(WindowHost::create_window(1280, 720, "Simple Synth")), _idGenerator(), activeFileName("") {
+ModuleEditor::ModuleEditor() : window(nullptr), activeFileName("") {
+    // ImNodes::CreateContext();
+    // init menu popup flags
+    openPopup = false;
+    saveAsPopup = false;
+    newWorkspacePopup = false;
+    exitPopup = false;
+    quickSave = false;
+}
+
+ModuleEditor::ModuleEditor(GLFWwindow* window_) : window(window_), _idGenerator(), activeFileName("") {
     ImNodes::CreateContext();
     // init menu popup flags
     openPopup = false;
@@ -306,15 +318,27 @@ void ModuleEditor::show() {
             _modules.emplace_back(module);
         }
 
-        if (ImGui::MenuItem("delay"))
-        {
-            auto module = std::make_shared<DelayNode>();
-            _modules.emplace_back(module);
-        }
+        // if (ImGui::MenuItem("delay"))
+        // {
+        //     auto module = std::make_shared<DelayNode>();
+        //     _modules.emplace_back(module);
+        // }
 
         if (ImGui::MenuItem("echo"))
         {
             auto module = std::make_shared<EchoNode>();
+            _modules.emplace_back(module);
+        }
+
+        if (ImGui::MenuItem("pitchShift"))
+        {
+            auto module = std::make_shared<PitchShiftNode>();
+            _modules.emplace_back(module);
+        }
+
+        if (ImGui::MenuItem("chorus"))
+        {
+            auto module = std::make_shared<ChorusNode>();
             _modules.emplace_back(module);
         }
 

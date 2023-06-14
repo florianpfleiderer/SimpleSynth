@@ -10,7 +10,7 @@ _gain=10
 [module_name]
 Mixer
 [module_id]
-4
+15
 [module_settings]
 _id_output=5
 _id_input_1=6
@@ -33,3 +33,4 @@ _ids_input:
 [IdGenerator_state]
 14
 [connections]
+conn_id=17 input_id=2 output_id=16

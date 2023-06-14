@@ -86,8 +86,13 @@ void Output::draw()
 }
 
 bool Output::tick(stk::StkFrames &frames, double streamTime, int output_id) {
-    if (_connections.empty() == false)
+    if (_connections.empty() == false){
         _connections[0].module->tick(frames, streamTime, output_id);
+    } else {
+        for (unsigned int i=0; i < bufferFrames; i++){
+            frames[i] = 0;
+        }
+    }
 
     return true;
 }

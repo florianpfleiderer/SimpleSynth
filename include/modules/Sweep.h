@@ -22,10 +22,10 @@ public:
      * @param endFreq End frequency of the sweep
      * @param duration Duration of the sweep in seconds
      */
-    Sweep(float startFreq = 500, float endFreq = 10000, float duration = 10);
+    Sweep(float startFreq = 200, float endFreq = 500, float duration = 10);
 
     /**
-     * @brief Construct a new Sweep object with full controll
+     * @brief Construct a new Sweep object with full control
      * 
      * @param startFreq 
      * @param endFreq 
@@ -77,6 +77,11 @@ private:
     int _id_start_frequency;       /**< ID of the start frequency attribute. */
     int _id_end_frequency;         /**< ID of the end frequency attribute. */
     int _id_duration;              /**< ID of the duration attribute. */
+
+    /**
+     * @brief Restart the Sweep
+     */
+    void restartSweep();
 };
 
 #endif //SIMPLESYNTH_SWEEP_H
