@@ -242,3 +242,8 @@ bool Sweep::tick(stk::StkFrames &frames, double streamTime, int output_id)
     sineWave.tick(frames);
     return true;
 }
+
+bool Sweep::play(bool state){
+    /*TODO Clear everything*/
+    return state;
+}

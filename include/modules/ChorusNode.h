@@ -49,6 +49,7 @@ public:
     explicit ChorusNode(int module_id, int id_input, int id_output, int _id_chorus, float _mod_depth, float _mod_freq);
 
     void draw() override;
+    bool play(bool state) override;
     bool tick(stk::StkFrames &frames, double streamTime, int output_id) override;
 
     /**

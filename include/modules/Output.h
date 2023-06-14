@@ -24,6 +24,7 @@ public:
     ~Output();
 
     void draw() override;
+    bool play(bool state) override;
     bool tick(stk::StkFrames &frames, double streamTime, int output_id) override;
 
     void serialize_settings(std::ostream &ostream) override;

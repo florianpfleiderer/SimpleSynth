@@ -32,6 +32,7 @@ public:
 
     //! Create the GUI of the node
     void draw() override;
+    bool play(bool state) override;
     //! Mix the signals pending on input 1 and input 2
     stk::StkFrames mix(stk::StkFrames& audio_signal_1, stk::StkFrames& audio_signal_2);
 

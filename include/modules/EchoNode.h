@@ -56,6 +56,7 @@ public:
     explicit EchoNode(int module_id, int id_input, int id_output, int id_echo_delay, float echo_delay);
 
     void draw() override;
+    bool play(bool state) override;
     bool tick(stk::StkFrames &frames, double streamTime, int output_id) override;
     
     void serialize_settings(std::ostream &ostream) override;

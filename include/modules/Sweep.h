@@ -42,6 +42,7 @@ public:
      * @brief Draw the module node in the user interface
      */
     void draw() override;
+    bool play(bool state) override;
 
     /**
      * @brief Processe audio frames and generates the frequency sweep
