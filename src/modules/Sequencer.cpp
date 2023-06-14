@@ -22,13 +22,9 @@ Sequencer::Sequencer(int module_id, int id_output, int id_bpm, int bpm, std::vec
                             }
 }
 
-
-
 Sequencer::~Sequencer(){
 
 }
-
-
 
 bool Sequencer::tick(stk::StkFrames &frames, double streamTime, int output_id){
 
