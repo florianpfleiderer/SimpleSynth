@@ -35,11 +35,11 @@ Output::Output() : Module("Output"), _id_input(IdGenerator::generateId()), _fram
 }
 
 Output::Output(int module_id, int id_input)
-                : Module("Output", module_id), _id_input(id_input) {
-                    _connectors.emplace_back(ConnectorType::INPUT, _id_input);
-                    parameters.deviceId = dac.getDefaultOutputDevice();
-    parameters.nChannels = 1;
+                : Module("Output", module_id), _id_input(id_input), _frames(stk::RT_BUFFER_SIZE, 1) {
 
+    _connectors.emplace_back(ConnectorType::INPUT, _id_input);
+    parameters.deviceId = dac.getDefaultOutputDevice();
+    parameters.nChannels = 1;
     try {
         dac.openStream( &parameters,
                         NULL,
@@ -123,7 +123,7 @@ void Output::serialize_settings(std::ostream &ostream)
 }
 
 std::shared_ptr<Module> Output::unserialize(std::stringstream& module_str, int module_id)
-{
+{   
     // variables
     int id_input(-1);
 

@@ -94,6 +94,7 @@ private:
      */
     std::shared_ptr<Module> find_module_by_id(int id, Connector &conn);
 
+    void clear_workspace();
 
     /**
      * @brief gets the save folder path

@@ -517,8 +517,7 @@ void ModuleEditor::show() {
     if (ImGui::BeginPopup("new_ws")) {
         ImGui::Text("Create new workspace? Unsaved changes will be lost.");
         if (ImGui::Button("yes") || KEY_ENTER) {
-            _modules.clear();
-            _connections.clear();
+            this->clear_workspace();
             IdGenerator::loadId(0);
             strcpy(activeFileName, "");
             ImGui::CloseCurrentPopup();
@@ -655,10 +654,8 @@ void ModuleEditor::load(std::string filename) {
     *   4. add unserialize function to unserializer_map in ModuleEditor::unserialize
     */
 
-    // delete all modules and connections from current memory
-    _modules.clear();
-    _connections.clear();
-
+    this->clear_workspace();
+    
     std::string path = getSaveFolderPath() + filename;
     // Load the internal imnodes state
     ImNodes::LoadCurrentEditorStateFromIniFile((path + ".ini").c_str());
@@ -684,10 +681,12 @@ void ModuleEditor::load(std::string filename) {
             if (buffer.str().empty()) {
                 throw std::invalid_argument("ModuleEditor::load -> Can not unserialize empty buffer.");
             }
+            //std::cout << "buffer:\n" << buffer.str() << std::endl;
             _modules.push_back(unserialize_module(buffer));
             buffer.str("");
             buffer.clear();
         } else {
+            //std::cout << "line=" << line << std::endl;
             buffer << line << std::endl;
         }
     }
@@ -804,12 +803,79 @@ std::string ModuleEditor::getSaveFolderPath() {
     }
     return "";
 }
+
 std::vector<std::shared_ptr<Module>> ModuleEditor::get_modules() const {
     return this->_modules;
 }
 
 std::vector<Connection> ModuleEditor::get_connections() const {
     return this->_connections;
+}
+
+void ModuleEditor::clear_workspace() {
+    std::cout << "1" << std::endl;
+    std::vector<int> conn_ids;
+    for(auto &connection : _connections){
+        conn_ids.push_back(connection.conn_id);
+    }
+    std::cout << "2" << std::endl;
+    for (const int conn_id : conn_ids){
+            /* remove from modules */
+            for (auto m : _modules) {
+                m->removeConnection(conn_id);
+            }
+            /* delete from _connections vector */
+            // erase-remove idom
+            _connections.erase(std::remove_if(_connections.begin(),
+                                              _connections.end(),
+                                              [conn_id](auto conn) { return conn.conn_id == conn_id; }),
+                               _connections.end());
+    }
+    std::cout << "3" << std::endl;
+    std::vector<int> module_ids;
+    for (auto &module : _modules){
+        module_ids.push_back(module->getId());
+    }
+    std::cout << "4" << std::endl;
+    for (const int module_id : module_ids){
+        std::cout << "5" << std::endl;
+        /* remove all connections */
+        /*  get all connectors */
+        auto module = std::find_if(_modules.begin(),
+                                    _modules.end(),
+                                    [module_id](auto mod) { return mod->getId() == module_id; });
+        std::cout << "6" << std::endl;
+        auto connectors = (*module)->getConnectors();
+        std::cout << "7" << std::endl;
+        /*  get all connections connected with connectors */
+        std::vector<int> connector_ids;
+        std::transform(connectors.begin(), connectors.end(), std::back_inserter(connector_ids), [](auto c){return c.id; });
+        std::cout << "8" << std::endl;
+        for (const int c : connector_ids)
+        {
+            std::cout << "9" << std::endl;
+            /*  remove all connections from all modules */
+            for (const auto& m : _modules)
+            {   
+                std::cout << "10" << std::endl;
+                m->removeConnection(c);
+            }
+            /*  remove connections from list */
+            std::cout << "11" << std::endl;
+            _connections.erase(std::remove_if(_connections.begin(),
+                                                _connections.end(),
+                                                [c](auto conn) { return conn.conn_id == c || conn.input_id == c || conn.output_id == c; }),
+                                _connections.end());
+        }
+
+        /* remove module */
+        std::cout << "12" << std::endl;
+        _modules.erase(std::remove_if(_modules.begin(),
+                                        _modules.end(),
+                                        [module_id](auto mod) { return mod->getId() == module_id; }),
+                        _modules.end());
+    }
+    std::cout << "13" << std::endl;
 }
 
 // void ModuleEditor::setWindow(GLFWwindow *window) {
