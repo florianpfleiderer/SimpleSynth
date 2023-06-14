@@ -86,15 +86,6 @@ private:
      */
     void create_connection(int start_id, int end_id, int conn_id=IdGenerator::generateId());
 
-    /** TODO: Robert kennt sich aus
-     * @brief 
-     * 
-     * @param id 
-     * @param conn 
-     * @return std::shared_ptr<Module> 
-     */
-    std::shared_ptr<Module> find_module_by_id(int id, Connector &conn);
-
     void clear_workspace();
 
     /**
@@ -107,8 +98,6 @@ private:
 
     [[nodiscard]] std::shared_ptr<Module> getModuleByConnectorId(int id) const;
 
-    static void glfw_error_callback(int error, const char* description);
-    static GLFWwindow* create_window(int width, int height, const char* title);
     static void end_frame(GLFWwindow* window, ImVec4 background_color);
     static void shutdown(GLFWwindow* window);
 };
