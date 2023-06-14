@@ -147,5 +147,5 @@ std::shared_ptr<Module> Output::unserialize(std::stringstream& module_str, int m
     if (id_input == -1) {
         throw std::invalid_argument("Can not create an output module with id_input= " + std::to_string(id_input));
     }
-    return std::make_shared<Output>(Output(module_id, id_input));
+    return std::make_shared<Output>(module_id, id_input);
 }

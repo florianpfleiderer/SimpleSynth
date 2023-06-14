@@ -179,5 +179,5 @@ std::shared_ptr<Module> ChorusNode::unserialize(std::stringstream& module_str, i
     if (mod_freq == -1) {
         throw std::invalid_argument("Can not create an ChorusNode module with mod_freq= " + std::to_string(mod_freq));
     }
-    return std::make_shared<ChorusNode>(ChorusNode(module_id, id_input, id_output, id_chorus, mod_depth, mod_freq));
+    return std::make_shared<ChorusNode>(module_id, id_input, id_output, id_chorus, mod_depth, mod_freq);
 }

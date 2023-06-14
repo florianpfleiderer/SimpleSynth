@@ -140,5 +140,5 @@ std::shared_ptr<Module> Amplifier::unserialize(std::stringstream& module_str, in
     } else {
         unsigned_gain = static_cast<unsigned int>(gain);
     }   
-    return std::make_shared<Amplifier>(Amplifier(module_id, id_input, id_output, unsigned_gain));
+    return std::make_shared<Amplifier>(module_id, id_input, id_output, unsigned_gain);
 }

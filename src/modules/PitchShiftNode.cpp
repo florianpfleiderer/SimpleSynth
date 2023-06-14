@@ -157,5 +157,5 @@ std::shared_ptr<Module> PitchShiftNode::unserialize(std::stringstream& module_st
     if (pitch_shift == -1) {
         throw std::invalid_argument("Can not create an PitchShiftNode module with mod_depth= " + std::to_string(pitch_shift));
     }
-    return std::make_shared<PitchShiftNode>(PitchShiftNode(module_id, id_input, id_output, id_pitch_shift, pitch_shift));
+    return std::make_shared<PitchShiftNode>(module_id, id_input, id_output, id_pitch_shift, pitch_shift);
 }

@@ -211,7 +211,7 @@ std::shared_ptr<Module> Sweep::unserialize(std::stringstream &module_str, int mo
     if (sweep_duration == -1) {
         throw std::invalid_argument("Can not create an DelayNode module with sweep_duration= " + std::to_string(sweep_duration));
     }
-    return std::make_shared<Sweep>(Sweep(sweep_start_frequency, sweep_end_frequency, sweep_duration, module_id, id_output, id_start_frequency, id_end_frequency, id_duration));
+    return std::make_shared<Sweep>(sweep_start_frequency, sweep_end_frequency, sweep_duration, module_id, id_output, id_start_frequency, id_end_frequency, id_duration);
 }
 
 bool Sweep::tick(stk::StkFrames &frames, double streamTime, int output_id)

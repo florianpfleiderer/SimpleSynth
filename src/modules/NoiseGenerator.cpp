@@ -69,6 +69,6 @@ std::shared_ptr<Module> NoiseGenerator::unserialize(std::stringstream &module_st
     if (id_output == -1) {
         throw std::invalid_argument("Can not create an output module with id_output= " + std::to_string(id_output));
     }
-    return std::make_shared<NoiseGenerator>(NoiseGenerator(module_id, id_output));
+    return std::make_shared<NoiseGenerator>(module_id, id_output);
 }
  

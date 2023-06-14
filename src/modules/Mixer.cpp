@@ -131,5 +131,5 @@ std::shared_ptr<Module> Mixer::unserialize(std::stringstream& module_str, int mo
     if (id_input_2 == -1) {
         throw std::invalid_argument("Can not create an EchoNode module with id_input_2= " + std::to_string(id_input_2));
 }   
-    return std::make_shared<Mixer>(Mixer(module_id, id_output, id_input_1, id_input_2));
+    return std::make_shared<Mixer>(module_id, id_output, id_input_1, id_input_2);
 }

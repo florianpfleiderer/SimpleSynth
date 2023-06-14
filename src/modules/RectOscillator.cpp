@@ -43,5 +43,5 @@ std::shared_ptr<Module> RectOscillator::unserialize(std::stringstream &module_st
     float frequency;
     Oscillator::getSettingsFromText(module_str, id_output, frequency);
     // create module with read data
-    return std::make_shared<RectOscillator>(RectOscillator(module_id, id_output, frequency));
+    return std::make_shared<RectOscillator>(module_id, id_output, frequency);
 }

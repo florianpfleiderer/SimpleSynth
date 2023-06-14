@@ -170,5 +170,5 @@ std::shared_ptr<Module> EchoNode::unserialize(std::stringstream& module_str, int
     if (echo_delay == -1) {
         throw std::invalid_argument("Can not create an EchoNode module with echo_delay= " + std::to_string(echo_delay));
     }
-    return std::make_shared<EchoNode>(EchoNode(module_id, id_input, id_output, id_echo_delay, echo_delay));
+    return std::make_shared<EchoNode>(module_id, id_input, id_output, id_echo_delay, echo_delay);
 }
