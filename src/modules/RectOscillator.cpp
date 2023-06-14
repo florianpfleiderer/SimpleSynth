@@ -16,7 +16,7 @@ bool RectOscillator::tick(stk::StkFrames &frames, double streamTime, int output_
     (void)output_id;
     (void)streamTime;
     
-    frames = rectangle.tick(frames);
+    rectangle.tick(frames);
     return true;
 }
 
