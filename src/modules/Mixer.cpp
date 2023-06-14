@@ -135,13 +135,13 @@ std::shared_ptr<Module> Mixer::unserialize(std::stringstream& module_str, int mo
 
     // create module with read data
     if (id_output == -1) {
-        throw std::invalid_argument("Can not create an EchoNode module with id_output= " + std::to_string(id_output));
+        throw std::invalid_argument("Can not create an Mixer module with id_output= " + std::to_string(id_output));
     }
     if (id_input_1 == -1) {
-        throw std::invalid_argument("Can not create an EchoNode module with id_input_1= " + std::to_string(id_input_1));
+        throw std::invalid_argument("Can not create an Mixer module with id_input_1= " + std::to_string(id_input_1));
     }
     if (id_input_2 == -1) {
-        throw std::invalid_argument("Can not create an EchoNode module with id_input_2= " + std::to_string(id_input_2));
+        throw std::invalid_argument("Can not create an Mixer module with id_input_2= " + std::to_string(id_input_2));
 }   
     return std::make_shared<Mixer>(module_id, id_output, id_input_1, id_input_2);
 }

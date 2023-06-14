@@ -17,6 +17,7 @@ Sequencer::Sequencer(unsigned int input_size) : Module("Sequencer"), _id_bpm(IdG
 
 Sequencer::Sequencer(int module_id, int id_output, int id_bpm, int bpm, std::vector<int> ids_input)
                         : Module("Sequencer", module_id), _id_bpm(id_bpm), _id_output(id_output), _ids_input(ids_input), _bpm(bpm) {
+                            _connectors.emplace_back(ConnectorType::OUTPUT, _id_output);
                             for(auto &id : ids_input){
                                 _connectors.emplace_back(ConnectorType::INPUT, id);
                             }

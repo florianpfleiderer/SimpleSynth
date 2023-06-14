@@ -87,14 +87,14 @@ void Amplifier::serialize_settings(std::ostream &ostream)
     ostream << "[module_settings]" << std::endl
             << "_id_output=" << _id_output << std::endl
             << "_id_input=" << _id_input << std::endl
-            << "_gain=" << _gain << std::endl;
+            << "_gain=" << std::to_string(_gain) << std::endl;
 }
 
 std::shared_ptr<Module> Amplifier::unserialize(std::stringstream& module_str, int module_id) {
     // variables
     int id_output(-1);
     int id_input(-1);
-    int gain(-1);
+    float gain(-1);
 
     // read stringstream
     std::string line;
@@ -119,13 +119,13 @@ std::shared_ptr<Module> Amplifier::unserialize(std::stringstream& module_str, in
                 throw std::invalid_argument("Following line does not follow the pattern \"_id_input=(\\d+)\":\n" + line );
             }
         }
-        pattern = "_gain=(\\d+)";
+        pattern = "_gain=([+-]?\\d+(\\.\\d+)?)";
         if (std::regex_search(line, matches, pattern)) {
-            if (matches.size() == 2) {
-                gain = std::stoi(matches[1].str());
+            if (matches.size() == 3) {
+                gain = std::stof(matches[1].str());
                 continue;
             } else {
-                throw std::invalid_argument("Following line does not follow the pattern \"_gain=(\\d+)\":\n" + line );
+                throw std::invalid_argument("Following line does not follow the pattern \"_gain=([+-]?\\d+(\\.\\d+)?)\":\n" + line );
             }
         }
     }
@@ -133,18 +133,15 @@ std::shared_ptr<Module> Amplifier::unserialize(std::stringstream& module_str, in
 
     // create module with read data
     if (id_input == -1) {
-        throw std::invalid_argument("Can not create an EchoNode module with id_input= " + std::to_string(id_input));
+        throw std::invalid_argument("Can not create an Amplifier module with id_input= " + std::to_string(id_input));
     }
     if (id_output == -1) {
-        throw std::invalid_argument("Can not create an EchoNode module with id_output= " + std::to_string(id_output));
+        throw std::invalid_argument("Can not create an Amplifier module with id_output= " + std::to_string(id_output));
     }
-    unsigned int unsigned_gain;
     if (gain == -1) {
-        throw std::invalid_argument("Can not create an EchoNode module with gain= " + std::to_string(gain));
-    } else {
-        unsigned_gain = static_cast<unsigned int>(gain);
-    }   
-    return std::make_shared<Amplifier>(module_id, id_input, id_output, unsigned_gain);
+        throw std::invalid_argument("Can not create an Amplifier module with gain= " + std::to_string(gain));
+    }
+    return std::make_shared<Amplifier>(module_id, id_input, id_output, gain);
 }
 
 bool Amplifier::play(bool state){
