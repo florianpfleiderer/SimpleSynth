@@ -9,15 +9,22 @@
 #include <algorithm>
 #include "Stk.h"
 
-#define INPUT_SIZE 4
-
+/**
+* @brief Step-Sequencer Module
+* @details This module takes several inputs and periodically switches between them according to the beats per minute set
+*
+* @param _id_bpm id for ImNodes slider
+* @param _id_output id for ImNode output connector
+* @param _ids_input std::vector with ids for ImNode input connectors
+* @param _bpm beats per minute
+*/
 class Sequencer : public Module {
+
 private:
     const int _id_bpm;
     const int _id_output;
     std::vector<int> _ids_input;
     int _bpm = 60;
-    //[[maybe_unused]] int _selected_bpm = 1;
 
 public:
 
@@ -29,7 +36,7 @@ public:
     Sequencer(unsigned int input_size = 4);
 
     /**
-     * @brief Construct a new Sequencer object with full controll (for load function)
+     * @brief Construct a new Sequencer object with full control (for load function)
      *
      * @param module_id
      * @param id_output
@@ -38,8 +45,6 @@ public:
      * @param ids_input
      */
     Sequencer(int module_id, int id_output, int id_bpm, int bpm, std::vector<int> ids_input);
-
-    ~Sequencer() override;
 
     bool tick(stk::StkFrames &frames, double streamTime, int output_id) override;
 

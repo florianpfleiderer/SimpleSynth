@@ -22,20 +22,16 @@ Sequencer::Sequencer(int module_id, int id_output, int id_bpm, int bpm, std::vec
                             }
 }
 
-Sequencer::~Sequencer(){
-
-}
-
 bool Sequencer::tick(stk::StkFrames &frames, double streamTime, int output_id){
 
     bool result_flag = false;
     bool valid_input = false;
     unsigned int frame_len = frames.size();
     int step_index = calc_step_index(streamTime);
-    stk::StkFrames temp_frame = stk::StkFrames(frame_len, 1);    // empty frame for input data
+    stk::StkFrames temp_frame = stk::StkFrames(frame_len, frames.channels());    // empty frame for input data
     std::shared_ptr<Module> module = nullptr;
     int module_output = -1;
-    (void) output_id; // not used because only one output exists
+    (void) output_id;    // not used because only one output exists
 
     for(int id_in : _ids_input){
         for(auto c : _connections){
@@ -56,14 +52,14 @@ bool Sequencer::tick(stk::StkFrames &frames, double streamTime, int output_id){
             valid_input = false;
         }
     }
-    if(result_flag == false){
+    if(!result_flag){
         frames *= 0;
     }
     return result_flag;
 }
 
 int Sequencer::calc_step_index(double streamTime){
-    double step_duration = 1 / ((double)_bpm/60); // step duration in seconds is one divided by beats per second
+    double step_duration = 1 / ((double)_bpm/60);    // step duration in seconds is one divided by beats per second
     int step_index = (int)( ( (long)(streamTime / step_duration) ) % _ids_input.size() );
 
     return step_index;
