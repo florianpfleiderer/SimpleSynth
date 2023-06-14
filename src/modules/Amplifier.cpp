@@ -20,11 +20,7 @@ void Amplifier::setGain(unsigned int g) {
 
 void Amplifier::amplify(stk::StkFrames& frames, unsigned int g) {
     // Amplify and call copy constructor
-    stk::StkFrames frames_amplified = frames * g;
-
-    //Deep copy the amplified data to the original frames object
-    // TODO: Fehlermöglichkeit, evtl. geht Information zu bufferSize_, dataRate_ etc. verloren
-    frames = frames_amplified;
+    frames = frames * g;
 }
 
 bool Amplifier::tick(stk::StkFrames& frames, double streamTime, int output_id) {
@@ -67,7 +63,7 @@ void Amplifier::draw()
     // Fader
     ImNodes::BeginStaticAttribute(_id_gain);
     ImGui::PushItemWidth(100.0f);
-    ImGui::SliderFloat("Gain factor", &_gain, 1.0f, 10.f);
+    ImGui::SliderFloat("Gain factor", &_gain, 0.1f, 10.f);
     ImGui::PopItemWidth();
     ImNodes::EndStaticAttribute();
 

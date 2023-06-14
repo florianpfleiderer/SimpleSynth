@@ -34,7 +34,6 @@ bool Mixer::tick(stk::StkFrames &frames, double streamTime, int output_id) {
     if(number_of_connections <= 1) {
         return false;
     } else{
-
         // Create StkFrames variables (signals) for mixing
         stk::StkFrames audio_signals[2] = {stk::StkFrames (frames.frames(), frames.channels())
                                            , stk::StkFrames(frames.frames(), frames.channels())};
