@@ -28,6 +28,55 @@ Sequencer::~Sequencer(){
 
 bool Sequencer::tick(stk::StkFrames &frames, double streamTime, int output_id){
 
+    bool result_flag = false;
+    bool valid_input = false;
+    unsigned int frame_len = frames.size();
+    int step_index = calc_step_index(streamTime);
+    stk::StkFrames temp_frame = stk::StkFrames(frame_len, 1);    // empty frame for input data
+    std::shared_ptr<Module> module = nullptr;
+    int module_output = -1;
+    (void) output_id; // not used because only one output exists
+
+    for(int id_in : _ids_input){
+        for(auto c : _connections){
+            if(id_in == c.output_id){
+                module = c.module;
+                module_output = c.output_id;
+                valid_input = true;
+                break;
+            }
+        }
+        if(valid_input){
+            if(id_in == _ids_input[step_index]){
+                result_flag = module->tick(frames, streamTime, module_output);
+            }
+            else{
+                module->tick(temp_frame, streamTime, module_output);
+            }
+            valid_input = false;
+        }
+    }
+    return result_flag;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// std::cout <<_bpm;
+
 //    bool valid_result = false;
 //    unsigned int frame_len = frames.size();
 //    double step_duration = 1 / (_bpm/60); // step duration in seconds is one divided by beats per second
@@ -72,7 +121,7 @@ bool Sequencer::tick(stk::StkFrames &frames, double streamTime, int output_id){
     // 2. get data from appropiate input
     // 3. select data range
     // 4. iterate and copy data accordingly
-
+/*
     bool valid_result = false;
     unsigned int frame_len = frames.size();
     double delta_t = 1 / frames.dataRate();
@@ -115,6 +164,7 @@ bool Sequencer::tick(stk::StkFrames &frames, double streamTime, int output_id){
         }
     }
     return true;
+*/
 }
 
 int Sequencer::calc_step_index(double streamTime){
