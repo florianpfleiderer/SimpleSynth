@@ -23,7 +23,7 @@ public:
      *
      * @param Default gain factor for amplifying the audio signal
      */
-    Amplifier(float _gain = 5);
+    Amplifier(float _gain = 1);
 
     /**
      * @brief Construct a new Amplifier object with full controll (for loading function)
