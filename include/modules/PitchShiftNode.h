@@ -49,6 +49,7 @@ public:
     explicit PitchShiftNode(int module_id, int id_input, int id_output, int _id_pitch_shift, float _pitch_shift);
 
     void draw() override;
+    bool play(bool state) override;
     bool tick(stk::StkFrames &frames, double streamTime, int output_id) override;
 
     /**

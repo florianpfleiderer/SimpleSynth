@@ -54,6 +54,7 @@ public:
      * This function is called every frame to draw the module's UI
      */
     void draw() override;
+    bool play(bool state) override;
 
 private:
     stk::BlitSaw saw;   /**< BlitSaw object used to generate the sawtooth waveform */

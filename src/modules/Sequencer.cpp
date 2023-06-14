@@ -165,3 +165,8 @@ std::shared_ptr<Module> Sequencer::unserialize(std::stringstream& module_str, in
     }     
     return std::make_shared<Sequencer>(module_id, id_output, id_bpm, bpm, ids_input);
 }
+
+bool Sequencer::play(bool state){
+    /*TODO Clear everything*/
+    return state;
+}

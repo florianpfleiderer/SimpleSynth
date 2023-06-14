@@ -33,6 +33,7 @@ public:
      * This function is called every frame to draw the module ui
      */
     void draw() override;
+    bool play(bool state) override;
 
     /**
      * @brief Update the frequency of the oscillator

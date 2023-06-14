@@ -157,3 +157,8 @@ std::shared_ptr<Module> DelayNode::unserialize(std::stringstream& module_str, in
     }
     return std::make_shared<DelayNode>(module_id, id_input, id_output, id_delay_length, delay_length);
 }
+
+bool DelayNode::play(bool state){
+    /*TODO Clear everything*/
+    return state;
+}

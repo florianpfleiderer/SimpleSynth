@@ -9,12 +9,10 @@
 #include <regex>
 
 
-Amplifier::Amplifier(unsigned int gain) : Module("Amplifier"), _id_output(IdGenerator::generateId()),
-                           _id_input(IdGenerator::generateId()), _gain(gain)
-                           {
+Amplifier::Amplifier(unsigned int g) : Module("Amplifier"), _id_output(IdGenerator::generateId()),
+                           _id_input(IdGenerator::generateId()),_gain(g), _id_gain(IdGenerator::generateId()) {
     _connectors.emplace_back(ConnectorType::INPUT, _id_input);
     _connectors.emplace_back(ConnectorType::OUTPUT, _id_output);
-
 }
 
 Amplifier::Amplifier(int module_id, int id_input, int id_output, unsigned int gain) 
@@ -28,34 +26,27 @@ void Amplifier::setGain(unsigned int g) {
     _gain  = g;
 }
 
-//! Amplify the StkFloat values (audio data) contained in frame
 void Amplifier::amplify(stk::StkFrames& frames, unsigned int g) {
     // Amplify and call copy constructor
-    stk::StkFrames frames_amplified = frames * g;
-
-    //Deep copy the amplified data to the original frames object
-    // TODO: Fehlermöglichkeit, evtl. geht Information zu bufferSize_, dataRate_ etc. verloren
-    frames = frames_amplified;
+    frames = frames * g;
 }
 
-bool Amplifier::tick(stk::StkFrames& frames, double streamTime, int output_id) {
 
+bool Amplifier::tick(stk::StkFrames& frames, double streamTime, int output_id) {
     // Fill frames with audio data and amplify the data
     for(auto & conn : this->_connections){
-        // Annahme: Jedes Module befüllt frames mit seinen Werten
         conn.module->tick(frames, streamTime, output_id);
     }
-
+    // Return false if the no audio data was provided
     if(frames.empty())
         return false;
-
-    // Amplify the audio signal stored in frames
+    // Amplify the audio data (signal) stored in frames
     amplify(frames, _gain);
 
     return true;
 }
 
-//! Create the GUI (node) for the amplifier class
+
 void Amplifier::draw()
 {
     // Create empty node
@@ -71,10 +62,22 @@ void Amplifier::draw()
 
     // Output pin
     ImNodes::BeginOutputAttribute(_id_output);
+    ImGui::Indent(160);
     ImGui::Text("out");
     ImNodes::EndInputAttribute();
 
+    // Fader
+    ImNodes::BeginStaticAttribute(_id_gain);
+    ImGui::PushItemWidth(100.0f);
+    ImGui::SliderFloat("Gain factor", &_gain, 0.1f, 10.f);
+    ImGui::PopItemWidth();
+    ImNodes::EndStaticAttribute();
+
     ImNodes::EndNode();
+}
+
+Amplifier::~Amplifier() {
+
 }
 
 //TODO: implement
@@ -141,4 +144,9 @@ std::shared_ptr<Module> Amplifier::unserialize(std::stringstream& module_str, in
         unsigned_gain = static_cast<unsigned int>(gain);
     }   
     return std::make_shared<Amplifier>(module_id, id_input, id_output, unsigned_gain);
+}
+
+bool Amplifier::play(bool state){
+    /*TODO Clear everything*/
+    return state;
 }

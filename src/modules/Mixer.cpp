@@ -16,35 +16,46 @@ Mixer::Mixer() : Module("Mixer"), _id_output(IdGenerator::generateId()),
     _connectors.emplace_back(ConnectorType::OUTPUT, _id_output);
 }
 
-Mixer::Mixer(int module_id, int id_output, int id_input_1, int id_input_2) 
-                : Module("Mixer", module_id), _id_output(id_output), _id_input_1(id_input_1), _id_input_2(id_input_2) {
-                    _connectors.emplace_back(ConnectorType::INPUT, _id_input_1);
-                    _connectors.emplace_back(ConnectorType::INPUT, _id_input_2);
-                    _connectors.emplace_back(ConnectorType::OUTPUT, _id_output);
-                }
+Mixer::Mixer(int module_id, int id_output, int id_input_1, int id_input_2) : Module("Mixer", module_id),
+                         _id_output(id_output), _id_input_1(id_input_1), _id_input_2(id_input_2) {
+    _connectors.emplace_back(ConnectorType::INPUT, _id_input_1);
+    _connectors.emplace_back(ConnectorType::INPUT, _id_input_2);
+    _connectors.emplace_back(ConnectorType::OUTPUT, _id_output);
+}
 
-stk::StkFrames Mixer::mix(stk::StkFrames& audio_signal_1, stk::StkFrames& audio_signal_2) {
+Mixer::~Mixer() = default;
 
-    stk::StkFrames mixed_signal = audio_signal_1 + audio_signal_2;
-
-    return mixed_signal;
+stk::StkFrames Mixer::mix(stk::StkFrames& ads_1, stk::StkFrames& ads_2) {
+    // Dimension checking. Can be removed for purpose of performance
+    if ( ads_1.frames() != ads_2.frames() || ads_1.channels() != ads_2.channels() ) {
+        std::ostringstream error;
+        error << "StkFrames::operator+: frames argument must be of equal dimensions!";
+        stk::Stk::handleError(error.str(), stk::StkError::MEMORY_ACCESS);
+    }
+    //Mix
+    return ads_1 + ads_2;
 }
 
 bool Mixer::tick(stk::StkFrames &frames, double streamTime, int output_id) {
 
-    //Create Frame variables for mixing
-    stk::StkFrames *audio_signals = new stk::StkFrames[_connectors.size()];
+    //Check if enough signals for mixing are available
+    auto number_of_connections = _connections.size();
 
-    for(unsigned int i = 0; i < this->_connections.size(); i++) {
-        this->_connections[i].module->tick(audio_signals[i], streamTime, output_id);
+    if(number_of_connections <= 1) {
+        return false;
+    } else{
+        // Create StkFrames variables (signals) for mixing
+        stk::StkFrames audio_signals[2] = {stk::StkFrames (frames.frames(), frames.channels())
+                                           , stk::StkFrames(frames.frames(), frames.channels())};
+        // Pass the signals to the sound generators to fill them with audio data
+        for(unsigned int i = 0; i < this->_connections.size(); i++) {
+            this->_connections[i].module->tick(audio_signals[i], streamTime, output_id);
+        }
+        stk::StkFrames mixed_signal = mix(audio_signals[0], audio_signals[1]);
+        frames = mixed_signal;
+
+        return  true;
     }
-
-    stk::StkFrames mixed_signal = mix(audio_signals[0], audio_signals[1]);
-    frames = mixed_signal;
-
-    delete [] audio_signals;
-
-    return  true;
 }
 
 void Mixer::draw()
@@ -132,4 +143,9 @@ std::shared_ptr<Module> Mixer::unserialize(std::stringstream& module_str, int mo
         throw std::invalid_argument("Can not create an EchoNode module with id_input_2= " + std::to_string(id_input_2));
 }   
     return std::make_shared<Mixer>(module_id, id_output, id_input_1, id_input_2);
+}
+
+bool Mixer::play(bool state){
+    /*TODO Clear everything*/
+    return state;
 }
