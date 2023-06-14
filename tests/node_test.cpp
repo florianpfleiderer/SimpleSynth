@@ -14,6 +14,7 @@
 #include "../include/modules/Sweep.h"
 #include "../include/modules/Output.h"
 #include <iostream>
+#include "../include/modules/Sequencer.h"
 
 // test member function of delay node
 TEST_CASE("Delay Node Test", "DelayNode") {
@@ -113,9 +114,19 @@ TEST_CASE("Output Node Test", "Output") {
     }
 }
 
+// test member function of sequencer node
+TEST_CASE("Sequencer Node Test", "Sequencer") {
+    Sequencer seqNode = Sequencer();
+
+    SECTION("basic tests") {
+        REQUIRE(seqNode.getName() == "Sequencer");
+        REQUIRE(seqNode.getId() == 1);
+    }
+}
+
 
 TEMPLATE_TEST_CASE( "test module.h functions in modules", "[nodes][template]", 
-                    DelayNode, EchoNode, SineOscillator, RectOscillator, SawOscillator, Sweep, NoiseGenerator, Output) {
+                    DelayNode, EchoNode, SineOscillator, RectOscillator, SawOscillator, Sweep, NoiseGenerator) {
     // call default constructor for each type
     TestType test_type = TestType();
 

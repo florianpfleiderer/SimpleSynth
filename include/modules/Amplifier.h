@@ -4,8 +4,10 @@
 
 #ifndef SIMPLESYNTH_AMPLIFIER_H
 #define SIMPLESYNTH_AMPLIFIER_H
+#endif
 
 #include "Module.h"
+
 #include "Stk.h"
 
 //! Amplifier class
@@ -15,19 +17,13 @@
  *  constant .
  */
 class Amplifier : public Module {
-    //! Output pin variable
-    int _id_output;
-    //! Input pin variable
-    int _id_input;
-    //! gain factor
-    unsigned int _gain;
 
 public:
     /** Amplifier constructor
      *
-     * @param gain value for amplifying the audio signal
+     * @param Default gain factor for amplifying the audio signal
      */
-    explicit Amplifier(unsigned int gain = 10);
+    Amplifier(float _gain = 1);
 
     /**
      * @brief Construct a new Amplifier object with full controll (for loading function)
@@ -37,13 +33,13 @@ public:
      * @param id_output 
      * @param gain 
      */
-    explicit Amplifier(int module_id, int id_input, int id_output, unsigned int gain);
+    explicit Amplifier(int module_id, int id_input, int id_output, float gain);
 
     //! This function is called every frame to draw the module ui.
     void draw() override;
 
-    /*!  \brief Function used for audio processing
-     *
+    //! Function used for audio processing
+    /*!
      * check if all inputs are connected
      * call tick functions of connected modules
      * do the necessary calculations
@@ -58,17 +54,19 @@ public:
 
     //! Amplify a pending signal
     /*!
+     * The StkFloat values which represent the audio signal are multiplied by the gain factor.
      *
      * @param frames vector of audio data
+     * @param g gain factor
      */
-    void amplify(stk::StkFrames& frames, unsigned int g);
+    void amplify(stk::StkFrames& frames, float g);
 
     //! Set requested value for gain
     /*!
      *
      * @param g gain factor which is used for multiplying the audio data
      */
-    void setGain(unsigned int g);
+    void setGain(float g);
     
     void serialize_settings(std::ostream &ostream) override;
 
@@ -81,6 +79,18 @@ public:
      */
     static std::shared_ptr<Module> unserialize(std::stringstream& module_str, int module_id);
 
+    bool play(bool state) override;
+
+    /**
+     * @brief Destructor
+     */
+    virtual ~Amplifier();
+
+protected:
+    int _id_output;         /**< ID of the output pin (connector) */
+    int _id_input;          /**< ID of the input pin (connector) */
+    float _gain;            /**< Gain factor by which the audio signal is amplified */
+    int _id_gain;           /**< ID of the gain parameter */
+
 };
 
-#endif

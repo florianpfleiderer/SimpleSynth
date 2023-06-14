@@ -50,3 +50,8 @@ std::shared_ptr<Module> SineOscillator::unserialize(std::stringstream &module_st
     // create module with read data
     return std::make_shared<SineOscillator>(module_id, id_output, frequency);
 }
+
+bool SineOscillator::play(bool state){
+    /*TODO Clear everything*/
+    return state;
+}

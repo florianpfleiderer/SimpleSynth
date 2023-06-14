@@ -33,6 +33,7 @@ ModuleEditor::ModuleEditor() : window(nullptr), activeFileName("") {
     newWorkspacePopup = false;
     exitPopup = false;
     quickSave = false;
+    play = false;
 }
 
 ModuleEditor::ModuleEditor(GLFWwindow* window_) : window(window_), _idGenerator(), activeFileName("") {
@@ -43,6 +44,7 @@ ModuleEditor::ModuleEditor(GLFWwindow* window_) : window(window_), _idGenerator(
     newWorkspacePopup = false;
     exitPopup = false;
     quickSave = false;
+    play = false;
 }
 
 /**
@@ -120,6 +122,8 @@ void ModuleEditor::draw_menu() {
             if (ImGui::MenuItem("Exit", "Ctrl+Alt+Q")) { exitPopup = true; }
             ImGui::EndMenu();
         }
+        if (ImGui::MenuItem("Play", "Space")) { play = true; }
+        if (ImGui::MenuItem("Pause", "Space")) { play = false; }
         ImGui::EndMainMenuBar();
     }
 }
@@ -167,12 +171,17 @@ void ModuleEditor::show() {
                                 (ImGui::IsKeyDown(ImGuiKey_LeftAlt) || ImGui::IsKeyDown(ImGuiKey_RightAlt)) &&
                                 ImGui::IsKeyReleased(ImGuiKey_Q);
 
+    const bool KEY_Space = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
+                            ImNodes::IsEditorHovered() &&
+                            ImGui::IsKeyReleased(ImGuiKey_Space);
+
     // shortcut activations
     if (KEY_CTRL_O) { openPopup = true; }
     if (KEY_CTRL_S) { quickSave = true;}
     if (KEY_Ctrl_Shift_S) { saveAsPopup = true; }
     if (KEY_Ctrl_Alt_N) { newWorkspacePopup = true; }
     if (KEY_Ctrl_Alt_Q) { exitPopup = true; }
+    if (KEY_Space) { play = !play; }
 
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8.f, 8.f));
@@ -203,15 +212,15 @@ void ModuleEditor::show() {
             _modules.emplace_back(module);
         }
 
-        if (ImGui::MenuItem("NoiseGenerator"))
-        {
-            auto module = std::make_shared<NoiseGenerator>();
-            _modules.emplace_back(module);
-        }
-
         if (ImGui::MenuItem("SawOscillator"))
         {
             auto module = std::make_shared<SawOscillator>();
+            _modules.emplace_back(module);
+        }
+
+        if (ImGui::MenuItem("NoiseGenerator"))
+        {
+            auto module = std::make_shared<NoiseGenerator>();
             _modules.emplace_back(module);
         }
 
@@ -378,6 +387,7 @@ void ModuleEditor::show() {
         ImGui::Text("Open:");
         ImGui::InputText("##Eingabe", textBuffer, bufferSize);
         if (ImGui::Button("Ok") || KEY_ENTER) {
+            play = false;
             this->load(textBuffer);
             strcpy(activeFileName, textBuffer);
             ImGui::CloseCurrentPopup();
@@ -420,6 +430,7 @@ void ModuleEditor::show() {
     if (ImGui::BeginPopup("new_ws")) {
         ImGui::Text("Create new workspace? Unsaved changes will be lost.");
         if (ImGui::Button("yes") || KEY_ENTER) {
+            play = false;
             this->clear_workspace();
             IdGenerator::loadId(0);
             strcpy(activeFileName, "");
@@ -434,6 +445,7 @@ void ModuleEditor::show() {
     if (ImGui::BeginPopup("exit")) {
         ImGui::Text("Exit programm? Unsaved changes will be lost.");
         if (ImGui::Button("yes") || KEY_ENTER) {
+            play = false;
             std::exit(0);
         }
         if (ImGui::Button("Cancel") || KEY_ESCAPE) {
@@ -444,11 +456,24 @@ void ModuleEditor::show() {
     if (ImGui::BeginPopup("exit")) {
         ImGui::Text("Exit programm? Unsaved changes will be lost.");
         if (ImGui::Button("yes") || KEY_ENTER) {
+            play = false;
             std::exit(0);
         }
         if (ImGui::Button("Cancel") || KEY_ESCAPE) {
             ImGui::CloseCurrentPopup();
             exitPopup = false;
+        }
+    }
+
+    if(play){
+        for(auto& m : _modules){
+            m->play(true);
+        }
+    }
+
+    if(!play){
+        for(auto& m : _modules){
+            m->play(false);
         }
     }
 

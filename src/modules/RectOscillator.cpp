@@ -16,7 +16,7 @@ bool RectOscillator::tick(stk::StkFrames &frames, double streamTime, int output_
     (void)output_id;
     (void)streamTime;
     
-    frames = rectangle.tick(frames);
+    rectangle.tick(frames);
     return true;
 }
 
@@ -44,4 +44,9 @@ std::shared_ptr<Module> RectOscillator::unserialize(std::stringstream &module_st
     Oscillator::getSettingsFromText(module_str, id_output, frequency);
     // create module with read data
     return std::make_shared<RectOscillator>(module_id, id_output, frequency);
+}
+
+bool RectOscillator::play(bool state){
+    /*TODO Clear everything*/
+    return state;
 }

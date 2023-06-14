@@ -53,6 +53,7 @@ public:
      * This function is called to render the module's UI representation in the user interface
      */
     void draw() override;
+    bool play(bool state) override;
 
 private:
     stk::BlitSquare rectangle; /**< BlitSquare object for generating rectangular waveforms */

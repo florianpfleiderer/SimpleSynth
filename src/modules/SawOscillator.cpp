@@ -47,3 +47,8 @@ std::shared_ptr<Module> SawOscillator::unserialize(std::stringstream &module_str
     // create module with read data
     return std::make_shared<SawOscillator>(module_id, id_output, frequency);
 }
+
+bool SawOscillator::play(bool state){
+    /*TODO Clear everything*/
+    return state;
+}

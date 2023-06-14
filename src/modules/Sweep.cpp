@@ -17,14 +17,16 @@ Sweep::Sweep(float startFreq, float endFreq, float duration)
     _id_end_frequency = IdGenerator::generateId();
     _id_duration = IdGenerator::generateId();
     _connectors.emplace_back(ConnectorType::OUTPUT, _id_output);
+    startSweep();
 }
 
 Sweep::Sweep(float startFreq, float endFreq, float duration, int module_id, int id_output, int id_start_frequency, int id_end_frequency, int id_duration )
         : Module("Sweep", module_id), sweepStartFrequency(startFreq), sweepEndFrequency(endFreq),
           sweepDuration(duration), startTime(0.0), isSweeping(false), _id_output(id_output),
           _id_start_frequency(id_start_frequency), _id_end_frequency(id_end_frequency), _id_duration(id_duration){
-            _connectors.emplace_back(ConnectorType::OUTPUT, _id_output);
-          }
+    _connectors.emplace_back(ConnectorType::OUTPUT, _id_output);
+    startSweep();
+}
 
 void Sweep::startSweep()
 {
@@ -43,48 +45,6 @@ void Sweep::restartSweep()
         stopSweep();
         startSweep();
     }
-}
-
-void Sweep::draw()
-{
-    ImNodes::BeginNode(getId());
-    ImNodes::BeginNodeTitleBar();
-    ImGui::TextUnformatted(getName().c_str());
-    ImNodes::EndNodeTitleBar();
-
-    ImNodes::BeginStaticAttribute(_id_start_frequency);
-    ImGui::PushItemWidth(150.0f);
-    if (ImGui::SliderFloat("Start Frequency", &sweepStartFrequency, 0, 16000.0)) {
-        restartSweep();
-    }
-    ImGui::PopItemWidth();
-    ImNodes::EndStaticAttribute();
-
-    if (sweepStartFrequency > sweepEndFrequency) {
-        sweepEndFrequency = sweepStartFrequency;
-    }
-
-    ImNodes::BeginStaticAttribute(_id_end_frequency);
-    ImGui::PushItemWidth(150.0f);
-    if (ImGui::SliderFloat("End Frequency", &sweepEndFrequency, sweepStartFrequency, 16000)) {
-        restartSweep();
-    }
-    ImGui::PopItemWidth();
-    ImNodes::EndStaticAttribute();
-
-    ImNodes::BeginStaticAttribute(_id_duration);
-    ImGui::PushItemWidth(150.0f);
-    if (ImGui::SliderFloat("Duration", &sweepDuration, 0.0f, 20.0)) {
-        restartSweep();
-    }
-    ImGui::PopItemWidth();
-    ImNodes::EndStaticAttribute();
-
-    ImNodes::BeginOutputAttribute(_id_output);
-    ImGui::Text("out");
-    ImNodes::EndOutputAttribute();
-
-    ImNodes::EndNode();
 }
 
 void Sweep::serialize_settings(std::ostream &ostream) {
@@ -191,27 +151,69 @@ std::shared_ptr<Module> Sweep::unserialize(std::stringstream &module_str, int mo
 
     // create module with read data
     if (id_output == -1) {
-        throw std::invalid_argument("Can not create an DelayNode module with id_output= " + std::to_string(id_output));
+        throw std::invalid_argument("Can not create an Sweep module with id_output= " + std::to_string(id_output));
     }
     if (id_start_frequency == -1) {
-        throw std::invalid_argument("Can not create an DelayNode module with id_start_frequency= " + std::to_string(id_start_frequency));
+        throw std::invalid_argument("Can not create an Sweep module with id_start_frequency= " + std::to_string(id_start_frequency));
     }
     if (id_end_frequency == -1) {
-        throw std::invalid_argument("Can not create an DelayNode module with id_end_frequency= " + std::to_string(id_end_frequency));
+        throw std::invalid_argument("Can not create an Sweep module with id_end_frequency= " + std::to_string(id_end_frequency));
     }
     if (id_duration == -1) {
-        throw std::invalid_argument("Can not create an DelayNode module with id_duration= " + std::to_string(id_duration));
+        throw std::invalid_argument("Can not create an Sweep module with id_duration= " + std::to_string(id_duration));
     }
     if (sweep_start_frequency == -1) {
-        throw std::invalid_argument("Can not create an DelayNode module with sweep_start_frequency= " + std::to_string(sweep_start_frequency));
+        throw std::invalid_argument("Can not create an Sweep module with sweep_start_frequency= " + std::to_string(sweep_start_frequency));
     }
     if (sweep_end_frequency == -1) {
-        throw std::invalid_argument("Can not create an DelayNode module with sweep_end_frequency= " + std::to_string(sweep_end_frequency));
+        throw std::invalid_argument("Can not create an Sweep module with sweep_end_frequency= " + std::to_string(sweep_end_frequency));
     }
     if (sweep_duration == -1) {
-        throw std::invalid_argument("Can not create an DelayNode module with sweep_duration= " + std::to_string(sweep_duration));
+        throw std::invalid_argument("Can not create an Sweep module with sweep_duration= " + std::to_string(sweep_duration));
     }
     return std::make_shared<Sweep>(sweep_start_frequency, sweep_end_frequency, sweep_duration, module_id, id_output, id_start_frequency, id_end_frequency, id_duration);
+}
+
+void Sweep::draw()
+{
+    ImNodes::BeginNode(getId());
+    ImNodes::BeginNodeTitleBar();
+    ImGui::TextUnformatted(getName().c_str());
+    ImNodes::EndNodeTitleBar();
+
+    ImNodes::BeginStaticAttribute(_id_start_frequency);
+    ImGui::PushItemWidth(150.0f);
+    if (ImGui::SliderFloat("Start Frequency", &sweepStartFrequency, 1, 16000.0)) {
+        restartSweep();
+    }
+    ImGui::PopItemWidth();
+    ImNodes::EndStaticAttribute();
+
+    if (sweepStartFrequency > sweepEndFrequency) {
+        sweepEndFrequency = sweepStartFrequency;
+    }
+
+    ImNodes::BeginStaticAttribute(_id_end_frequency);
+    ImGui::PushItemWidth(150.0f);
+    if (ImGui::SliderFloat("End Frequency", &sweepEndFrequency, sweepStartFrequency, 16000)) {
+        restartSweep();
+    }
+    ImGui::PopItemWidth();
+    ImNodes::EndStaticAttribute();
+
+    ImNodes::BeginStaticAttribute(_id_duration);
+    ImGui::PushItemWidth(150.0f);
+    if (ImGui::SliderFloat("Duration", &sweepDuration, 0.1f, 20.0)) {
+        restartSweep();
+    }
+    ImGui::PopItemWidth();
+    ImNodes::EndStaticAttribute();
+
+    ImNodes::BeginOutputAttribute(_id_output);
+    ImGui::Text("out");
+    ImNodes::EndOutputAttribute();
+
+    ImNodes::EndNode();
 }
 
 bool Sweep::tick(stk::StkFrames &frames, double streamTime, int output_id)
@@ -230,8 +232,12 @@ bool Sweep::tick(stk::StkFrames &frames, double streamTime, int output_id)
         }
         else
         {
-            stopSweep();
-            sineWave.setFrequency(sweepEndFrequency);
+            startTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+            double t = 0.0;
+            double currentFrequency = sweepStartFrequency + (sweepEndFrequency - sweepStartFrequency) * t;
+            sineWave.setFrequency(currentFrequency);
+            //stopSweep();
+            //sineWave.setFrequency(sweepEndFrequency);
         }
     }
     else
@@ -241,4 +247,9 @@ bool Sweep::tick(stk::StkFrames &frames, double streamTime, int output_id)
 
     sineWave.tick(frames);
     return true;
+}
+
+bool Sweep::play(bool state){
+    /*TODO Clear everything*/
+    return state;
 }

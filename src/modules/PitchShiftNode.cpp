@@ -159,3 +159,8 @@ std::shared_ptr<Module> PitchShiftNode::unserialize(std::stringstream& module_st
     }
     return std::make_shared<PitchShiftNode>(module_id, id_input, id_output, id_pitch_shift, pitch_shift);
 }
+
+bool PitchShiftNode::play(bool state){
+    /*TODO Clear everything*/
+    return state;
+}

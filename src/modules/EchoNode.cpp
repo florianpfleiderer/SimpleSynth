@@ -172,3 +172,8 @@ std::shared_ptr<Module> EchoNode::unserialize(std::stringstream& module_str, int
     }
     return std::make_shared<EchoNode>(module_id, id_input, id_output, id_echo_delay, echo_delay);
 }
+
+bool EchoNode::play(bool state){
+    /*TODO Clear everything*/
+    return state;
+}

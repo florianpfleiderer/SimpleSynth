@@ -27,7 +27,7 @@ void Oscillator::draw()
     ImNodes::EndNodeTitleBar();
 
     ImNodes::BeginStaticAttribute(_id_frequency);
-    ImGui::PushItemWidth(150.0f);
+    ImGui::PushItemWidth(200.0f);
     ImGui::SliderFloat("Frequency", &_frequency, 0.1f, 16000.0f);
     ImGui::PopItemWidth();
     ImNodes::EndStaticAttribute();
@@ -81,4 +81,9 @@ void Oscillator::getSettingsFromText(std::stringstream &module_str, int &id_outp
     if (frequency == -1) {
         throw std::invalid_argument("Can not create an Oscillator module with frequency= " + std::to_string(frequency));
     }
+}
+
+bool Oscillator::play(bool state){
+    /*TODO Clear everything*/
+    return state;
 }

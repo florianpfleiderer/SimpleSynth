@@ -50,6 +50,7 @@ private:
     bool newWorkspacePopup;
     bool exitPopup;
     bool quickSave;
+    bool play;
     char activeFileName[256];
 
     void begin_frame();

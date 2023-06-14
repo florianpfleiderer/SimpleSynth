@@ -27,6 +27,7 @@ public:
      * Draw the NoiseGenerator module node in the GUI
      */
     void draw() override;
+    bool play(bool state) override;
 
     void serialize_settings(std::ostream &ostream) override;
 

@@ -9,6 +9,7 @@ cmake-build-*
 # VS Code
 .vscode/
 .DS_Store
+.VSCodeCounter
 
 # VS Code files for those working on multiple tools
 .vscode/*
