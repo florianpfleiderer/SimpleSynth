@@ -19,11 +19,21 @@
 class Amplifier : public Module {
 
 public:
-    /*! Amplifier constructor
+    /** Amplifier constructor
      *
      * @param Default gain factor for amplifying the audio signal
      */
     Amplifier(unsigned int _gain = 5);
+
+    /**
+     * @brief Construct a new Amplifier object with full controll (for loading function)
+     * 
+     * @param module_id 
+     * @param id_input 
+     * @param id_output 
+     * @param gain 
+     */
+    explicit Amplifier(int module_id, int id_input, int id_output, unsigned int gain);
 
     //! This function is called every frame to draw the module ui.
     void draw() override;
@@ -57,8 +67,19 @@ public:
      * @param g gain factor which is used for multiplying the audio data
      */
     void setGain(unsigned int g);
-
+    
     void serialize_settings(std::ostream &ostream) override;
+
+    /**
+     * @brief creates a Amplifier object from the given module string of the save-file
+     * 
+     * @param module_str Amplifier module string from the save-file
+     * @param module_id id of the Amplifier object
+     * @return std::shared_ptr<Module> to unserialized Amplifier object
+     */
+    static std::shared_ptr<Module> unserialize(std::stringstream& module_str, int module_id);
+
+    bool play(bool state) override;
 
     /**
      * @brief Destructor
@@ -70,7 +91,6 @@ protected:
     int _id_input;          /**< ID of the input pin (connector) */
     float _gain;            /**< Gain factor by which the audio signal is amplified */
     int _id_gain;           /**< ID of the gain parameter */
-
 
 };
 

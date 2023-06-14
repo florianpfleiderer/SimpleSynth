@@ -7,19 +7,19 @@ _id_output=2
 _frequency=440
 
 [module_name]
-Noise
+RectOscillator
 [module_id]
 4
 [module_settings]
 _id_output=5
+_frequency=440
 
 [module_name]
-RectOscillator
+Noise
 [module_id]
-6
+7
 [module_settings]
-_id_output=7
-_frequency=440
+_id_output=8
 
 [module_name]
 SawOscillator
@@ -35,33 +35,82 @@ Sweep
 12
 [module_settings]
 _id_output=13
-_id_start_frequency=13
-_id_end_frequency=13
-_id_duration=13
-sweepStartFrequency=500
-sweepEndFrequency=10000
+_id_start_frequency=14
+_id_end_frequency=15
+_id_duration=16
+sweepStartFrequency=200
+sweepEndFrequency=500
 sweepDuration=10
 
 [module_name]
-Delay
+Echo
 [module_id]
 17
 [module_settings]
 _id_input=18
 _id_output=19
-_id_delay_length=20
-_delay_length=0
+_id_echo_delay=20
+_echo_delay=0
 
 [module_name]
-Echo
+PitchShift
 [module_id]
 21
 [module_settings]
 _id_input=22
 _id_output=23
-_id_echo_delay=24
-_echo_delay=0
+_id_pitch_shift=24
+_pitch_shift=0
+
+[module_name]
+Chorus
+[module_id]
+25
+[module_settings]
+_id_input=26
+_id_output=27
+_id_chorus=28
+_mod_depth=0
+_mod_freq=0
+
+[module_name]
+Amplifier
+[module_id]
+29
+[module_settings]
+_id_output=30
+_id_input=31
+_gain=10
+
+[module_name]
+Mixer
+[module_id]
+32
+[module_settings]
+_id_output=33
+_id_input_1=34
+_id_input_2=35
+
+[module_name]
+Sequencer
+[module_id]
+36
+[module_settings]
+_id_bpm=37
+_id_output=38
+_bpm=60
+_ids_input:
+39
+40
+41
+42
 
 [IdGenerator_state]
-24
+48
 [connections]
+conn_id=43 input_id=2 output_id=26
+conn_id=44 input_id=10 output_id=22
+conn_id=45 input_id=5 output_id=34
+conn_id=46 input_id=8 output_id=35
+conn_id=47 input_id=13 output_id=31
+conn_id=48 input_id=27 output_id=18

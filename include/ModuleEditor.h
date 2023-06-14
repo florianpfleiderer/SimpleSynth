@@ -28,6 +28,7 @@ class ModuleEditor {
 public:
 
     ModuleEditor();
+    ModuleEditor(GLFWwindow* window);
     virtual ~ModuleEditor();
     [[nodiscard]] GLFWwindow* getWindow() const;
     // void setWindow(GLFWwindow* window);
@@ -49,6 +50,7 @@ private:
     bool newWorkspacePopup;
     bool exitPopup;
     bool quickSave;
+    bool play;
     char activeFileName[256];
 
     void begin_frame();

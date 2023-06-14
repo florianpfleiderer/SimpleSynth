@@ -7,12 +7,14 @@
 #include "Stk.h"
 #include <regex>
 
-NoiseGenerator::NoiseGenerator() : Module("Noise") {
-    _id_output = IdGenerator::generateId();
+NoiseGenerator::NoiseGenerator() : Module("Noise"), _id_output(IdGenerator::generateId()) {
+    _connectors.emplace_back(ConnectorType::OUTPUT, _id_output);
 }
 
 NoiseGenerator::NoiseGenerator(int id, int id_output)
-    : Module("Noise", id), _id_output(id_output) {}
+    : Module("Noise", id), _id_output(id_output) {
+        _connectors.emplace_back(ConnectorType::OUTPUT, _id_output);
+    }
 
 
 bool NoiseGenerator::tick(stk::StkFrames &frames, double streamTime, int output_id)
@@ -69,4 +71,8 @@ std::shared_ptr<Module> NoiseGenerator::unserialize(std::stringstream &module_st
     }
     return std::make_shared<NoiseGenerator>(NoiseGenerator(module_id, id_output));
 }
- 
+
+bool NoiseGenerator::play(bool state){
+    /*TODO Clear everything*/
+    return state;
+} 

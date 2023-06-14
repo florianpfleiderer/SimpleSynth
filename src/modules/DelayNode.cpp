@@ -61,10 +61,10 @@ void DelayNode::draw()
 }
 
 bool DelayNode::tick(stk::StkFrames &frames, double streamTime, int output_id) {
-    for(auto &conn: this->_connections) {
-        conn.module->tick(frames, streamTime, output_id);
-    }
-    frames = _delay.tick(frames);
+    if(_connections.empty() == false)
+        _connections[0].module->tick(frames, streamTime, output_id);
+
+    _delay.tick(frames);
     if(frames.empty())
         return false;
     return true;
@@ -156,4 +156,9 @@ std::shared_ptr<Module> DelayNode::unserialize(std::stringstream& module_str, in
         throw std::invalid_argument("Can not create an DelayNode module with delay_length= " + std::to_string(delay_length));
     }
     return std::make_shared<DelayNode>(DelayNode(module_id, id_input, id_output, id_delay_length, delay_length));
+}
+
+bool DelayNode::play(bool state){
+    /*TODO Clear everything*/
+    return state;
 }

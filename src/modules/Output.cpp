@@ -26,16 +26,11 @@ Output::Output() : Module("Output"), _id_input(IdGenerator::generateId()), _fram
         error.printMessage();
     }
 
-    try {
-        dac.startStream();
-    }
-    catch ( RtAudioError &error ) {
-        error.printMessage();
-    }
+    
 }
 
 Output::Output(int module_id, int id_input)
-                : Module("Output", module_id), _id_input(id_input) {
+                : Module("Output", module_id), _id_input(id_input), _frames(stk::RT_BUFFER_SIZE, 1) {
                     _connectors.emplace_back(ConnectorType::INPUT, _id_input);
                     parameters.deviceId = dac.getDefaultOutputDevice();
     parameters.nChannels = 1;
@@ -53,12 +48,7 @@ Output::Output(int module_id, int id_input)
         error.printMessage();
     }
 
-    try {
-        dac.startStream();
-    }
-    catch ( RtAudioError &error ) {
-        error.printMessage();
-    }
+    
 }
 
 //Destructor
@@ -86,8 +76,13 @@ void Output::draw()
 }
 
 bool Output::tick(stk::StkFrames &frames, double streamTime, int output_id) {
-    if (_connections.empty() == false)
+    if (_connections.empty() == false){
         _connections[0].module->tick(frames, streamTime, output_id);
+    } else {
+        for (unsigned int i=0; i < bufferFrames; i++){
+            frames[i] = 0;
+        }
+    }
 
     return true;
 }
@@ -143,4 +138,13 @@ std::shared_ptr<Module> Output::unserialize(std::stringstream& module_str, int m
         throw std::invalid_argument("Can not create an output module with id_input= " + std::to_string(id_input));
     }
     return std::make_shared<Output>(Output(module_id, id_input));
+}
+
+bool Output::play(bool state){
+    if (state && !dac.isStreamRunning()){
+        dac.startStream();
+    } else if(!state && dac.isStreamRunning()){
+        dac.stopStream();
+    }
+    return dac.isStreamRunning();
 }

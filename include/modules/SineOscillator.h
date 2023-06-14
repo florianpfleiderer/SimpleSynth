@@ -51,6 +51,7 @@ public:
      * @brief Draw the SineOscillator module UI
      */
     void draw() override;
+    bool play(bool state) override;
 
 private:
     stk::SineWave sine; /**< SineWave object used for generating the sine wave */

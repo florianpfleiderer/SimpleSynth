@@ -49,6 +49,7 @@ public:
     explicit DelayNode(int module_id, int id_input, int id_output, int _id_delay_length, float _delay_length);
 
     void draw() override;
+    bool play(bool state) override;
     bool tick(stk::StkFrames &frames, double streamTime, int output_id) override;
 
     /**

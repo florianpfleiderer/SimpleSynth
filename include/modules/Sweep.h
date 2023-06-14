@@ -22,10 +22,10 @@ public:
      * @param endFreq End frequency of the sweep
      * @param duration Duration of the sweep in seconds
      */
-    Sweep(float startFreq = 500, float endFreq = 10000, float duration = 10);
+    Sweep(float startFreq = 200, float endFreq = 500, float duration = 10);
 
     /**
-     * @brief Construct a new Sweep object with full controll
+     * @brief Construct a new Sweep object with full control
      * 
      * @param startFreq 
      * @param endFreq 
@@ -42,6 +42,7 @@ public:
      * @brief Draw the module node in the user interface
      */
     void draw() override;
+    bool play(bool state) override;
 
     /**
      * @brief Processe audio frames and generates the frequency sweep
@@ -55,11 +56,15 @@ public:
     void startSweep();
     void stopSweep();
 
-    /**
-     * @brief Serialize the module settings to an output stream
-     * @param ostream Output stream to write the settings to
-     */
     void serialize_settings(std::ostream &ostream) override;
+
+    /**
+     * @brief creates a Sweep object from the given module string of the save-file
+     * 
+     * @param module_str Sweep module string from the save-file
+     * @param module_id id of the Sweep object
+     * @return std::shared_ptr<Module> to unserialized Sweep object
+     */
     static std::shared_ptr<Module> unserialize(std::stringstream& module_str, int module_id);
 
 private:
@@ -73,6 +78,11 @@ private:
     int _id_start_frequency;       /**< ID of the start frequency attribute. */
     int _id_end_frequency;         /**< ID of the end frequency attribute. */
     int _id_duration;              /**< ID of the duration attribute. */
+
+    /**
+     * @brief Restart the Sweep
+     */
+    void restartSweep();
 };
 
 #endif //SIMPLESYNTH_SWEEP_H

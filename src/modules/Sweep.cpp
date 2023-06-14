@@ -37,6 +37,14 @@ void Sweep::stopSweep()
     isSweeping = false;
 }
 
+void Sweep::restartSweep()
+{
+    if (isSweeping) {
+        stopSweep();
+        startSweep();
+    }
+}
+
 void Sweep::draw()
 {
     ImNodes::BeginNode(getId());
@@ -46,7 +54,9 @@ void Sweep::draw()
 
     ImNodes::BeginStaticAttribute(_id_start_frequency);
     ImGui::PushItemWidth(150.0f);
-    ImGui::SliderFloat("Start Frequency", &sweepStartFrequency, 0, 16000.0);
+    if (ImGui::SliderFloat("Start Frequency", &sweepStartFrequency, 0, 16000.0)) {
+        restartSweep();
+    }
     ImGui::PopItemWidth();
     ImNodes::EndStaticAttribute();
 
@@ -56,13 +66,17 @@ void Sweep::draw()
 
     ImNodes::BeginStaticAttribute(_id_end_frequency);
     ImGui::PushItemWidth(150.0f);
-    ImGui::SliderFloat("End Frequency", &sweepEndFrequency, sweepStartFrequency, 16000);
+    if (ImGui::SliderFloat("End Frequency", &sweepEndFrequency, sweepStartFrequency, 16000)) {
+        restartSweep();
+    }
     ImGui::PopItemWidth();
     ImNodes::EndStaticAttribute();
 
     ImNodes::BeginStaticAttribute(_id_duration);
     ImGui::PushItemWidth(150.0f);
-    ImGui::SliderFloat("Duration", &sweepDuration, 0.0f, 20.0);
+    if (ImGui::SliderFloat("Duration", &sweepDuration, 0.0f, 20.0)) {
+        restartSweep();
+    }
     ImGui::PopItemWidth();
     ImNodes::EndStaticAttribute();
 
@@ -74,6 +88,7 @@ void Sweep::draw()
 }
 
 void Sweep::serialize_settings(std::ostream &ostream) {
+    /*
     ostream << "[module_settings]" << std::endl
             << "_id_output=" << _id_output << std::endl
             << "_id_start_frequency=" << _id_output << std::endl
@@ -82,6 +97,16 @@ void Sweep::serialize_settings(std::ostream &ostream) {
             << "sweepStartFrequency=" << sweepStartFrequency << std::endl
             << "sweepEndFrequency=" << sweepEndFrequency << std::endl
             << "sweepDuration=" << sweepDuration << std::endl;
+    */
+    ostream << "[module_settings]" << std::endl
+            << "_id_output=" << _id_output << std::endl
+            << "_id_start_frequency=" << _id_start_frequency << std::endl
+            << "_id_end_frequency=" << _id_end_frequency << std::endl
+            << "_id_duration=" << _id_duration << std::endl
+            << "sweepStartFrequency=" << sweepStartFrequency << std::endl
+            << "sweepEndFrequency=" << sweepEndFrequency << std::endl
+            << "sweepDuration=" << sweepDuration << std::endl;
+
 }
 
 std::shared_ptr<Module> Sweep::unserialize(std::stringstream &module_str, int module_id) {
@@ -196,7 +221,7 @@ bool Sweep::tick(stk::StkFrames &frames, double streamTime, int output_id)
 
     if (isSweeping)
     {
-        double currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() - startTime;;
+        double currentTime = (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() - startTime) / 1000.0;
         if (currentTime <= sweepDuration)
         {
             double t = currentTime / sweepDuration;
@@ -205,7 +230,7 @@ bool Sweep::tick(stk::StkFrames &frames, double streamTime, int output_id)
         }
         else
         {
-            isSweeping = false;
+            stopSweep();
             sineWave.setFrequency(sweepEndFrequency);
         }
     }
@@ -216,4 +241,9 @@ bool Sweep::tick(stk::StkFrames &frames, double streamTime, int output_id)
 
     sineWave.tick(frames);
     return true;
+}
+
+bool Sweep::play(bool state){
+    /*TODO Clear everything*/
+    return state;
 }

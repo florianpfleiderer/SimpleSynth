@@ -29,6 +29,8 @@ void RectOscillator::draw() {
     ImNodes::EndOutputAttribute();
 
     ImNodes::EndNode();
+
+    updateFrequency(_frequency);
 }
 
 void RectOscillator::updateFrequency(float frequency) {
@@ -42,4 +44,9 @@ std::shared_ptr<Module> RectOscillator::unserialize(std::stringstream &module_st
     Oscillator::getSettingsFromText(module_str, id_output, frequency);
     // create module with read data
     return std::make_shared<RectOscillator>(RectOscillator(module_id, id_output, frequency));
+}
+
+bool RectOscillator::play(bool state){
+    /*TODO Clear everything*/
+    return state;
 }

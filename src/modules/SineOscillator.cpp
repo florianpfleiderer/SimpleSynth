@@ -34,6 +34,8 @@ void SineOscillator::draw() {
     ImNodes::EndOutputAttribute();
 
     ImNodes::EndNode();
+
+    updateFrequency(_frequency);
 }
 
 void SineOscillator::updateFrequency(float frequency) {
@@ -47,4 +49,9 @@ std::shared_ptr<Module> SineOscillator::unserialize(std::stringstream &module_st
     Oscillator::getSettingsFromText(module_str, id_output, frequency);
     // create module with read data
     return std::make_shared<SineOscillator>(SineOscillator(module_id, id_output, frequency));
+}
+
+bool SineOscillator::play(bool state){
+    /*TODO Clear everything*/
+    return state;
 }

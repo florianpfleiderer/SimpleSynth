@@ -4,11 +4,19 @@
 
 #include "../../include/modules/Sequencer.h"
 #include "imnodes.h"
+#include <regex>
 
 Sequencer::Sequencer(unsigned int input_size) : Module("Sequencer"), _id_bpm(IdGenerator::generateId()), _id_output(IdGenerator::generateId()){
     _ids_input = std::vector<int>(input_size);
     std::generate(_ids_input.begin(), _ids_input.end(), IdGenerator::generateId);
     }
+
+Sequencer::Sequencer(int module_id, int id_output, int id_bpm, int bpm, std::vector<int> ids_input)
+                        : Module("Sequencer", module_id), _id_bpm(id_bpm), _id_output(id_output), _ids_input(ids_input), _bpm(bpm) {
+                            for(auto &id : ids_input){
+                                _connectors.emplace_back(ConnectorType::INPUT, id);
+                            }
+                        }
 
 Sequencer::~Sequencer(){
 }
@@ -83,9 +91,82 @@ void Sequencer::draw() {
     }
 
     ImNodes::EndNode();
-}
+}  
 
 void Sequencer::serialize_settings(std::ostream &ostream){
-    (void) ostream;
+    ostream << "[module_settings]" << std::endl
+            << "_id_bpm=" << _id_bpm << std::endl
+            << "_id_output=" << _id_output << std::endl
+            << "_bpm=" << _bpm << std::endl
+            << "_ids_input:" << std::endl;
+    for(auto &id_input : _ids_input) {
+        ostream << id_input << std::endl;
+    }
 }
 
+std::shared_ptr<Module> Sequencer::unserialize(std::stringstream& module_str, int module_id) {
+    // variables
+    int id_bpm(-1);
+    int id_output(-1);
+    int bpm(-1);
+    std::vector<int> ids_input;
+
+    // read stringstream
+    std::string line;
+    std::regex pattern;
+    std::smatch matches;
+    while(std::getline(module_str, line)) {
+        pattern = "_id_bpm=(\\d+)";
+        if (std::regex_search(line, matches, pattern)) {
+            if (matches.size() == 2) {
+                id_bpm = std::stoi(matches[1].str());
+                continue;
+            } else {
+                throw std::invalid_argument("Following line does not follow the pattern \"_id_bpm=(\\d+)\":\n" + line );
+            }
+        }
+        pattern = "_id_output=(\\d+)";
+        if (std::regex_search(line, matches, pattern)) {
+            if (matches.size() == 2) {
+                id_output = std::stoi(matches[1].str());
+                continue;;
+            } else {
+                throw std::invalid_argument("Following line does not follow the pattern \"_id_output=(\\d+)\":\n" + line );
+            }
+        }
+        pattern = "_bpm=(\\d+)";
+        if (std::regex_search(line, matches, pattern)) {
+            if (matches.size() == 2) {
+                bpm = std::stoi(matches[1].str());
+                continue;
+            } else {
+                throw std::invalid_argument("Following line does not follow the pattern \"_bpm=(\\d+)\":\n" + line );
+            }
+        }
+        if (line == "_ids_input:") { break; }
+    }
+    while(std::getline(module_str, line)){
+        ids_input.emplace_back(std::stoi(line));
+    }
+
+
+    // create module with read data
+    if (id_output == -1) {
+        throw std::invalid_argument("Can not create an Sequencer module with id_output= " + std::to_string(id_output));
+    }
+    if (id_bpm == -1) {
+        throw std::invalid_argument("Can not create an Sequencer module with id_bpm= " + std::to_string(id_bpm));
+    }
+    if (bpm == -1) {
+        throw std::invalid_argument("Can not create an Sequencer module with bpm= " + std::to_string(bpm));
+    }     
+    if (ids_input.empty() == true) {
+        throw std::invalid_argument("Can not create an Sequencer module with bpm= " + std::to_string(bpm));
+    }     
+    return std::make_shared<Sequencer>(Sequencer(module_id, id_output, id_bpm, bpm, ids_input));
+}
+
+bool Sequencer::play(bool state){
+    /*TODO Clear everything*/
+    return state;
+}

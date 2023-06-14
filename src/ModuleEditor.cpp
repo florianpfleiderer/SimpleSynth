@@ -17,14 +17,26 @@
 #include "../include/modules/SawOscillator.h"
 #include "../include/modules/EchoNode.h"
 #include "../include/modules/DelayNode.h"
+#include "../include/modules/PitchShiftNode.h"
+#include "../include/modules/ChorusNode.h"
 #include "../include/modules/NoiseGenerator.h"
 #include "../include/modules/Sweep.h"
 #include "../include/modules/Sequencer.h"
 #include "../include/modules/Amplifier.h"
 #include "../include/modules/Mixer.h"
 
+ModuleEditor::ModuleEditor() : window(nullptr), activeFileName("") {
+    // ImNodes::CreateContext();
+    // init menu popup flags
+    openPopup = false;
+    saveAsPopup = false;
+    newWorkspacePopup = false;
+    exitPopup = false;
+    quickSave = false;
+    play = false;
+}
 
-ModuleEditor::ModuleEditor() : window(WindowHost::create_window(1280, 720, "Simple Synth")), _idGenerator(), activeFileName("") {
+ModuleEditor::ModuleEditor(GLFWwindow* window_) : window(window_), _idGenerator(), activeFileName("") {
     ImNodes::CreateContext();
     // init menu popup flags
     openPopup = false;
@@ -32,6 +44,7 @@ ModuleEditor::ModuleEditor() : window(WindowHost::create_window(1280, 720, "Simp
     newWorkspacePopup = false;
     exitPopup = false;
     quickSave = false;
+    play = false;
 }
 
 // void ModuleEditor::glfw_error_callback(int error, const char *description) {
@@ -204,6 +217,8 @@ void ModuleEditor::draw_menu() {
             if (ImGui::MenuItem("Save As..", "Ctrl+Shift+S")) { saveAsPopup = true; }
             if (ImGui::MenuItem("New Workspace", "Ctrl+Alt+N")) { newWorkspacePopup = true; }
             if (ImGui::MenuItem("Exit", "Ctrl+Alt+Q")) { exitPopup = true; }
+            if (ImGui::MenuItem("Play", "Space")) { play = true; }
+            if (ImGui::MenuItem("Pause", "Space")) { play = false; }
             ImGui::EndMenu();
         }
         ImGui::EndMainMenuBar();
@@ -253,12 +268,17 @@ void ModuleEditor::show() {
                                 (ImGui::IsKeyDown(ImGuiKey_LeftAlt) || ImGui::IsKeyDown(ImGuiKey_RightAlt)) &&
                                 ImGui::IsKeyReleased(ImGuiKey_Q);
 
+    const bool KEY_Space = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
+                            ImNodes::IsEditorHovered() &&
+                            ImGui::IsKeyReleased(ImGuiKey_Space);
+
     // shortcut activations
     if (KEY_CTRL_O) { openPopup = true; }
     if (KEY_CTRL_S) { quickSave = true;}
     if (KEY_Ctrl_Shift_S) { saveAsPopup = true; }
     if (KEY_Ctrl_Alt_N) { newWorkspacePopup = true; }
     if (KEY_Ctrl_Alt_Q) { exitPopup = true; }
+    if (KEY_Space) { play = !play; }
 
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8.f, 8.f));
@@ -307,15 +327,27 @@ void ModuleEditor::show() {
             _modules.emplace_back(module);
         }
 
-        if (ImGui::MenuItem("delay"))
-        {
-            auto module = std::make_shared<DelayNode>();
-            _modules.emplace_back(module);
-        }
+        // if (ImGui::MenuItem("delay"))
+        // {
+        //     auto module = std::make_shared<DelayNode>();
+        //     _modules.emplace_back(module);
+        // }
 
         if (ImGui::MenuItem("echo"))
         {
             auto module = std::make_shared<EchoNode>();
+            _modules.emplace_back(module);
+        }
+
+        if (ImGui::MenuItem("pitchShift"))
+        {
+            auto module = std::make_shared<PitchShiftNode>();
+            _modules.emplace_back(module);
+        }
+
+        if (ImGui::MenuItem("chorus"))
+        {
+            auto module = std::make_shared<ChorusNode>();
             _modules.emplace_back(module);
         }
 
@@ -458,6 +490,7 @@ void ModuleEditor::show() {
         ImGui::Text("Open:");
         ImGui::InputText("##Eingabe", textBuffer, bufferSize);
         if (ImGui::Button("Ok") || KEY_ENTER) {
+            play = false;
             this->load(textBuffer);
             strcpy(activeFileName, textBuffer);
             ImGui::CloseCurrentPopup();
@@ -500,6 +533,7 @@ void ModuleEditor::show() {
     if (ImGui::BeginPopup("new_ws")) {
         ImGui::Text("Create new workspace? Unsaved changes will be lost.");
         if (ImGui::Button("yes") || KEY_ENTER) {
+            play = false;
             _modules.clear();
             _connections.clear();
             IdGenerator::loadId(0);
@@ -515,6 +549,7 @@ void ModuleEditor::show() {
     if (ImGui::BeginPopup("exit")) {
         ImGui::Text("Exit programm? Unsaved changes will be lost.");
         if (ImGui::Button("yes") || KEY_ENTER) {
+            play = false;
             std::exit(0);
         }
         if (ImGui::Button("Cancel") || KEY_ESCAPE) {
@@ -525,6 +560,7 @@ void ModuleEditor::show() {
     if (ImGui::BeginPopup("exit")) {
         ImGui::Text("Exit programm? Unsaved changes will be lost.");
         if (ImGui::Button("yes") || KEY_ENTER) {
+            play = false;
             std::exit(0);
         }
         if (ImGui::Button("Cancel") || KEY_ESCAPE) {
@@ -533,6 +569,17 @@ void ModuleEditor::show() {
         }
     }
 
+    if(play){
+        for(auto& m : _modules){
+            m->play(true);
+        }
+    }
+
+    if(!play){
+        for(auto& m : _modules){
+            m->play(false);
+        }
+    }
 
 
 
@@ -688,6 +735,11 @@ std::shared_ptr<Module> ModuleEditor::unserialize_module(std::stringstream &modu
     unserializer_map["SawOscillator"] = &SawOscillator::unserialize;
     unserializer_map["SineOscillator"] = &SineOscillator::unserialize;
     unserializer_map["Sweep"] = &Sweep::unserialize;
+    unserializer_map["Amplifier"] = &Amplifier::unserialize;
+    unserializer_map["Mixer"] = &Mixer::unserialize;
+    unserializer_map["Sequencer"] = &Sequencer::unserialize;
+    unserializer_map["Chorus"] = &ChorusNode::unserialize;
+    unserializer_map["PitchShift"] = &PitchShiftNode::unserialize;
 
 
     // unserialize general module data

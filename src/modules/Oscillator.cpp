@@ -82,3 +82,8 @@ void Oscillator::getSettingsFromText(std::stringstream &module_str, int &id_outp
         throw std::invalid_argument("Can not create an Oscillator module with frequency= " + std::to_string(frequency));
     }
 }
+
+bool Oscillator::play(bool state){
+    /*TODO Clear everything*/
+    return state;
+}
