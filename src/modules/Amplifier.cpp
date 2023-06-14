@@ -24,16 +24,14 @@ void Amplifier::amplify(stk::StkFrames& frames, unsigned int g) {
 }
 
 bool Amplifier::tick(stk::StkFrames& frames, double streamTime, int output_id) {
-
     // Fill frames with audio data and amplify the data
     for(auto & conn : this->_connections){
-        // Annahme: Jedes Module befüllt frames mit seinen Werten
         conn.module->tick(frames, streamTime, output_id);
     }
+    // Return false if the no audio data was provided
     if(frames.empty())
         return false;
-
-    // Amplify the audio signal stored in frames
+    // Amplify the audio data (signal) stored in frames
     amplify(frames, _gain);
 
     return true;
