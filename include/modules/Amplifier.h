@@ -15,25 +15,19 @@
  *  constant .
  */
 class Amplifier : public Module {
-    //! Output pin variable
-    int _id_output;
-    //! Input pin variable
-    int _id_input;
-    //! gain factor
-    unsigned int _gain;
 
 public:
     /*! Amplifier constructor
      *
-     * @param gain value for amplifying the audio signal
+     * @param Default gain factor for amplifying the audio signal
      */
-    explicit Amplifier(unsigned int gain = 10);
+    Amplifier(unsigned int _gain = 5);
 
     //! This function is called every frame to draw the module ui.
     void draw() override;
 
-    /*!  \brief Function used for audio processing
-     *
+    //! Function used for audio processing
+    /*!
      * check if all inputs are connected
      * call tick functions of connected modules
      * do the necessary calculations
@@ -48,8 +42,10 @@ public:
 
     //! Amplify a pending signal
     /*!
+     * The StkFloat values which represent the audio signal are multiplied by the gain factor.
      *
      * @param frames vector of audio data
+     * @param g gain factor
      */
     void amplify(stk::StkFrames& frames, unsigned int g);
 
@@ -61,6 +57,17 @@ public:
     void setGain(unsigned int g);
 
     void serialize_settings(std::ostream &ostream) override;
+
+    /**
+     * @brief Destructor
+     */
+    virtual ~Amplifier();
+
+protected:
+    int _id_output;         /**< ID of the output pin (connector) */
+    int _id_input;          /**< ID of the input pin (connector) */
+    float _gain;            /**< Gain factor by which the audio signal is amplified */
+    int _id_gain;           /**< ID of the gain parameter */
 
 };
 

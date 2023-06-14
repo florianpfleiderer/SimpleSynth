@@ -8,20 +8,16 @@
 #include "Stk.h"
 
 
-Amplifier::Amplifier(unsigned int gain) : Module("Amplifier"), _id_output(IdGenerator::generateId()),
-                           _id_input(IdGenerator::generateId()), _gain(gain)
-                           {
+Amplifier::Amplifier(unsigned int g) : Module("Amplifier"), _id_output(IdGenerator::generateId()),
+                           _id_input(IdGenerator::generateId()),_gain(g), _id_gain(IdGenerator::generateId()) {
     _connectors.emplace_back(ConnectorType::INPUT, _id_input);
     _connectors.emplace_back(ConnectorType::OUTPUT, _id_output);
-
 }
 
-//! Set the gain factor
 void Amplifier::setGain(unsigned int g) {
     _gain  = g;
 }
 
-//! Amplify the StkFloat values (audio data) contained in frame
 void Amplifier::amplify(stk::StkFrames& frames, unsigned int g) {
     // Amplify and call copy constructor
     stk::StkFrames frames_amplified = frames * g;
@@ -38,7 +34,6 @@ bool Amplifier::tick(stk::StkFrames& frames, double streamTime, int output_id) {
         // Annahme: Jedes Module befüllt frames mit seinen Werten
         conn.module->tick(frames, streamTime, output_id);
     }
-
     if(frames.empty())
         return false;
 
@@ -48,7 +43,7 @@ bool Amplifier::tick(stk::StkFrames& frames, double streamTime, int output_id) {
     return true;
 }
 
-//! Create the GUI (node) for the amplifier class
+
 void Amplifier::draw()
 {
     // Create empty node
@@ -65,10 +60,22 @@ void Amplifier::draw()
 
     // Output pin
     ImNodes::BeginOutputAttribute(_id_output);
+    ImGui::Indent(160);
     ImGui::Text("out");
     ImNodes::EndInputAttribute();
 
+    // Fader
+    ImNodes::BeginStaticAttribute(_id_gain);
+    ImGui::PushItemWidth(100.0f);
+    ImGui::SliderFloat("Gain factor", &_gain, 1.0f, 10.f);
+    ImGui::PopItemWidth();
+    ImNodes::EndStaticAttribute();
+
     ImNodes::EndNode();
+}
+
+Amplifier::~Amplifier() {
+
 }
 
 //TODO: implement

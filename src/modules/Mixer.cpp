@@ -24,19 +24,29 @@ stk::StkFrames Mixer::mix(stk::StkFrames& audio_signal_1, stk::StkFrames& audio_
 
 bool Mixer::tick(stk::StkFrames &frames, double streamTime, int output_id) {
 
-    //Create Frame variables for mixing
-    stk::StkFrames *audio_signals = new stk::StkFrames[_connectors.size()];
+    //Check if signals for mixing are available
+    auto number_of_connections = _connections.size();
 
-    for(unsigned int i = 0; i < this->_connections.size(); i++) {
-        this->_connections[i].module->tick(audio_signals[i], streamTime, output_id);
+    if(number_of_connections <= 1) {
+        std::cout << "Not enough signals for mixing available. "
+                     "Create at least 2 connections to the mixer first!" << std::endl;
+        return false;
+
+    } else{
+        // Create StkFrames variables for mixing
+        stk::StkFrames audio_signal_1(frames.frames(), frames.channels());
+        stk::StkFrames audio_signal_2(frames.frames(), frames.channels());
+        stk::StkFrames audio_signals[2] = {audio_signal_1, audio_signal_2};
+
+        for(unsigned int i = 0; i < this->_connections.size(); i++) {
+            this->_connections[i].module->tick(audio_signals[i], streamTime, output_id);
+        }
+
+        stk::StkFrames mixed_signal = mix(audio_signals[0], audio_signals[1]);
+        frames = mixed_signal;
+
+        return  true;
     }
-
-    stk::StkFrames mixed_signal = mix(audio_signals[0], audio_signals[1]);
-    frames = mixed_signal;
-
-    delete [] audio_signals;
-
-    return  true;
 }
 
 void Mixer::draw()
@@ -68,4 +78,8 @@ void Mixer::draw()
 
 void Mixer::serialize_settings(std::ostream &ostream) {
     ostream << "Mixer" << std::endl;
+}
+
+Mixer::~Mixer() {
+
 }
