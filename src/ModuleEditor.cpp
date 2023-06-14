@@ -309,15 +309,15 @@ void ModuleEditor::show() {
             _modules.emplace_back(module);
         }
 
-        if (ImGui::MenuItem("NoiseGenerator"))
-        {
-            auto module = std::make_shared<NoiseGenerator>();
-            _modules.emplace_back(module);
-        }
-
         if (ImGui::MenuItem("SawOscillator"))
         {
             auto module = std::make_shared<SawOscillator>();
+            _modules.emplace_back(module);
+        }
+
+        if (ImGui::MenuItem("NoiseGenerator"))
+        {
+            auto module = std::make_shared<NoiseGenerator>();
             _modules.emplace_back(module);
         }
 
@@ -368,12 +368,6 @@ void ModuleEditor::show() {
         if (ImGui::MenuItem("sequencer"))
         {
             auto module = std::make_shared<Sequencer>();
-            _modules.emplace_back(module);
-        }
-
-        if (ImGui::MenuItem("ampflifier"))
-        {
-            auto module = std::make_shared<Amplifier>();
             _modules.emplace_back(module);
         }
 
