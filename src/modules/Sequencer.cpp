@@ -32,32 +32,32 @@ Sequencer::~Sequencer(){
 
 bool Sequencer::tick(stk::StkFrames &frames, double streamTime, int output_id){
 
-    bool valid_result = false;
-    unsigned int frame_len = frames.size();
-    double step_duration = 1 / (_bpm/60); // step duration in seconds is one divided by beats per second
-    int step_index = (int)( ( (long)(streamTime / step_duration) ) % _ids_input.size() );
-    // int frame_start_ind = (int) ( (long)(streamTime / (1 / frames.dataRate())) % frame_len ); // position in frame via index according to streamTime and dataRate
-
-    stk::StkFrames input_frame = stk::StkFrames(frame_len, 1);
-    std::shared_ptr<Module> module = nullptr;
-    int module_output = -1;
-    (void) output_id; // not used because only one output exists
-
-    for(auto c : _connections){
-        std::cout << _ids_input[step_index];
-        std::cout << c.input_id;
-        if(_ids_input[step_index] == c.input_id){
-            module = c.module;
-            module_output = c.output_id;
-            valid_result = true;
-            break;
-        }
-    }
-
-    if(valid_result){
-        module->tick(frames, streamTime, module_output);
-    }
-    return true;
+//    bool valid_result = false;
+//    unsigned int frame_len = frames.size();
+//    double step_duration = 1 / (_bpm/60); // step duration in seconds is one divided by beats per second
+//    int step_index = (int)( ( (long)(streamTime / step_duration) ) % _ids_input.size() );
+//    // int frame_start_ind = (int) ( (long)(streamTime / (1 / frames.dataRate())) % frame_len ); // position in frame via index according to streamTime and dataRate
+//
+//    stk::StkFrames input_frame = stk::StkFrames(frame_len, 1);
+//    std::shared_ptr<Module> module = nullptr;
+//    int module_output = -1;
+//    (void) output_id; // not used because only one output exists
+//
+//    for(auto c : _connections){
+//        std::cout << _ids_input[step_index];
+//        std::cout << c.input_id;
+//        if(_ids_input[step_index] == c.output_id){
+//            module = c.module;
+//            module_output = c.output_id;
+//            valid_result = true;
+//            break;
+//        }
+//    }
+//
+//    if(valid_result){
+//        module->tick(frames, streamTime, module_output);
+//    }
+//    return true;
 //
 //    if(valid_result){
 //        valid_result = module->tick(input_frame, streamTime, module_output);
@@ -76,7 +76,7 @@ bool Sequencer::tick(stk::StkFrames &frames, double streamTime, int output_id){
     // 2. get data from appropiate input
     // 3. select data range
     // 4. iterate and copy data accordingly
-/*
+
     bool valid_result = false;
     unsigned int frame_len = frames.size();
     double delta_t = 1 / frames.dataRate();
@@ -89,7 +89,7 @@ bool Sequencer::tick(stk::StkFrames &frames, double streamTime, int output_id){
     (void) output_id; // not used because only one output exists
 
     for(auto c : _connections){    // get corresponding input module
-        if(_ids_input[step_index] == c.input_id){
+        if(_ids_input[step_index] == c.output_id){
             module = c.module;
             module_output = c.output_id;
             valid_result = true;
@@ -103,7 +103,7 @@ bool Sequencer::tick(stk::StkFrames &frames, double streamTime, int output_id){
             last_step_index = step_index;
 
             for(auto c : _connections){    // get corresponding input module
-                if(_ids_input[step_index] == c.input_id){
+                if(_ids_input[step_index] == c.output_id){
                     module = c.module;
                     module_output = c.output_id;
                     valid_result = true;
@@ -119,7 +119,6 @@ bool Sequencer::tick(stk::StkFrames &frames, double streamTime, int output_id){
         }
     }
     return true;
-    */
 }
 
 int Sequencer::calc_step_index(double streamTime){
