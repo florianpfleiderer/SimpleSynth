@@ -15,23 +15,23 @@ Mixer::Mixer() : Module("Mixer"), _id_output(IdGenerator::generateId()),
     _connectors.emplace_back(ConnectorType::OUTPUT, _id_output);
 }
 
-stk::StkFrames Mixer::mix(stk::StkFrames& audio_signal_1, stk::StkFrames& audio_signal_2) {
-
-    stk::StkFrames mixed_signal = audio_signal_1 + audio_signal_2;
-
-    return mixed_signal;
+stk::StkFrames Mixer::mix(stk::StkFrames& ads_1, stk::StkFrames& ads_2) {
+    // Dimension checking. Can be removed for purpose of performance
+    if ( ads_1.frames() != ads_2.frames() || ads_1.channels() != ads_2.channels() ) {
+        std::ostringstream error;
+        error << "StkFrames::operator+: frames argument must be of equal dimensions!";
+        stk::Stk::handleError(error.str(), stk::StkError::MEMORY_ACCESS);
+    }
+    return ads_1 + ads_2;
 }
 
 bool Mixer::tick(stk::StkFrames &frames, double streamTime, int output_id) {
 
-    //Check if signals for mixing are available
+    //Check if enough signals for mixing are available
     auto number_of_connections = _connections.size();
 
     if(number_of_connections <= 1) {
-        std::cout << "Not enough signals for mixing available. "
-                     "Create at least 2 connections to the mixer first!" << std::endl;
         return false;
-
     } else{
         // Create StkFrames variables for mixing
         stk::StkFrames audio_signal_1(frames.frames(), frames.channels());
@@ -43,6 +43,7 @@ bool Mixer::tick(stk::StkFrames &frames, double streamTime, int output_id) {
         }
 
         stk::StkFrames mixed_signal = mix(audio_signals[0], audio_signals[1]);
+
         frames = mixed_signal;
 
         return  true;
