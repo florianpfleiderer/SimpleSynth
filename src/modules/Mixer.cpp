@@ -16,6 +16,15 @@ Mixer::Mixer() : Module("Mixer"), _id_output(IdGenerator::generateId()),
     _connectors.emplace_back(ConnectorType::OUTPUT, _id_output);
 }
 
+Mixer::Mixer(int module_id, int id_output, int id_input_1, int id_input_2) : Module("Mixer", module_id),
+                         _id_output(id_output), _id_input_1(id_input_1), _id_input_2(id_input_2) {
+    _connectors.emplace_back(ConnectorType::INPUT, _id_input_1);
+    _connectors.emplace_back(ConnectorType::INPUT, _id_input_2);
+    _connectors.emplace_back(ConnectorType::OUTPUT, _id_output);
+}
+
+Mixer::~Mixer() = default;
+
 stk::StkFrames Mixer::mix(stk::StkFrames& ads_1, stk::StkFrames& ads_2) {
     // Dimension checking. Can be removed for purpose of performance
     if ( ads_1.frames() != ads_2.frames() || ads_1.channels() != ads_2.channels() ) {
