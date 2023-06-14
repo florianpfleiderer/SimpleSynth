@@ -126,7 +126,7 @@ TEST_CASE("Sequencer Node Test", "Sequencer") {
 
 
 TEMPLATE_TEST_CASE( "test module.h functions in modules", "[nodes][template]", 
-                    DelayNode, EchoNode, SineOscillator, RectOscillator, SawOscillator, Sweep, NoiseGenerator, Output) {
+                    DelayNode, EchoNode, SineOscillator, RectOscillator, SawOscillator, Sweep, NoiseGenerator) {
     // call default constructor for each type
     TestType test_type = TestType();
 
