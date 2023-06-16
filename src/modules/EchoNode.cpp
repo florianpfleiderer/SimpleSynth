@@ -54,7 +54,7 @@ void EchoNode::draw() {
 
     ImNodes::BeginStaticAttribute(_id_echo_delay);
     ImGui::PushItemWidth(100.0f);
-    ImGui::SliderFloat("echo_delay", &_echo_delay, 0.0f, 1000.0f);
+    ImGui::SliderFloat("echo_delay", &_echo_delay, 0.0f, 44100.0f);
     ImGui::PopItemWidth();
     setEchoDelay(_echo_delay);
     ImGui::Text("echo_delay=%03f", _echo_delay);

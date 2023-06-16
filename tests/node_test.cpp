@@ -116,6 +116,7 @@ TEST_CASE("Output Node Test", "Output") {
 
 // test member function of sequencer node
 TEST_CASE("Sequencer Node Test", "Sequencer") {
+    IdGenerator::resetId();
     Sequencer seqNode = Sequencer();
 
     SECTION("basic tests") {

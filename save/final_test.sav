@@ -5,7 +5,7 @@ Sequencer
 [module_settings]
 _id_bpm=4
 _id_output=5
-_bpm=500
+_bpm=303
 _ids_input:
 6
 7
@@ -69,7 +69,7 @@ Sequencer
 [module_settings]
 _id_bpm=74
 _id_output=75
-_bpm=500
+_bpm=303
 _ids_input:
 76
 77
@@ -100,15 +100,6 @@ RectOscillator
 [module_settings]
 _id_output=102
 _frequency=777.444
-
-[module_name]
-Mixer
-[module_id]
-104
-[module_settings]
-_id_output=105
-_id_input_1=106
-_id_input_2=107
 
 [module_name]
 Mixer
@@ -182,10 +173,24 @@ Echo
 _id_input=159
 _id_output=160
 _id_echo_delay=161
-_echo_delay=857.143
+_echo_delay=25200
+
+[module_name]
+Sequencer
+[module_id]
+167
+[module_settings]
+_id_bpm=168
+_id_output=169
+_bpm=303
+_ids_input:
+170
+171
+172
+173
 
 [IdGenerator_state]
-163
+176
 [connections]
 conn_id=19 input_id=17 output_id=7
 conn_id=23 input_id=21 output_id=6
@@ -193,16 +198,16 @@ conn_id=30 input_id=28 output_id=8
 conn_id=31 input_id=25 output_id=9
 conn_id=72 input_id=5 output_id=45
 conn_id=85 input_id=75 output_id=83
-conn_id=108 input_id=99 output_id=106
-conn_id=109 input_id=102 output_id=107
 conn_id=114 input_id=44 output_id=112
-conn_id=121 input_id=105 output_id=118
 conn_id=135 input_id=111 output_id=134
 conn_id=137 input_id=132 output_id=52
-conn_id=143 input_id=51 output_id=142
 conn_id=153 input_id=148 output_id=76
 conn_id=154 input_id=151 output_id=78
 conn_id=155 input_id=82 output_id=46
 conn_id=156 input_id=119 output_id=113
 conn_id=162 input_id=124 output_id=159
-conn_id=163 input_id=160 output_id=133
+conn_id=165 input_id=160 output_id=133
+conn_id=166 input_id=51 output_id=142
+conn_id=174 input_id=99 output_id=171
+conn_id=175 input_id=102 output_id=173
+conn_id=176 input_id=169 output_id=118
