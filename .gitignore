@@ -30,6 +30,8 @@ xcuserdata
 *.ini
 
 # saves
-# save/*
-# !test.ini
-# !test.sav
+save/*
+!test.ini
+!test.sav
+!final_test.ini
+!final_test.sav
