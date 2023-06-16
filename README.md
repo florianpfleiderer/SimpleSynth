@@ -37,9 +37,7 @@ Import in VS or VSCode with CMake Tools and C/C++ Plugin.
 TODO
 
 ### Test
-for this project, the catch2 test framework is used.
-link to docs: https://github.com/catchorg/Catch2/blob/devel/docs/tutorial.md
-
+For this project, the catch2 test framework is used.
 #### macos
 in build directory:
 ```
@@ -57,6 +55,10 @@ TODO
 ### linux
 TODO
 
-## general information
+## References
+[1] https://github.com/Nelarius/imnodes<br>
+[2] https://github.com/thestk/stk<br>
+[3] https://github.com/catchorg/Catch2<br>
+
 Link for an extended stk tutorial:
 https://ccrma.stanford.edu/software/stk/
