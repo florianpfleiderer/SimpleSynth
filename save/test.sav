@@ -86,26 +86,12 @@ _id_input=83
 _gain=0.450000
 
 [module_name]
-Noise
-[module_id]
-87
-[module_settings]
-_id_output=88
-
-[module_name]
-Noise
-[module_id]
-95
-[module_settings]
-_id_output=96
-
-[module_name]
 SawOscillator
 [module_id]
 98
 [module_settings]
 _id_output=99
-_frequency=81.796
+_frequency=255.708
 
 [module_name]
 RectOscillator
@@ -113,7 +99,7 @@ RectOscillator
 101
 [module_settings]
 _id_output=102
-_frequency=81.796
+_frequency=777.444
 
 [module_name]
 Mixer
@@ -152,9 +138,9 @@ _id_output=124
 _id_start_frequency=125
 _id_end_frequency=126
 _id_duration=127
-sweepStartFrequency=1
-sweepEndFrequency=119.404
-sweepDuration=0.1
+sweepStartFrequency=120.396
+sweepEndFrequency=714.698
+sweepDuration=6.931
 
 [module_name]
 Mixer
@@ -172,8 +158,34 @@ Output
 [module_settings]
 _id_input=142
 
+[module_name]
+SawOscillator
+[module_id]
+147
+[module_settings]
+_id_output=148
+_frequency=179.132
+
+[module_name]
+SawOscillator
+[module_id]
+150
+[module_settings]
+_id_output=151
+_frequency=613.912
+
+[module_name]
+Echo
+[module_id]
+158
+[module_settings]
+_id_input=159
+_id_output=160
+_id_echo_delay=161
+_echo_delay=857.143
+
 [IdGenerator_state]
-143
+163
 [connections]
 conn_id=19 input_id=17 output_id=7
 conn_id=23 input_id=21 output_id=6
@@ -181,8 +193,6 @@ conn_id=30 input_id=28 output_id=8
 conn_id=31 input_id=25 output_id=9
 conn_id=72 input_id=5 output_id=45
 conn_id=85 input_id=75 output_id=83
-conn_id=94 input_id=88 output_id=78
-conn_id=97 input_id=96 output_id=76
 conn_id=108 input_id=99 output_id=106
 conn_id=109 input_id=102 output_id=107
 conn_id=114 input_id=44 output_id=112
@@ -190,3 +200,9 @@ conn_id=121 input_id=105 output_id=118
 conn_id=135 input_id=111 output_id=134
 conn_id=137 input_id=132 output_id=52
 conn_id=143 input_id=51 output_id=142
+conn_id=153 input_id=148 output_id=76
+conn_id=154 input_id=151 output_id=78
+conn_id=155 input_id=82 output_id=46
+conn_id=156 input_id=119 output_id=113
+conn_id=162 input_id=124 output_id=159
+conn_id=163 input_id=160 output_id=133
