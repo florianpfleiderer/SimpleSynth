@@ -1,4 +1,4 @@
-# SimpleSynth
+# SimpleSynth [![Pipeline](https://github.com/florianpfleiderer/SimpleSynth/workflows/CMake/badge.svg?branch=main)](https://github.com/florianpfleiderer/SimpleSynth/actions)
 
 ### General Description
 <!-- short description 
