@@ -1,4 +1,4 @@
-# SimpleSynth
+# SimpleSynth [![Main](https://github.com/florianpfleiderer/SimpleSynth/workflows/Main/badge.svg?branch=main)](https://github.com/florianpfleiderer/SimpleSynth/actions)
 
 ### General Description
 <!-- short description 
