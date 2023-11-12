@@ -2,12 +2,10 @@
 # simplehttpserver build stage
 ########################################################################################################################
 
-FROM alpine:3.17.0 AS build
+FROM ubuntu:20.04 as build
 
-RUN apk update && apk add --no-cache \
-    build-base \
-    cmake \
-    git
+RUN apt-get update && \
+	apt-get install -y build-essential git cmake
 
 WORKDIR /simplesynth-app
 
@@ -19,7 +17,7 @@ COPY CMakeLists.txt ./
 
 WORKDIR /simplesynth-app/build
 
-RUN cmake -DCMAKE_BUILD_TYPE=Release .. && make 
+RUN cmake .. && make 
 
 CMD ["./SimpleSynth"]
 
