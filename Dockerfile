@@ -2,22 +2,17 @@
 # simplehttpserver build stage
 ########################################################################################################################
 
-FROM ubuntu:20.04 as build
+FROM gcc:latest AS build
 
 RUN apt-get update && \
-	apt-get install -y build-essential git cmake
+	apt-get install -y build-essential git cmake libgl1-mesa-dev libglfw3-dev libxinerama-dev libxcursor-dev libxi-dev libasound2-dev doxygen
 
-WORKDIR /simplesynth-app
+WORKDIR /simplesynth
 
-COPY include ./include
-COPY src ./src 
-COPY tests ./tests
-COPY save ./save
-COPY CMakeLists.txt ./
+COPY . .
 
-WORKDIR /simplesynth-app/build
+WORKDIR /simplesynth/build
 
 RUN cmake .. && make 
 
-CMD ["./SimpleSynth"]
-
+CMD [ "/bin/bash" ]
