@@ -22,6 +22,14 @@ Clone:
 git clone https://stea.iue.tuwien.ac.at/CppProjects2023/GroupKProject 
 ```
 ### Build
+#### using docker
+```
+docker built -t simplesynth .
+docker run -it --rm -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix simplesynth
+```
+
+If you want to run it on mac, see: https://medium.com/@nr817174/gui-containers-on-docker-running-graphical-applications-seamlessly-36e77925d0df
+
 #### macos
 ```
 mkdir build

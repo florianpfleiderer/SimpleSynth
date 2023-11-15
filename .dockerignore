@@ -1,0 +1,20 @@
+# .dockerignore
+#
+# Created on Wed Nov 15 2023 by Florian Pfleiderer
+#
+# Copyright (c) 2023 TU Wien
+
+# Ignore .github directory
+.github
+
+# Ignore build directory
+build
+
+# Ignore LICENSE.md file
+LICENSE.md
+
+# Ignore README.md file
+README.md
+
+# Ignore .gitignore file
+.gitignore
